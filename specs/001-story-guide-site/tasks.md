@@ -83,13 +83,13 @@
 **Independent Test**：只有 00＋換頁，在矩陣各尺寸正常排版並可部署。
 
 - [x] T047 [US1] `src/content/pages/00.yaml`：標題、導言（含人名標記）、核心關係、三個世界（含名詞標記）、四條主軸（編號／標題／副標）
-- [ ] T048 [US1] `src/features/world/WorldIntro.tsx`：舞台版三欄（440／1fr／1fr、欄距 56）、核心關係條、主軸清單（整列可點、hover accent-100、「↓ 進入第一主軸」提示）
-- [ ] T049 [US1] 流式版 00：單欄、核心關係條縮小、主軸清單（min-h 64）
-- [ ] T050 [US1] 換頁：頁面指示點選、↑↓ 鍵（舞台版）、流式版頁面選單；無轉場；切頁保留狀態
-- [ ] T051 [P] [US1] `tests/e2e/matrix.spec.ts`：視窗矩陣（contracts/layout-and-coordinates.md §7）→ 00 無水平捲軸、舞台版放得下一屏、版型門檻切換正確
-- [ ] T052 [US1] 在 1280×600 驗證 compact 字級補償；調整 00 文字不溢出
+- [x] T048 [US1] `src/features/world/WorldIntro.tsx`：舞台版三欄（440／1fr／1fr、欄距 56）、核心關係條、主軸清單（整列可點、hover accent-100、「↓ 進入第一主軸」提示）
+- [x] T049 [US1] 流式版 00：單欄、核心關係條縮小、主軸清單（min-h 64）
+- [x] T050 [US1] 換頁：頁面指示點選、↑↓ 鍵（舞台版）、流式版頁面選單；無轉場；切頁保留狀態
+- [x] T051 [P] [US1] `tests/e2e/matrix.spec.ts`：視窗矩陣（contracts/layout-and-coordinates.md §7）→ 00 無水平捲軸、舞台版放得下一屏、版型門檻切換正確
+- [x] T052 [US1] 在 1280×600 驗證 compact 字級補償；調整 00 文字不溢出
 
-**Checkpoint 3**：部署；手機與桌機皆可閱讀 00 並換頁。
+**Checkpoint 3（程式與驗證完成，待推送部署確認）**：部署；手機與桌機皆可閱讀 00 並換頁。
 
 ---
 

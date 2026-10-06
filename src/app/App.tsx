@@ -6,6 +6,7 @@ import { Stage } from '../components/layout/Stage';
 import { DisplayNum } from '../components/ui';
 import { t } from '../content';
 import { useGlobalKeys } from '../features/axis/useGlobalKeys';
+import { WorldIntro } from '../features/world/WorldIntro';
 import { getReturnTo, pageOfRoute, parseHash, useHash } from '../lib/hash-router';
 import { useAppStore } from '../store/store';
 
@@ -23,15 +24,19 @@ function useRoutedPage() {
   return { page, peopleOpen };
 }
 
-/** 頁面內容的暫代：Phase 3 起由各頁取代（00 導讀、01–04 主軸頁） */
-function PagePlaceholder({ page }: { page: number }) {
+/** 主軸頁（01–04）的暫代：Phase 4 起由 AxisPage 取代 */
+function AxisPlaceholder({ page }: { page: number }) {
   return (
-    <main className="p-8">
+    <main className="absolute inset-y-0 right-0 left-[72px] p-8 flow:static flow:p-0 flow:pt-9">
       <DisplayNum className="text-[64px]">{String(page).padStart(2, '0')}</DisplayNum>
       <h1 className="font-heading text-[34px]">{t('site.title')}</h1>
       <p>{t('site.subtitle')}</p>
     </main>
   );
+}
+
+function PageView({ page }: { page: number }) {
+  return page === 0 ? <WorldIntro /> : <AxisPlaceholder page={page} />;
 }
 
 function Shell() {
@@ -42,16 +47,14 @@ function Shell() {
   if (mode === 'flow') {
     return (
       <FlowShell>
-        <PagePlaceholder page={page} />
+        <PageView page={page} />
         <Dock />
       </FlowShell>
     );
   }
   return (
     <Stage>
-      <div className="absolute inset-y-0 right-0 left-[72px]">
-        <PagePlaceholder page={page} />
-      </div>
+      <PageView page={page} />
       <Dock />
     </Stage>
   );

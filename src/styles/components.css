@@ -39,6 +39,7 @@
   }
   /* 方向鍵提示 */
   .kbd {
+    font-family: inherit; /* Tailwind 預設把 kbd 設成等寬字型，設計稿用內文字型 */
     display: inline-flex;
     align-items: center;
     justify-content: center;
