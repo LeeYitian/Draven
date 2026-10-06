@@ -1,0 +1,79 @@
+# 名詞解釋（固定內容，不依進度改變；解釋 40 字以內、不含劇透）
+# firstPage：首次出現的頁（0＝00 導讀）。
+# autoLink: false＝不自動辨識，只在文字中寫 {t:id|文字} 時連結：
+#   - 太常見的詞（人間、地底交界、異界）
+#   - 同時是人物的詞（盤蛇神、地龍）：它們在後面各頁要走「人名 Popover」，名詞版只在 00 明確標記時使用
+terms:
+  - id: human-world
+    term: 人間
+    firstPage: 0
+    autoLink: false
+    text: 人類王國所在的世界，多族並存，長生魔女也住在這裡。
+  - id: border
+    term: 地底交界
+    firstPage: 0
+    autoLink: false
+    text: 人間與異界的交界，事物的界線在這裡變得模糊。
+  - id: otherworld
+    term: 異界
+    firstPage: 0
+    autoLink: false
+    text: 靈體所居的另一個世界，盤蛇神就住在那一邊。
+  - id: coven
+    term: 魔女集會
+    firstPage: 0
+    text: 魔女們以燭火和濃霧召集的茶會，交換情報，也監督魔女的規矩。
+  - id: snake-cult
+    term: 盤蛇教會
+    firstPage: 0
+    text: 信奉環繞世界的巨蛇的宗教，和德雷文起義差不多時間興起。
+  - id: snake-god
+    term: 盤蛇神
+    firstPage: 0
+    autoLink: false
+    text: 盤蛇教會信奉的神，形象是環繞世界的巨蛇。
+  - id: earth-dragon
+    term: 地龍
+    firstPage: 0
+    autoLink: false
+    text: 住在地底深處的上古地龍，不參與戰爭。
+  - id: sleep-scent
+    term: 昏睡氣味
+    firstPage: 0
+    text: 盤蛇的氣味，混雜鐵鏽、土腥、海洋、煙火，聞了會讓人想睡。
+  - id: morning-star
+    term: 東方晨星
+    firstPage: 1
+    text: 德雷文的稱號之一；他在朝議上把這個名號分給外派的貴族子弟。
+  - id: envoy
+    term: 交流特使
+    firstPage: 1
+    text: 派往各族領地交流的使者；人馬少族長法恩是第一位特使。
+  - id: magic-contract
+    term: 魔法契約
+    firstPage: 1
+    text: 以魔法立下的誓約；艾莉絲以此擔保法恩不會背叛國王與人類。
+  - id: bitter-magic
+    term: 苦味魔法
+    firstPage: 2
+    text: 艾莉絲施在茶上的魔法：刁難德雷文的大臣只嚐得到苦味。
+  - id: magic-resistance
+    term: 魔法抗性
+    firstPage: 2
+    text: 艾利安天生能抵抗魔法的能力，連魔女的試探都能撐過。
+  - id: time-bottle
+    term: 時間瓶
+    firstPage: 2
+    text: 露米裝著自己時間的小瓶子。
+  - id: twin-snake-curse
+    term: 雙頭蛇詛咒
+    firstPage: 2
+    text: 德雷文胸口的詛咒，同時代表墮落和治癒，讓他在衰弱與新生間輪迴。
+  - id: sacrifice-custom
+    term: 獻祭舊俗
+    firstPage: 3
+    text: 盤蛇教會把孩子任命為主教，送往異界控制盤蛇神的習俗。
+  - id: magic-postcard
+    term: 魔法明信片
+    firstPage: 4
+    text: 艾莉絲給德雷文的紙卡，會定期呈現她去過的地方和留言。

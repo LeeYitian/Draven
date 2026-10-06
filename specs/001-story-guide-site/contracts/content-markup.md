@@ -48,9 +48,9 @@
   participants: [nor, elian, fane, lioran, bren, rumi]
   text: >-
     教會坍塌後，{p:nor}和{p:rumi}趕到大洞邊。…
-    {p:elian}{h:cursed-useful|受{p:nor}之託和{p:fane}深入地底}，找到{p:bren}；
+    {p:elian}{h:useful-to-witch|受{p:nor}之託和{p:fane}深入地底}，找到{p:bren}；
     {p:fane}告訴{p:bren}{t:snake-god}不是人類。
-    {h:forgotten-gift|{p:fane}用馬蹄鐵敲出火}、燒鬃毛蓋過{h:snake-smell|盤蛇的氣味}，並棒喝{p:elian}：界線不可能消失。
+    {h:forgotten-gift|{p:fane}用馬蹄鐵敲出火}、燒鬃毛蓋過{h:spirit-scent|盤蛇的氣味}，並棒喝{p:elian}：界線不可能消失。
 ```
 
 ## 4. 建置期驗證（`npm run content:check`，失敗即中止建置）
@@ -61,7 +61,7 @@
 | `{p:}` id 存在於 people | `unknown person id "fan" — 你是不是要 "fane"？` |
 | `{t:}` id 存在於 glossary | 同上 |
 | `{x:}` target 已知 | |
-| `{h:}`：id 存在、位於 recycle 指定的頁與事件、不重疊、每條伏筆恰有一個回收處 | `hint "snake-smell" 應出現在 03 事件 6，但在 03.yaml 找不到 {h:snake-smell|…}` |
+| `{h:}`：id 存在、位於 recycle 指定的頁與事件、不重疊、每條伏筆恰有一個回收處 | `hint "spirit-scent" 應出現在 03 事件 6，但在 03.yaml 找不到 {h:spirit-scent|…}` |
 | 事件 `participants` 與圖節點 id 存在 | |
 | 圖連線 `from/to` 為已定義節點；`event` 在 1…N 或 `bg` | |
 | 圖 `layout.desktop/flow.nodes` 涵蓋所有節點 | |

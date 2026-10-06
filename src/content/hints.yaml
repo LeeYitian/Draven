@@ -1,0 +1,77 @@
+# 伏筆（12 條，只使用「已解釋」的伏筆）。
+# acquire：讀者「進入」該主軸時獲得（01→1、02→8、03→2、04→1，共 12）。
+# recycle：回收處＝該頁該事件的敘述中，必須恰有一個 {h:<id>|片語}（content:check 會檢查）。
+# keyword：顯示在伏筆托盤，不能直接洩漏答案。
+hints:
+  - id: cold-hand
+    n: 1
+    keyword: 冰涼的手
+    acquire: 2
+    recycle: { axis: 4, event: 2 }
+    explain: 艾莉絲第一次牽德雷文就覺得他手冰涼，他卻抽手不讓她檢查。
+  - id: first-cold
+    n: 2
+    keyword: 第一次感冒
+    acquire: 2
+    recycle: { axis: 2, event: 4 }
+    explain: 艾莉絲訂這個條件，是為了讓德雷文能在他生病時抱抱他。
+  - id: similar-name
+    n: 3
+    keyword: 相像的名字
+    acquire: 2
+    recycle: { axis: 4, event: 5 }
+    explain: 艾利安和艾莉絲名字相像，是德雷文取的；忘了艾莉絲，也就忘了原因。
+  - id: not-prince
+    n: 4
+    keyword: 不當王子
+    acquire: 2
+    recycle: { axis: 2, event: 5 }
+    explain: 德雷文不讓艾利安當王子，是希望他當個自由的孩子。
+  - id: spirit-scent
+    n: 5
+    keyword: 精靈身上的怪香味
+    acquire: 2
+    recycle: { axis: 3, event: 6 }
+    explain: 利歐蘭從教會帶回的香味，正是盤蛇的氣味。
+  - id: bishop-scent
+    n: 6
+    keyword: 主教身邊的氣味
+    acquire: 2
+    recycle: { axis: 3, event: 1 }
+    explain: 德雷文常在主教身邊聞到同樣的味道，因為主教曾是盤蛇的孩子。
+  - id: laughing-cry-man
+    n: 7
+    keyword: 霧中又哭又笑的人
+    acquire: 3
+    recycle: { axis: 3, event: 7 }
+    explain: 利歐蘭夢中被蛇環繞的人，就是教會舊俗留下的黑影男人。
+  - id: second-prophecy
+    n: 8
+    keyword: 第二個預言
+    acquire: 4
+    recycle: { axis: 4, event: 3 }
+    explain: 「截然相反的人」就是主教：一個為了人類養子，一個為了非人養育者。
+  - id: forgotten-gift
+    n: 9
+    keyword: 忘了送的禮物
+    acquire: 1
+    recycle: { axis: 3, event: 6 }
+    explain: 法恩一直忘了送給德雷文的馬蹄鐵吊飾，在地底生了火。
+  - id: useful-to-witch
+    n: 10
+    keyword: 對魔女有用
+    acquire: 2
+    recycle: { axis: 3, event: 6 }
+    explain: 諾爾說的考驗，就是要艾利安深入地底。
+  - id: not-mother-again
+    n: 11
+    keyword: 不想再當母親
+    acquire: 2
+    recycle: { axis: 4, event: 4 }
+    explain: 艾莉絲一開始說不想再當母親，最後卻為了德雷文放棄了母親的身分。
+  - id: divine-language
+    n: 12
+    keyword: 神語
+    acquire: 3
+    recycle: { axis: 3, event: 3 }
+    explain: 連精靈都沒聽過的語言，是盤蛇在異界教給主教的。

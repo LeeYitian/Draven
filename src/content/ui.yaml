@@ -1,5 +1,167 @@
-# 介面文案（任務 T033 會擴充：按鈕、提示、aria 標籤…）
-# 元件一律以 t('key') 取用，不在程式碼裡寫死文字（憲章 I）。
+# 介面文案（按鈕、提示、標籤、aria 說明）。元件一律以 t('key', { 參數 }) 取用（憲章 I）。
+# {n}、{name}、{keyword} 等是參數，執行時替換。
+# 各頁自己的文字（標題、事件敘述…）在 pages/；人物、名詞、伏筆在各自的 yaml。
 site:
   title: 德雷文
   subtitle: 故事導覽
+
+common:
+  close: 關閉
+  cancel: 取消
+  skipToContent: 跳到主要內容
+
+# 側欄（舞台版）／底部導覽列（流式版）
+dock:
+  nav: 主要導覽
+  people: 人物誌
+  hints: 伏筆
+  tracking: 追蹤中
+  untracked: 未追蹤
+  pages: 頁面
+  pagesMenu: 選擇頁面
+  goPage: 前往 {page}
+  currentPage: 目前在 {page}
+  hintsBadge: 已獲得 {n} 個伏筆
+
+keys:
+  events: 切換事件
+  pages: 換頁
+  firstTime: 用 ← → 切換事件，關係圖會跟著畫出
+  enterFirst: 進入第一主軸
+
+# 主軸頁共用
+axis:
+  coreTheme: 核心主題
+  expandEvent: 展開事件內容
+  eventTag: 事件類型
+  prev: ← 上一個
+  next: 下一個 →
+  eventOf: '{n} / {total} · 左右滑動'
+  graphTitle: 人物關係
+  eventBar: 事件進程
+  eventButton: '事件 {n}：{title}'
+
+graph:
+  zoomIn: 放大
+  zoomOut: 縮小
+  zoomLevel: 縮放 {percent}%
+  labels: 線段標籤
+  legend: 圖例
+  legendGroup: 群體
+  reset: 重設
+  hint: 點圖例開關線種 · 雙指縮放 · 拖曳平移
+  node: '{name}，{sub}'
+  nodeFocus: 聚焦 {name}
+
+layer:
+  count: '{name} · {n}'
+  collapsed: 已收合
+  collapse: 收合 {name}
+  expand: 展開 {name}
+  onlyUnderground: 只看地底
+
+spectrum:
+  label: 邊界之辯光譜
+  valueText: 最接近的立場：{name}
+
+compare:
+  label: 兩種面對時間的方式：左右拖曳比較
+
+mirror:
+  flipHint: 點擊翻面
+  flip: 翻到另一面
+
+postcard:
+  flip: 翻面明信片
+  flipHint: 點擊翻面
+
+# Popover
+popover:
+  progress: 依目前進度 {page}
+  viewInPeople: 在人物誌查看 →
+  term: 名詞
+  close: 關閉說明
+
+# 伏筆
+hints:
+  title: 伏筆
+  acquiredOne: '獲得新伏筆：{keyword}'
+  acquiredMany: 獲得 {n} 個新伏筆
+  acquiredFooter: 已獲得 {n} 個伏筆 · 點「伏筆」查看
+  count: 已獲得 {n} 個伏筆
+  countSolved: 已獲得 {n} 個伏筆 · 已解開 {solved}
+  empty: 還沒有伏筆。閱讀主軸時，伏筆會自動收進這裡。
+  howTo: 拖曳關鍵字到頁面上的框格，或點選關鍵字再點框格
+  howToTouch: 點選關鍵字，再點頁面上的框格
+  slotEmpty: 伏筆
+  slotReady: 放開以放入
+  slotTap: 點這裡放入
+  slotWrong: 不是這個
+  slotLabel: 伏筆框格，第 {n} 處
+  keywordLabel: 伏筆關鍵字：{keyword}
+  selectedBanner: 已選「{keyword}」，點頁面上的框格放入。
+  collapse: 收合伏筆托盤
+  solvedLive: 答對了：{keyword}
+  wrongLive: 不是這個，關鍵字已放回托盤
+
+tracking:
+  now: 正在追蹤：{name}
+  hint: 01–04 中他出場的事件與引言會掛上書籤標記。
+  badge: 追蹤中
+  button: 追蹤
+  cancel: 取消追蹤
+  buttonLabel: 追蹤 {name}
+
+# 人物誌
+people:
+  title: 人物誌
+  total: 出場人物 {n}
+  progress: 目前進度 {page}
+  progressLegend: 彩色＝已登場
+  selected: 已選中 {n} 人
+  sortLabel: 排列
+  sort:
+    group: 依群體
+    order: 依出場順序
+    world: 依所在世界
+  filter:
+    group: 群體
+    axis: 主軸
+    tag: 關係標籤
+  centerOf: 以 {name} 為中心
+  centerClear: 取消中心視角
+  expandHint: 再點一次，展開完整介紹
+  noRelation: 沒有直接關係
+  close: 關閉人物誌
+  collapseCard: 收合完整介紹
+  spoilerTag: 劇透 · {axis}
+  spoilerLocked: 讀完第 {n} 主軸後解鎖（點擊仍可查看）
+  spoilerShown: 劇透 · {axis} · 已顯示
+  spoilerShow: 顯示劇透
+  spoilerHide: 隱藏
+  cardLabel: '{name}，{role}'
+  groups:
+    royal: 王廷
+    coven: 魔女集會
+    cult: 盤蛇教會
+    centaur: 人馬族
+    deity: 神靈
+  tags:
+    human: 人類
+    other: 外族
+    hall: 朝堂
+    church: 教會
+    vassal: 臣子
+    family: 家人
+    friend: 朋友
+    supervise: 互相監督
+    assist: 互相協助
+  worlds:
+    human: 人間
+    underground: 地底交界
+    otherworld: 異界
+
+settings:
+  reset: 重置進度
+  resetConfirm: 確定要清除追蹤、伏筆與劇透遮罩的紀錄嗎？
+  resetDone: 已重置

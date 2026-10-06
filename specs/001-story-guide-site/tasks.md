@@ -49,17 +49,17 @@
 - [x] T024 [P] `tests/unit/hash-router.test.ts` → `src/lib/hash-router.ts`（`#/`、`#/axis/n`、`#/people`、`returnTo`、未知回 00；開發旗標 `?editor=1`／`?debug=anchors` 位於 `#` 之前，不影響路由）
 
 ### 2C 內容系統（對應需求 #5、#6）
-- [ ] T025 `src/content/schema.ts`：zod schema（Person、AxisPage、AxisEvent、GraphDef、Quote、Term、Hint、UiString、extras）依 data-model.md
-- [ ] T026 `tests/unit/markup.test.ts` → `src/content/markup.ts`：`{p:}{t:}{x:}{h:}` tokenizer／巢狀／逸出／錯誤定位（contracts/content-markup.md §1）
-- [ ] T027 `tests/unit/aliases.test.ts` → `src/content/aliases.ts`：最長優先、`autoLink:false`、名詞優先、已在標記內不重複
-- [ ] T028 `src/content/index.ts`：載入 YAML、`t(key, params)`、`getPerson/getTerm/getHint/getPage`；型別由 schema 推導
-- [ ] T029 `tests/unit/content-check.test.ts`（以壞資料 fixtures）→ `scripts/content-check.ts`：contracts/content-markup.md §4 的全部檢查，錯誤訊息含檔案與位置
-- [ ] T030 [P] `src/content/people.yaml`：15 人（卡片、別名、popover 4 階段、世界、標籤、firstAppearance、order、bio 含劇透）— 來源 `specs/內容準備與設計稿修改.md` §二-2、§二-3
-- [ ] T031 [P] `src/content/glossary.yaml`：16 個名詞 — §二-4
-- [ ] T032 [P] `src/content/hints.yaml`：12 條伏筆 — §二-5（`acquire`、`recycle`、`explain`）
-- [ ] T033 [P] `src/content/ui.yaml`：介面文案與 aria 標籤 — §二-8 與設計稿上所有 UI 文字（含「放開以放入」「不是這個」「追蹤中」「重置進度」「在人物誌查看」…）
-- [ ] T034 [P] `scripts/convert-bio.ts`：把規格文件中的 `[劇透:主軸]…[/劇透]` 轉成 `bio` 結構（一次性）；轉換結果併入 T030
-- [ ] T035 `eslint` 規則與 `content-check` 結合：驗證 `ui.yaml` 的 key 皆被程式使用、程式用到的 key 皆存在
+- [x] T025 `src/content/schema.ts`：zod schema（Person、AxisPage、AxisEvent、GraphDef、Quote、Term、Hint、UiString、extras）依 data-model.md
+- [x] T026 `tests/unit/markup.test.ts` → `src/content/markup.ts`：`{p:}{t:}{x:}{h:}` tokenizer／巢狀／逸出／錯誤定位（contracts/content-markup.md §1）
+- [x] T027 `tests/unit/aliases.test.ts` → `src/content/aliases.ts`：最長優先、`autoLink:false`、名詞優先、已在標記內不重複
+- [x] T028 `src/content/index.ts`：載入 YAML、`t(key, params)`、`getPerson/getTerm/getHint/getPage`；型別由 schema 推導
+- [x] T029 `tests/unit/content-check.test.ts`（以壞資料 fixtures）→ `scripts/content-check.ts`：contracts/content-markup.md §4 的全部檢查，錯誤訊息含檔案與位置
+- [x] T030 [P] `src/content/people.yaml`：15 人（卡片、別名、popover 4 階段、世界、標籤、firstAppearance、order、bio 含劇透）— 來源 `specs/內容準備與設計稿修改.md` §二-2、§二-3
+- [x] T031 [P] `src/content/glossary.yaml`：16 個名詞 — §二-4
+- [x] T032 [P] `src/content/hints.yaml`：12 條伏筆 — §二-5（`acquire`、`recycle`、`explain`）
+- [x] T033 [P] `src/content/ui.yaml`：介面文案與 aria 標籤 — §二-8 與設計稿上所有 UI 文字（含「放開以放入」「不是這個」「追蹤中」「重置進度」「在人物誌查看」…）
+- [x] T034 [P] `scripts/convert-people.ts`（原名 convert-bio，實際轉換卡片、別名、Popover、登場順序、標籤與完整介紹，一次產生 people.yaml）：把規格文件中的 `[劇透:主軸]…[/劇透]` 轉成 `bio` 結構（一次性）；轉換結果併入 T030
+- [x] T035 `eslint` 規則與 `content-check` 結合：驗證 `ui.yaml` 的 key 皆被程式使用、程式用到的 key 皆存在
 
 ### 2D 狀態、版型、框架
 - [ ] T036 `tests/unit/selectors.test.ts` → `src/store/selectors.ts`：`progress`、`isOnStage`、`popoverText`（階段累積、空段跳過、00／01 僅基本）、`visibleEdges`、`edgeState`、`nodeState`、`eventTracked`、`eventMarkedByNodeFocus`、`spoilerVisible`、`slotAnswer`（**劇透規則全覆蓋**）
@@ -214,7 +214,7 @@
 - [ ] T120 以 `LayoutEditor` 校正 01–04 全部桌機／流式座標；人工檢查線上文字不互蓋
 - [ ] T121 版面溢出走查（G-05）：25 個事件×矩陣×compact，左欄無溢出（Playwright 斷言 `scrollHeight ≤ clientHeight`）
 - [ ] T122 無障礙：角色／標籤檢查、鍵盤走完全站、`aria-live`、對比（含 02 age=1）、`inert` 行為
-- [ ] T123 效能：Lighthouse、bundle 分析（`React.lazy` 分割 04／LayoutEditor）、拖曳／畫線 fps 檢查
+- [ ] T123 效能：Lighthouse、bundle 分析（目前 gzip 106KB，其中 zod 佔大宗：正式版可跳過執行期 zod 驗證——建置時 content:check 已驗證——或改用 zod/mini）（`React.lazy` 分割 04／LayoutEditor）、拖曳／畫線 fps 檢查
 - [ ] T124 [手動] 真機檢查清單：iPhone Safari、Android Chrome（捲動 vs 關係圖、3D 翻面、字型載入、底部導覽列安全區）
 - [ ] T125 「重置進度」入口（清除追蹤、伏筆、遮罩）與文案
 - [ ] T126 `README.md`（開發、改文字、部署）＋校對 quickstart.md；更新教學中的實際檔案與網址
