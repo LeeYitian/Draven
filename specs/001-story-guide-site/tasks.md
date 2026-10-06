@@ -41,12 +41,12 @@
 - [x] T018b 文字保護事件層：`src/lib/protect-content.ts` 在 `document` 攔截 `selectstart`／`copy`（並清空 clipboardData）／`cut`／`dragstart`；`contextmenu` 預設不攔截，由旗標開關；單元測試驗證事件被取消（已完成）；**Playwright 驗證三連擊、Ctrl+A、拖曳後 `getSelection().toString()===''`（SC-008）待 T051 建立 e2e 設定時一併加入**
 
 ### 2B 基礎函式庫（先測後寫）
-- [ ] T019 [P] `tests/unit/localPoint.test.ts` → `src/lib/localPoint.ts`（驗證 k=1／1.319／巢狀 1.5，與 research S2 同數字）
-- [ ] T020 [P] `src/lib/stage-metrics.ts`（design-system §4 全部常數，唯一出處）
-- [ ] T021 [P] `tests/unit/storage.test.ts` → `src/lib/storage.ts`（localStorage／sessionStorage 安全包裝，不可用時退化為記憶體）
-- [ ] T022 [P] `tests/unit/spring.test.ts` → `src/lib/spring.ts`（rAF 彈簧，過衝約 6%、約 400ms，可注入時鐘）
-- [ ] T023 [P] `src/lib/useReducedMotion.ts`
-- [ ] T024 [P] `tests/unit/hash-router.test.ts` → `src/lib/hash-router.ts`（`#/`、`#/axis/n`、`#/people`、`returnTo`、未知回 00；開發旗標 `?editor=1`／`?debug=anchors` 位於 `#` 之前，不影響路由）
+- [x] T019 [P] `tests/unit/localPoint.test.ts` → `src/lib/localPoint.ts`（驗證 k=1／1.319／巢狀 1.5，與 research S2 同數字）
+- [x] T020 [P] `src/lib/stage-metrics.ts`（design-system §4 全部常數，唯一出處）
+- [x] T021 [P] `tests/unit/storage.test.ts` → `src/lib/storage.ts`（localStorage／sessionStorage 安全包裝，不可用時退化為記憶體）
+- [x] T022 [P] `tests/unit/spring.test.ts` → `src/lib/spring.ts`（rAF 彈簧，過衝約 6%、約 400ms，可注入時鐘）
+- [x] T023 [P] `src/lib/useReducedMotion.ts`
+- [x] T024 [P] `tests/unit/hash-router.test.ts` → `src/lib/hash-router.ts`（`#/`、`#/axis/n`、`#/people`、`returnTo`、未知回 00；開發旗標 `?editor=1`／`?debug=anchors` 位於 `#` 之前，不影響路由）
 
 ### 2C 內容系統（對應需求 #5、#6）
 - [ ] T025 `src/content/schema.ts`：zod schema（Person、AxisPage、AxisEvent、GraphDef、Quote、Term、Hint、UiString、extras）依 data-model.md
