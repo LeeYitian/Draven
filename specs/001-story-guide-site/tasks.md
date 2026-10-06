@@ -20,10 +20,10 @@
 - [x] T007 `package.json` scripts：`dev`、`build`（`tsc -b && npm run content:check && vite build`）、`preview`、`lint`、`typecheck`、`test`、`content:check`、`check`（lint＋typecheck＋content:check＋test）、`e2e`
 - [x] T008 [P] Vitest 設定（jsdom、`tests/unit/**`）與一支範例測試，確認 `npm test` 可跑
 - [x] T009 `.github/workflows/deploy.yml`（官方 Pages 流程：checkout → setup-node 22＋cache → `npm ci` → `npm run check` → `npm run build` → `upload-pages-artifact` → `deploy-pages`；權限 `contents: read, pages: write, id-token: write`；`concurrency: pages`）
-- [ ] T010 [手動] （D-01 已處理：`contents/`、`docs/` 已不在版控）依本機的 `docs/部署教學-GitHub-Pages.md`：Settings → Pages → Source 選 **GitHub Actions**；若倉庫為私有且方案不支援 Pages，需改為公開或升級方案
-- [ ] T011 空殼首頁（站名取自 ui.yaml）**已完成並通過本機 check／build；尚待：推送 `main`、確認 Actions 綠燈且 `https://leeyitian.github.io/Draven/` 可開**
+- [x] T010 [手動] （D-01 已處理：`contents/`、`docs/` 已不在版控）依本機的 `docs/部署教學-GitHub-Pages.md`：Settings → Pages → Source 選 **GitHub Actions**；若倉庫為私有且方案不支援 Pages，需改為公開或升級方案
+- [x] T011 空殼首頁（站名取自 ui.yaml）已推送；Actions 全綠（run 37504149909），`https://leeyitian.github.io/Draven/` 回應 200 且資源正常載入
 
-**Checkpoint 1**：網址上線；`npm run check`、`npm run build` 在本機與 CI 皆通過。
+**Checkpoint 1 ✅（2026-10-07 通過）**：網址上線；`npm run check`、`npm run build` 在本機與 CI 皆通過。
 
 ---
 
