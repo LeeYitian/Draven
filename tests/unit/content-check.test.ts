@@ -318,3 +318,73 @@ describe('validateContent：人物與名詞', () => {
     expect(w.map((i) => i.message).join('\n')).toContain('錯別字「德雷紋」');
   });
 });
+
+describe('validateContent：00 世界觀導讀', () => {
+  const world = () => ({
+    eyebrow: '導讀',
+    title: '標題',
+    intro: '國王{p:dravin}推動共榮。',
+    coreRelation: {
+      heading: '核心關係',
+      chain: [
+        { personId: 'dravin', role: '國王' },
+        { personId: 'fane', role: '特使' },
+      ],
+      links: ['任命'],
+      caption: '說明。',
+    },
+    worlds: { heading: '三個世界', items: [{ name: '{t:morning-star|人間}', text: '王國。' }] },
+    axes: {
+      heading: '四條主軸',
+      items: [1, 2, 3, 4].map((axis) => ({ axis, title: `主軸${axis}`, subtitle: '副標' })),
+    },
+  });
+
+  it('合法的 00 沒有錯誤', () => {
+    expect(messages(validateContent(bundle({ world: world() })))).toEqual([]);
+  });
+
+  it('核心關係的人物不存在', () => {
+    const w = world();
+    w.coreRelation.chain[1]!.personId = 'ghost';
+    expect(messages(validateContent(bundle({ world: w }))).join('\n')).toContain(
+      'coreRelation.chain[1].personId',
+    );
+  });
+
+  it('連線文字數量必須是人物數量減 1', () => {
+    const w = world();
+    w.coreRelation.links = ['一', '二'];
+    expect(messages(validateContent(bundle({ world: w }))).join('\n')).toContain(
+      '必須是人物數量減 1',
+    );
+  });
+
+  it('標記錯誤會指出 pages/00.yaml 與欄位', () => {
+    const w = world();
+    w.worlds.items[0]!.text = '{t:nope|名詞}';
+    const out = messages(validateContent(bundle({ world: w }))).join('\n');
+    expect(out).toContain('pages/00.yaml worlds.items[0].text');
+    expect(out).toContain('未知名詞 id "nope"');
+  });
+
+  it('主軸清單的標題和該頁標題不一致 → 警告', () => {
+    const w = world();
+    w.axes.items[0]!.title = '舊標題';
+    const issues = validateContent(bundle({ world: w }));
+    expect(issues.some((i) => i.severity === 'warning' && i.message.includes('標題不一致'))).toBe(
+      true,
+    );
+  });
+
+  it('真實的 00.yaml 通過驗證', () => {
+    const read = (f: string) => YAML.parse(readFileSync(`src/content/${f}`, 'utf8'));
+    const issues = validateContent({
+      people: read('people.yaml'),
+      glossary: read('glossary.yaml'),
+      hints: read('hints.yaml'),
+      world: read('pages/00.yaml'),
+    });
+    expect(messages(issues)).toEqual([]);
+  });
+});

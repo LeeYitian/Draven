@@ -49,8 +49,8 @@ for (const file of yamlFiles) {
   else if (name === 'glossary.yaml') bundle.glossary = data;
   else if (name === 'hints.yaml') bundle.hints = data;
   else if (name === 'ui.yaml') bundle.ui = data;
+  else if (name === 'pages/00.yaml') bundle.world = data;
   else if (/^pages\/0[1-4]\.yaml$/.test(name)) bundle.pages![name.slice(6, 8)] = data;
-  // pages/00.yaml 等其他檔：結構驗證在對應任務加入；這裡先確認語法正確（上面已 parse）
 }
 
 issues.push(...validateContent(bundle));

@@ -261,6 +261,34 @@ export const AxisPageSchema = z.strictObject({
   extras: AxisExtrasSchema.default({}),
 });
 
+// ── 00 世界觀導讀（pages/00.yaml）────────────────────────────
+export const WorldIntroSchema = z.strictObject({
+  eyebrow: z.string().min(1),
+  title: z.string().min(1),
+  /** 導言（含行內標記；人名會自動辨識） */
+  intro: z.string().min(1),
+  coreRelation: z.strictObject({
+    heading: z.string().min(1),
+    /** 核心關係條：由左到右的人物（role 是這裡顯示的短身分），相鄰兩人之間的連線文字在 links */
+    chain: z.array(z.strictObject({ personId: id, role: z.string().min(1) })).min(2),
+    links: z.array(z.string().min(1)),
+    caption: z.string().min(1),
+  }),
+  worlds: z.strictObject({
+    heading: z.string().min(1),
+    items: z.array(z.strictObject({ name: z.string().min(1), text: z.string().min(1) })).min(1),
+  }),
+  axes: z.strictObject({
+    heading: z.string().min(1),
+    items: z
+      .array(
+        z.strictObject({ axis: axisNumber, title: z.string().min(1), subtitle: z.string().min(1) }),
+      )
+      .length(4),
+  }),
+});
+
+export type WorldIntro = z.infer<typeof WorldIntroSchema>;
 export type Person = z.infer<typeof PersonSchema>;
 export type PersonRelation = z.infer<typeof PersonRelationSchema>;
 export type PeopleFile = z.infer<typeof PeopleFileSchema>;

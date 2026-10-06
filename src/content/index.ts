@@ -10,19 +10,22 @@ import {
   HintsFileSchema,
   PeopleFileSchema,
   UiSchema,
+  WorldIntroSchema,
   type AxisPage,
   type Hint,
   type Person,
   type PersonRelation,
   type Term,
   type UiTree,
+  type WorldIntro,
 } from './schema.ts';
 import glossaryRaw from './glossary.yaml';
 import hintsRaw from './hints.yaml';
 import peopleRaw from './people.yaml';
 import uiRaw from './ui.yaml';
+import worldRaw from './pages/00.yaml';
 
-export type { AxisPage, Hint, MarkupNode, Person, PersonRelation, Term };
+export type { AxisPage, Hint, MarkupNode, Person, PersonRelation, Term, WorldIntro };
 
 const peopleFile = PeopleFileSchema.parse(peopleRaw);
 export const people: readonly Person[] = peopleFile.people;
@@ -39,6 +42,9 @@ const hintsById = new Map(hints.map((h) => [h.id, h]));
 export const getPerson = (id: string): Person | undefined => peopleById.get(id);
 export const getTerm = (id: string): Term | undefined => termsById.get(id);
 export const getHint = (id: string): Hint | undefined => hintsById.get(id);
+
+/** 00 世界觀導讀的全部文字 */
+export const worldIntro: WorldIntro = WorldIntroSchema.parse(worldRaw);
 
 // ── 主軸頁（pages/01–04.yaml；尚未建立的頁回傳 undefined）────────────────
 const pageModules = import.meta.glob('./pages/0[1-4].yaml', { eager: true, import: 'default' });

@@ -9,6 +9,7 @@ import {
   HintsFileSchema,
   PeopleFileSchema,
   UiSchema,
+  WorldIntroSchema,
   type AxisPage,
 } from './schema.ts';
 import { MarkupError, collectRefs, parseMarkup, type MarkerRef } from './markup.ts';
@@ -29,6 +30,8 @@ export interface ContentBundle {
   glossary?: unknown;
   hints?: unknown;
   ui?: unknown;
+  /** pages/00.yaml */
+  world?: unknown;
   /** key 為 '01'…'04' */
   pages?: Record<string, unknown>;
 }
@@ -95,6 +98,10 @@ export function validateContent(bundle: ContentBundle): Issue[] {
   const hintsFile =
     bundle.hints === undefined ? undefined : parseWith(HintsFileSchema, bundle.hints, 'hints.yaml');
   if (bundle.ui !== undefined) parseWith(UiSchema, bundle.ui, 'ui.yaml');
+  const world =
+    bundle.world === undefined
+      ? undefined
+      : parseWith(WorldIntroSchema, bundle.world, 'pages/00.yaml');
 
   const pages = new Map<string, AxisPage>();
   for (const [key, raw] of Object.entries(bundle.pages ?? {})) {
@@ -254,6 +261,51 @@ export function validateContent(bundle: ContentBundle): Issue[] {
   });
   terms.forEach((t, i) => refsOf(t.text, 'glossary.yaml', `terms[${i}].text`));
   hints.forEach((h, i) => refsOf(h.explain, 'hints.yaml', `hints[${i}].explain`));
+
+  // ── 00 世界觀導讀 ───────────────────────────────────────────
+  if (world) {
+    const f = 'pages/00.yaml';
+    refsOf(world.intro, f, 'intro');
+    refsOf(world.coreRelation.caption, f, 'coreRelation.caption');
+    world.coreRelation.chain.forEach((c, i) => {
+      if (peopleFile && !personIds.has(c.personId))
+        add(
+          'error',
+          f,
+          `coreRelation.chain[${i}].personId`,
+          `未知人物 id "${c.personId}"${suggest(c.personId, personIds)}`,
+        );
+    });
+    if (world.coreRelation.links.length !== world.coreRelation.chain.length - 1)
+      add(
+        'error',
+        f,
+        'coreRelation.links',
+        `連線文字數量（${world.coreRelation.links.length}）必須是人物數量減 1（${world.coreRelation.chain.length - 1}）`,
+      );
+    world.worlds.items.forEach((w, i) => {
+      refsOf(w.name, f, `worlds.items[${i}].name`);
+      refsOf(w.text, f, `worlds.items[${i}].text`);
+    });
+    world.axes.items.forEach((a, i) => {
+      if (a.axis !== i + 1)
+        add(
+          'error',
+          f,
+          `axes.items[${i}].axis`,
+          `主軸清單必須依 1、2、3、4 排列（這裡是 ${a.axis}）`,
+        );
+      const page = bundle.pages?.[`0${a.axis}`];
+      const title = (page as { title?: unknown } | undefined)?.title;
+      if (typeof title === 'string' && title !== a.title)
+        add(
+          'warning',
+          f,
+          `axes.items[${i}].title`,
+          `和 pages/0${a.axis}.yaml 的標題不一致：「${a.title}」≠「${title}」`,
+        );
+    });
+  }
 
   // ── 各主軸頁 ───────────────────────────────────────────────
   const anchorsByHint = new Map<string, { file: string; axis: number; event: number }[]>();
