@@ -1,0 +1,13 @@
+# 原稿與內部文件：不進版本控制（也不會公開）
+contents/
+docs/
+
+# 建置與工具產物
+node_modules/
+dist/
+playwright-report/
+test-results/
+.vite/
+
+# 含大量小說原文引句的內部文件（保留在本機）
+specs/內容準備與設計稿修改.md
