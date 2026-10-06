@@ -11,3 +11,6 @@ test-results/
 
 # 含大量小說原文引句的內部文件（保留在本機）
 specs/內容準備與設計稿修改.md
+
+# Claude Code 本機設定
+.claude/

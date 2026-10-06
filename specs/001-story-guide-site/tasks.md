@@ -30,15 +30,15 @@
 ## Phase 2：Foundational（所有故事共用，**完成前不得開始任何 US**）
 
 ### 2A 主題與共用樣式（對應需求 #1）
-- [ ] T012 `src/styles/index.css`：`@import "tailwindcss"`、`@theme`（`--color-*: initial` 後貼入 Classical 色盤、字體、陰影、圓角、動畫、keyframes）—依 design-system.md §1
-- [ ] T013 `src/styles/index.css`：`@custom-variant stage|flow|compact`、`:root` 的 `--fs-*`／`--z-*`、`@utility text-aux|text-body|text-title|tnum`
-- [ ] T014 [P] `src/styles/components.css`（`@layer components`）：`.eyebrow .display-num .btn(-primary/-secondary/-ghost/-icon) .kbd .hairline .plate`
-- [ ] T015 [P] 同上：`.chip`（含 `data-variant`、`aria-pressed`、`data-off`）、`.segmented`、`.callout`、`.sheet`、`.scrim`、`.bookmark`
-- [ ] T016 [P] 同上：`.link-name .link-term .link-cross .hint-anchor .hint-slot[data-state] .hint-keyword[data-state]`
-- [ ] T017 [P] 同上：`.event-cell[data-state][data-tracked] .node[data-state][data-group][data-dragging] .edge[data-kind][data-state] .person-card[data-on][data-selected][data-tracked][data-center] .person-card-compact .spoiler .mirror-card`
-- [ ] T018 `/__kit` 開發專用「元件圖鑑」頁：列出所有共用類別／元件的全部狀態（對照設計稿 §6 目視驗收）
-- [ ] T018a 文字保護（N-01／FR-090–092）：`src/styles/index.css` 的 `@layer base` 加全域 `user-select:none`（含 `-webkit-`）、`-webkit-touch-callout:none`、`img{-webkit-user-drag:none}`；提供 `.allow-select` 覆寫類別（預設不使用）
-- [ ] T018b 文字保護事件層：`src/lib/protect-content.ts` 在 `document` 攔截 `selectstart`／`copy`（並清空 clipboardData）／`cut`／`dragstart`；`contextmenu` 預設不攔截，由旗標開關；單元測試驗證事件被取消；Playwright 驗證三連擊、Ctrl+A、拖曳後 `getSelection().toString()===''`（SC-008）
+- [x] T012 `src/styles/index.css`：`@import "tailwindcss"`、`@theme`（`--color-*: initial` 後貼入 Classical 色盤、字體、陰影、圓角、動畫、keyframes）—依 design-system.md §1
+- [x] T013 `src/styles/index.css`：`@custom-variant stage|flow|compact`、`:root` 的 `--fs-*`／`--z-*`、`@utility text-aux|text-body|text-title|tnum`
+- [x] T014 [P] `src/styles/components.css`（`@layer components`）：`.eyebrow .display-num .btn(-primary/-secondary/-ghost/-icon) .kbd .hairline .plate`
+- [x] T015 [P] 同上：`.chip`（含 `data-variant`、`aria-pressed`、`data-off`）、`.segmented`、`.callout`、`.sheet`、`.scrim`、`.bookmark`
+- [x] T016 [P] 同上：`.link-name .link-term .link-cross .hint-anchor .hint-slot[data-state] .hint-keyword[data-state]`
+- [x] T017 [P] 同上：`.event-cell[data-state][data-tracked] .node[data-state][data-group][data-dragging] .edge[data-kind][data-state] .person-card[data-on][data-selected][data-tracked][data-center] .person-card-compact .spoiler .mirror-card`
+- [x] T018 `/__kit` 開發專用「元件圖鑑」頁：列出所有共用類別／元件的全部狀態（對照設計稿 §6 目視驗收）
+- [x] T018a 文字保護（N-01／FR-090–092）：`src/styles/index.css` 的 `@layer base` 加全域 `user-select:none`（含 `-webkit-`）、`-webkit-touch-callout:none`、`img{-webkit-user-drag:none}`；提供 `.allow-select` 覆寫類別（預設不使用）
+- [x] T018b 文字保護事件層：`src/lib/protect-content.ts` 在 `document` 攔截 `selectstart`／`copy`（並清空 clipboardData）／`cut`／`dragstart`；`contextmenu` 預設不攔截，由旗標開關；單元測試驗證事件被取消（已完成）；**Playwright 驗證三連擊、Ctrl+A、拖曳後 `getSelection().toString()===''`（SC-008）待 T051 建立 e2e 設定時一併加入**
 
 ### 2B 基礎函式庫（先測後寫）
 - [ ] T019 [P] `tests/unit/localPoint.test.ts` → `src/lib/localPoint.ts`（驗證 k=1／1.319／巢狀 1.5，與 research S2 同數字）

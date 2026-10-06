@@ -62,6 +62,11 @@ export default tseslint.config(
     files: ['src/**/*.{ts,tsx}'],
     rules: { 'no-restricted-syntax': ['error', ...noHardCodedContent] },
   },
+  // 開發專用頁面（元件圖鑑 /__kit）：示範文字允許寫在程式裡，但仍禁止 #hex 色碼
+  {
+    files: ['src/dev/**/*.{ts,tsx}'],
+    rules: { 'no-restricted-syntax': ['error', noHardCodedContent[3]] },
+  },
   // 測試與腳本：允許中文字串（測試資料、錯誤訊息），Node 環境
   {
     files: ['tests/**/*.{ts,tsx}', 'scripts/**/*.ts', '*.config.{js,ts}'],
