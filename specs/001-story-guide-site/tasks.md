@@ -11,17 +11,17 @@
 
 ## Phase 1：Setup（專案初始化與部署管線）
 
-- [ ] T001 在倉庫根目錄建立 Vite＋React＋TypeScript 專案（`package.json`、`tsconfig*.json`、`src/main.tsx`、`index.html`）；**不得覆蓋** `specs/`、`design/`、`contents/`、`draft/`、`DESIGN_README.md`
-- [ ] T002 安裝依賴：執行期 `react react-dom zustand lucide-react`；開發 `tailwindcss @tailwindcss/vite zod yaml vitest @testing-library/react @testing-library/user-event jsdom @playwright/test eslint typescript-eslint prettier`，鎖定 `package-lock.json`
-- [ ] T003 [P] 設定 `eslint.config.js`（含 `no-restricted-syntax`：禁止 `.tsx` 內含中文字串字面值與 `#hex` 色碼；測試與 `content/` 例外）、`.prettierrc`、`.editorconfig`
+- [x] T001 在倉庫根目錄建立 Vite＋React＋TypeScript 專案（`package.json`、`tsconfig*.json`、`src/main.tsx`、`index.html`）；**不得覆蓋** `specs/`、`design/`、`contents/`、`draft/`、`DESIGN_README.md`
+- [x] T002 安裝依賴：執行期 `react react-dom zustand lucide-react`；開發 `tailwindcss @tailwindcss/vite zod yaml vitest @testing-library/react @testing-library/user-event jsdom @playwright/test eslint typescript-eslint prettier`，鎖定 `package-lock.json`
+- [x] T003 [P] 設定 `eslint.config.js`（含 `no-restricted-syntax`：禁止 `.tsx` 內含中文字串字面值與 `#hex` 色碼；測試與 `content/` 例外）、`.prettierrc`、`.editorconfig`
 - [x] T004 `.gitignore` 已建立（`contents/`、`docs/`、`node_modules/`、`dist/`、`playwright-report/`、`test-results/`、`.vite/`）；之後新增工具產物時再補
-- [ ] T005 `vite.config.ts`：`base: mode==='production' ? '/Draven/' : '/'`（可由 `VITE_BASE` 覆寫）、`@vitejs/plugin-react`、`@tailwindcss/vite`、YAML plugin（`scripts/vite-plugin-yaml.ts`，用 `yaml` 套件，15 行）
-- [ ] T006 `index.html`：`lang="zh-Hant"`、viewport、Google Fonts（Cormorant Garamond 400/500/600、Lora 400/500、Noto Serif TC 400/500/600，`display=swap`）、preconnect、`<title>`
-- [ ] T007 `package.json` scripts：`dev`、`build`（`tsc -b && npm run content:check && vite build`）、`preview`、`lint`、`typecheck`、`test`、`content:check`、`check`（lint＋typecheck＋content:check＋test）、`e2e`
-- [ ] T008 [P] Vitest 設定（jsdom、`tests/unit/**`）與一支範例測試，確認 `npm test` 可跑
-- [ ] T009 `.github/workflows/deploy.yml`（官方 Pages 流程：checkout → setup-node 22＋cache → `npm ci` → `npm run check` → `npm run build` → `upload-pages-artifact` → `deploy-pages`；權限 `contents: read, pages: write, id-token: write`；`concurrency: pages`）
+- [x] T005 `vite.config.ts`：`base: mode==='production' ? '/Draven/' : '/'`（可由 `VITE_BASE` 覆寫）、`@vitejs/plugin-react`、`@tailwindcss/vite`、YAML plugin（`scripts/vite-plugin-yaml.ts`，用 `yaml` 套件，15 行）
+- [x] T006 `index.html`：`lang="zh-Hant"`、viewport、Google Fonts（Cormorant Garamond 400/500/600、Lora 400/500、Noto Serif TC 400/500/600，`display=swap`）、preconnect、`<title>`
+- [x] T007 `package.json` scripts：`dev`、`build`（`tsc -b && npm run content:check && vite build`）、`preview`、`lint`、`typecheck`、`test`、`content:check`、`check`（lint＋typecheck＋content:check＋test）、`e2e`
+- [x] T008 [P] Vitest 設定（jsdom、`tests/unit/**`）與一支範例測試，確認 `npm test` 可跑
+- [x] T009 `.github/workflows/deploy.yml`（官方 Pages 流程：checkout → setup-node 22＋cache → `npm ci` → `npm run check` → `npm run build` → `upload-pages-artifact` → `deploy-pages`；權限 `contents: read, pages: write, id-token: write`；`concurrency: pages`）
 - [ ] T010 [手動] （D-01 已處理：`contents/`、`docs/` 已不在版控）依本機的 `docs/部署教學-GitHub-Pages.md`：Settings → Pages → Source 選 **GitHub Actions**；若倉庫為私有且方案不支援 Pages，需改為公開或升級方案
-- [ ] T011 空殼首頁（只顯示標題）推送 `main`，確認 Actions 綠燈且 `https://leeyitian.github.io/Draven/` 可開
+- [ ] T011 空殼首頁（站名取自 ui.yaml）**已完成並通過本機 check／build；尚待：推送 `main`、確認 Actions 綠燈且 `https://leeyitian.github.io/Draven/` 可開**
 
 **Checkpoint 1**：網址上線；`npm run check`、`npm run build` 在本機與 CI 皆通過。
 
