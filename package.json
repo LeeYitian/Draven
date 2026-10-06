@@ -5,7 +5,20 @@
   "type": "module",
   "description": "《德雷文》互動故事導覽網站",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && npm run content:check && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "typecheck": "tsc -b",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "content:check": "node scripts/content-check.ts",
+    "check": "npm run lint && npm run typecheck && npm run content:check && npm test",
+    "format": "prettier --write .",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "lucide-react": "^1.52.0",
