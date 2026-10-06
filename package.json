@@ -1,0 +1,10 @@
+{
+  "name": "draven-story-guide",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "《德雷文》互動故事導覽網站",
+  "engines": {
+    "node": ">=22"
+  }
+}
