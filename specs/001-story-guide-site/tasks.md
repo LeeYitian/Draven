@@ -55,26 +55,26 @@
 - [x] T028 `src/content/index.ts`：載入 YAML、`t(key, params)`、`getPerson/getTerm/getHint/getPage`；型別由 schema 推導
 - [x] T029 `tests/unit/content-check.test.ts`（以壞資料 fixtures）→ `scripts/content-check.ts`：contracts/content-markup.md §4 的全部檢查，錯誤訊息含檔案與位置
 - [x] T030 [P] `src/content/people.yaml`：15 人（卡片、別名、popover 4 階段、世界、標籤、firstAppearance、order、bio 含劇透）— 來源 `specs/內容準備與設計稿修改.md` §二-2、§二-3
-- [x] T031 [P] `src/content/glossary.yaml`：16 個名詞 — §二-4
+- [x] T031 [P] `src/content/glossary.yaml`：17 個名詞 — §二-4
 - [x] T032 [P] `src/content/hints.yaml`：12 條伏筆 — §二-5（`acquire`、`recycle`、`explain`）
 - [x] T033 [P] `src/content/ui.yaml`：介面文案與 aria 標籤 — §二-8 與設計稿上所有 UI 文字（含「放開以放入」「不是這個」「追蹤中」「重置進度」「在人物誌查看」…）
 - [x] T034 [P] `scripts/convert-people.ts`（原名 convert-bio，實際轉換卡片、別名、Popover、登場順序、標籤與完整介紹，一次產生 people.yaml）：把規格文件中的 `[劇透:主軸]…[/劇透]` 轉成 `bio` 結構（一次性）；轉換結果併入 T030
 - [x] T035 `eslint` 規則與 `content-check` 結合：驗證 `ui.yaml` 的 key 皆被程式使用、程式用到的 key 皆存在
 
 ### 2D 狀態、版型、框架
-- [ ] T036 `tests/unit/selectors.test.ts` → `src/store/selectors.ts`：`progress`、`isOnStage`、`popoverText`（階段累積、空段跳過、00／01 僅基本）、`visibleEdges`、`edgeState`、`nodeState`、`eventTracked`、`eventMarkedByNodeFocus`、`spoilerVisible`、`slotAnswer`（**劇透規則全覆蓋**）
-- [ ] T037 `src/store/*.ts`：nav、axis、graph、tracking（persist）、hints（persist）、people、extras 切片（data-model §2）
-- [ ] T038 `tests/unit/layout-decide.test.ts` → `src/components/layout/LayoutProvider.tsx`：`decide()`、`data-layout`／`data-compact`／`--stage-scale`、同步初值、切換時保留狀態
-- [ ] T039 `src/components/layout/Stage.tsx`、`FlowShell.tsx`（舞台外底色、max-w 640、底部導覽列保留空間）
-- [ ] T040 `src/components/layout/Dock.tsx`：舞台版側欄 72px／流式底部導覽列；人物誌、伏筆（徽章）、追蹤中區塊、頁面指示＋方向鍵提示、頁面選單（流式）
-- [ ] T041 `src/components/layout/PageFrame.tsx`、`PageHeader.tsx`：§1-A 網格（頁首 y28 h72、事件列 y162 h56、下方區 y238 h457）；欄寬 **01–04 統一**：左 620（敘述文字 470＋旁註欄 150，行高 36）、欄距 40、右 628（G-05）；01 旁註欄留空；流式版對應堆疊
-- [ ] T042 [P] `src/components/ui/`：Button、Chip、Segmented、Kbd、Eyebrow、DisplayNum、Hairline、Bookmark、Callout、Sheet、Scrim、Spoiler（未顯示不渲染 children）、FlashOnce
-- [ ] T043 `src/components/text/RichText.tsx`＋`NameLink`／`TermLink`／`CrossLink`／`HintAnchor`（只負責渲染與觸發；Popover 內容在 US3）
-- [ ] T044 `tests/unit/popover-placement.test.ts` → `src/components/text/placePopover.ts`（下方 12px、翻上方、夾在舞台內）
-- [ ] T045 `src/features/axis/useGlobalKeys.ts`＋`tests/unit/keys.test.ts`（contracts/state-and-events.md §2 的所有略過條件）
-- [ ] T046 `src/app/App.tsx`／`router`：LayoutProvider → 路由 → 目前頁；`/__kit` 路由（僅開發）
+- [x] T036 `tests/unit/selectors.test.ts` → `src/store/selectors.ts`：`progress`、`isOnStage`、`popoverText`（階段累積、空段跳過、00／01 僅基本）、`visibleEdges`、`edgeState`、`nodeState`、`eventTracked`、`eventMarkedByNodeFocus`、`spoilerVisible`、`slotAnswer`（**劇透規則全覆蓋**）
+- [x] T037 `src/store/*.ts`：nav、axis、graph、tracking（persist）、hints（persist）、people、extras 切片（data-model §2）
+- [x] T038 `tests/unit/layout-decide.test.ts` → `src/components/layout/LayoutProvider.tsx`：`decide()`、`data-layout`／`data-compact`／`--stage-scale`、同步初值、切換時保留狀態
+- [x] T039 `src/components/layout/Stage.tsx`、`FlowShell.tsx`（舞台外底色、max-w 640、底部導覽列保留空間）
+- [x] T040 `src/components/layout/Dock.tsx`：舞台版側欄 72px／流式底部導覽列；人物誌、伏筆（徽章）、追蹤中區塊、頁面指示＋方向鍵提示、頁面選單（流式）
+- [x] T041 `src/components/layout/PageFrame.tsx`、`PageHeader.tsx`：§1-A 網格（頁首 y28 h72、事件列 y162 h56、下方區 y238 h457）；欄寬 **01–04 統一**：左 620（敘述文字 470＋旁註欄 150，行高 36）、欄距 40、右 628（G-05）；01 旁註欄留空；流式版對應堆疊
+- [x] T042 [P] `src/components/ui/`：Button、Chip、Segmented、Kbd、Eyebrow、DisplayNum、Hairline、Bookmark、Callout、Sheet、Scrim、Spoiler（未顯示不渲染 children）、FlashOnce
+- [x] T043 `src/components/text/RichText.tsx`＋`NameLink`／`TermLink`／`CrossLink`／`HintAnchor`（只負責渲染與觸發；Popover 內容在 US3）
+- [x] T044 `tests/unit/popover-placement.test.ts` → `src/components/text/placePopover.ts`（下方 12px、翻上方、夾在舞台內）
+- [x] T045 `src/features/axis/useGlobalKeys.ts`＋`tests/unit/keys.test.ts`（contracts/state-and-events.md §2 的所有略過條件）
+- [x] T046 `src/app/App.tsx`／`router`：LayoutProvider → 路由 → 目前頁；`/__kit` 路由（僅開發）
 
-**Checkpoint 2**：`/__kit` 圖鑑逐項對照設計稿 §6 通過；單元測試全綠；`content:check` 可對 fixtures 正確報錯；`main` 可部署。
+**Checkpoint 2 ✅（2026-10-07 通過）**：`/__kit` 圖鑑逐項對照設計稿 §6 通過；單元測試全綠；`content:check` 可對 fixtures 正確報錯；`main` 可部署。
 
 ---
 

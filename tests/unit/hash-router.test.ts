@@ -25,6 +25,7 @@ describe('parseHash', () => {
   it('人物誌與開發用元件圖鑑', () => {
     expect(parseHash('#/people')).toEqual({ name: 'people' });
     expect(parseHash('#/__kit')).toEqual({ name: 'kit' });
+    expect(parseHash('#/__kit/frame')).toEqual({ name: 'kit' });
   });
 
   it('未知路徑一律回 home（含不存在的主軸、非數字、多餘段落）', () => {

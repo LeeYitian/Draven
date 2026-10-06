@@ -19,7 +19,7 @@ export function parseHash(hash: string): Route {
   const path = hash.replace(/^#/, '').split('?')[0]!.replace(/\/+$/, '');
   if (path === '' || path === '/') return { name: 'home' };
   if (path === '/people') return { name: 'people' };
-  if (path === '/__kit') return { name: 'kit' };
+  if (path === '/__kit' || path.startsWith('/__kit/')) return { name: 'kit' };
   const axis = /^\/axis\/([1-4])$/.exec(path);
   if (axis) return { name: 'axis', axis: Number(axis[1]) as AxisNumber };
   return { name: 'home' };
@@ -36,6 +36,18 @@ export function formatRoute(route: Route): string {
     case 'kit':
       return '#/__kit';
   }
+}
+
+/** 頁碼（0＝00 導讀、1–4＝主軸）→ 路由 */
+export function routeForPage(page: number): Route {
+  return page >= 1 && page <= 4 ? { name: 'axis', axis: page as AxisNumber } : { name: 'home' };
+}
+
+/** 路由 → 頁碼；人物誌與圖鑑不是「頁」，回傳 null */
+export function pageOfRoute(route: Route): 0 | 1 | 2 | 3 | 4 | null {
+  if (route.name === 'home') return 0;
+  if (route.name === 'axis') return route.axis;
+  return null;
 }
 
 interface AppHistoryState {

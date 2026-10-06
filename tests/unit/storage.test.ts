@@ -62,3 +62,29 @@ describe('createSafeStorage', () => {
     expect(store.get('solved', [])).toEqual(['x']);
   });
 });
+
+describe('資料來源優先序', () => {
+  it('瀏覽器儲存被外部清除（使用者清除網站資料）後，讀到的是預設值而不是舊的記憶體備份', () => {
+    const backend = memoryBackend();
+    const store = createSafeStorage(() => backend);
+    store.set('tracked', 'fane');
+    backend.clear();
+    expect(store.get('tracked', null)).toBeNull();
+  });
+
+  it('寫入成功後不留記憶體備份；寫入失敗才用記憶體備援', () => {
+    const backend = memoryBackend();
+    const store = createSafeStorage(() => backend);
+    store.set('a', 1);
+    backend.removeItem('draven:a'); // 外部移除
+    expect(store.get('a', 0)).toBe(0);
+
+    const realSet = backend.setItem;
+    backend.setItem = () => {
+      throw new DOMException('full', 'QuotaExceededError');
+    };
+    store.set('b', 2);
+    expect(store.get('b', 0)).toBe(2); // 備援
+    backend.setItem = realSet;
+  });
+});

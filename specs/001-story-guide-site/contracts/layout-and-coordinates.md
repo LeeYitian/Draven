@@ -16,7 +16,7 @@ function decide(w: number, h: number): LayoutState {
   return { mode: flow ? 'flow' : 'stage', s, compact: !flow && s < 0.89, w, h };
 }
 ```
-- 輸入：`window.visualViewport ?? window`（`width/height`），監聽 `resize`／`visualViewport.resize`／`orientationchange`；以 `requestAnimationFrame` 合併。
+- 輸入：`window.innerWidth／innerHeight`（layout viewport）。瀏覽器縮放（Ctrl＋/−）會反映在這兩個值上而重新計算；手機雙指縮放不會（visualViewport 才會變），不應觸發版型切換。監聽 `resize`、`orientationchange`。
 - 輸出寫入：`<html data-layout="stage|flow" [data-compact]>` 與 CSS 變數 `--stage-scale`。
 - 初始值同步計算（避免首幀閃爍，不得先渲染再切換）。
 - 切換版型時：保留 `page`、`eventIndex`、`focus`、追蹤、伏筆；取消進行中的拖曳；關閉 Popover。

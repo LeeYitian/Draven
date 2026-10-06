@@ -1,29 +1,75 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
+import { Dock } from '../components/layout/Dock';
+import { FlowShell } from '../components/layout/FlowShell';
+import { LayoutProvider, useLayout } from '../components/layout/LayoutProvider';
+import { Stage } from '../components/layout/Stage';
+import { DisplayNum } from '../components/ui';
 import { t } from '../content';
+import { useGlobalKeys } from '../features/axis/useGlobalKeys';
+import { getReturnTo, pageOfRoute, parseHash, useHash } from '../lib/hash-router';
+import { useAppStore } from '../store/store';
 
-// 開發專用元件圖鑑：只在 dev 模式載入，正式建置會把整段移除（任務 T046 會改成正式路由）
+// 開發專用元件圖鑑：只在 dev 模式載入，正式建置會把整段移除
 const Kit = import.meta.env.DEV ? lazy(() => import('../dev/Kit')) : null;
+const FrameDemo = import.meta.env.DEV ? lazy(() => import('../dev/FrameDemo')) : null;
+
+/** 路由 → 底層頁碼。人物誌是疊在「開啟前的頁面」上的抽屜，所以底層頁碼取 returnTo。 */
+function useRoutedPage() {
+  const route = parseHash(useHash());
+  const peopleOpen = route.name === 'people';
+  const page = pageOfRoute(peopleOpen ? parseHash(getReturnTo()) : route) ?? 0;
+  const syncNav = useAppStore((s) => s.syncNav);
+  useEffect(() => syncNav(page, peopleOpen), [page, peopleOpen, syncNav]);
+  return { page, peopleOpen };
+}
+
+/** 頁面內容的暫代：Phase 3 起由各頁取代（00 導讀、01–04 主軸頁） */
+function PagePlaceholder({ page }: { page: number }) {
+  return (
+    <main className="p-8">
+      <DisplayNum className="text-[64px]">{String(page).padStart(2, '0')}</DisplayNum>
+      <h1 className="font-heading text-[34px]">{t('site.title')}</h1>
+      <p>{t('site.subtitle')}</p>
+    </main>
+  );
+}
+
+function Shell() {
+  const { mode } = useLayout();
+  const { page } = useRoutedPage();
+  useGlobalKeys();
+
+  if (mode === 'flow') {
+    return (
+      <FlowShell>
+        <PagePlaceholder page={page} />
+        <Dock />
+      </FlowShell>
+    );
+  }
+  return (
+    <Stage>
+      <div className="absolute inset-y-0 right-0 left-[72px]">
+        <PagePlaceholder page={page} />
+      </div>
+      <Dock />
+    </Stage>
+  );
+}
 
 export function App() {
-  const [hash, setHash] = useState(location.hash);
-  useEffect(() => {
-    const onChange = () => setHash(location.hash);
-    window.addEventListener('hashchange', onChange);
-    return () => window.removeEventListener('hashchange', onChange);
-  }, []);
-
-  if (Kit && hash === '#/__kit') {
+  const hash = useHash();
+  if (Kit && FrameDemo && parseHash(hash).name === 'kit') {
+    const Page = hash.includes('/frame') ? FrameDemo : Kit;
     return (
       <Suspense fallback={null}>
-        <Kit />
+        <Page />
       </Suspense>
     );
   }
-
   return (
-    <main className="p-8">
-      <h1 className="font-heading text-[40px]">{t('site.title')}</h1>
-      <p>{t('site.subtitle')}</p>
-    </main>
+    <LayoutProvider>
+      <Shell />
+    </LayoutProvider>
   );
 }
