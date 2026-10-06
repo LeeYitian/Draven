@@ -1,4 +1,4 @@
-# 《主教與盤蛇神》故事導覽網站 · 專案憲章（Constitution）
+# 《德雷文》故事導覽網站 · 專案憲章（Constitution）
 
 > 依 github/spec-kit 方法論建立。本憲章是 `/plan`、`/tasks`、`/implement` 每一步的檢查依據（見 plan.md「Constitution Check」）。
 > 版本 1.1.0 · 制定日 2026-10-07 · 最後修訂 2026-10-07（新增 IV-b 文字保護）

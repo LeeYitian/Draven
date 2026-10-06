@@ -1,4 +1,4 @@
-# Tasks：《主教與盤蛇神》互動故事導覽網站
+# Tasks：《德雷文》互動故事導覽網站
 
 **Input**：`specs/001-story-guide-site/` 下的 spec.md、plan.md、research.md、design-system.md、data-model.md、contracts/
 **格式**：`[ID] [P?] [Story?] 描述（檔案路徑）`

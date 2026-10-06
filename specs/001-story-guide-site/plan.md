@@ -1,4 +1,4 @@
-# Implementation Plan：《主教與盤蛇神》互動故事導覽網站
+# Implementation Plan：《德雷文》互動故事導覽網站
 
 **Branch**：`001-story-guide-site` ｜ **Date**：2026-10-07 ｜ **Spec**：[spec.md](spec.md)
 **Input**：[spec.md](spec.md)、[clarifications.md](clarifications.md)（暫定預設已納入）、[research.md](research.md)

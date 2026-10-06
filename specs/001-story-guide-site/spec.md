@@ -1,4 +1,4 @@
-# Feature Specification：《主教與盤蛇神》互動故事導覽網站
+# Feature Specification：《德雷文》互動故事導覽網站
 
 **Feature Branch**：`001-story-guide-site`
 **Created**：2026-10-07
