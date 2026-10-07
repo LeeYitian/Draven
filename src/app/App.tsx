@@ -3,6 +3,8 @@ import { Dock } from '../components/layout/Dock';
 import { FlowShell } from '../components/layout/FlowShell';
 import { LayoutProvider, useLayout } from '../components/layout/LayoutProvider';
 import { Stage } from '../components/layout/Stage';
+import { TrackToast } from '../components/layout/TrackToast';
+import { PopoverLayer } from '../components/text/PopoverLayer';
 import { DisplayNum } from '../components/ui';
 import { getAxisPage, t } from '../content';
 import { AxisPage } from '../features/axis/AxisPage';
@@ -52,6 +54,8 @@ function Shell() {
       <FlowShell>
         <PageView page={page} />
         <Dock />
+        <TrackToast />
+        <PopoverLayer />
       </FlowShell>
     );
   }
@@ -59,6 +63,8 @@ function Shell() {
     <Stage>
       <PageView page={page} />
       <Dock />
+      <TrackToast />
+      <PopoverLayer />
     </Stage>
   );
 }

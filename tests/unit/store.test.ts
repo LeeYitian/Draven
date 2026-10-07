@@ -128,6 +128,14 @@ describe('追蹤', () => {
     expect(s().trackingFeedback).toBe(before + 1);
   });
 
+  it('重新載入時忽略不是人物的儲存值（群體 id、已不存在的 id）', () => {
+    for (const bad of ['beastmen', 'nobody', 42]) {
+      localStorage.setItem('draven:tracked', JSON.stringify(bad));
+      resetStoreForTests();
+      expect(s().trackedPersonId).toBeNull();
+    }
+  });
+
   it('寫入 localStorage，重新載入後保留', () => {
     s().trackPerson('fane');
     expect(JSON.parse(localStorage.getItem('draven:tracked')!)).toBe('fane');

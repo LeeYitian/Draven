@@ -1,4 +1,10 @@
-import { useEffect, type CSSProperties, type MouseEventHandler, type ReactNode } from 'react';
+import {
+  useEffect,
+  type CSSProperties,
+  type MouseEventHandler,
+  type ReactNode,
+  type Ref,
+} from 'react';
 import { cn } from '../../lib/cn';
 
 export type ScrimTone = 'paper' | 'ink' | 'cover';
@@ -26,6 +32,8 @@ export interface CalloutProps {
   arrowX?: number;
   arrowY?: number;
   role?: string;
+  ref?: Ref<HTMLDivElement>;
+  tabIndex?: number;
   className?: string;
   style?: CSSProperties;
   children: ReactNode;

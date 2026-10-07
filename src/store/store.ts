@@ -131,13 +131,15 @@ interface SavedHints {
 
 function createInitialState(): Omit<AppState, keyof Actions> {
   const saved = persistentStorage.get<SavedHints>('hints', { owned: [], solved: [] });
+  const savedTracked = persistentStorage.get<string | null>('tracked', null);
   return {
     page: 0,
     peopleOpen: false,
     navReady: false,
     axis: { 1: initialAxis(), 2: initialAxis(), 3: initialAxis(), 4: initialAxis() },
     animateEvent: null,
-    trackedPersonId: persistentStorage.get<string | null>('tracked', null),
+    // 儲存的 id 若不是人物（資料改版、被手動改過）就忽略：群體節點不可追蹤，也不能讓事件掛上錯的書籤
+    trackedPersonId: savedTracked !== null && peopleIds.has(savedTracked) ? savedTracked : null,
     trackingFeedback: 0,
     hints: { owned: saved.owned, solved: saved.solved, selected: null, toast: null },
     people: initialPeople(),

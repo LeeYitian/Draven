@@ -124,14 +124,14 @@
 
 ## Phase 5：User Story 3 — Popover 與追蹤人物（P2）
 
-- [ ] T070 [US3] `src/components/text/PopoverLayer.tsx`：單例、舞台內最上層、`placePopover`、light-dismiss、Esc、焦點回錨點、`role=dialog`
-- [ ] T071 [US3] `PersonPopover`（姓名＋身分＋階段文字＋頁尾「依目前進度 n」「在人物誌查看 →」）與 `TermPopover`（名詞固定、無頁尾）；內容取自 selector（劇透規則）
-- [ ] T072 [US3] 流式版：Popover 改 `Sheet`（底部小卡＋scrim）
+- [x] T070 [US3] `src/components/text/PopoverLayer.tsx`：單例、舞台內最上層、`placePopover`、light-dismiss、Esc、焦點回錨點、`role=dialog`
+- [x] T071 [US3] `PersonPopover`（姓名＋身分＋階段文字＋頁尾「依目前進度 n」「在人物誌查看 →」）與 `TermPopover`（名詞固定、無頁尾）；內容取自 selector（劇透規則）
+- [x] T072 [US3] 流式版：Popover 改 `Sheet`（底部小卡＋scrim）
 - [x] T073 [US3] ~~節點名稱 Popover~~ **已取消（G-09 決議：關係圖節點不開 Popover）**；以 `tests/unit` 斷言節點點擊只觸發聚焦、不開 Popover
-- [ ] T074 [P] [US3] `tests/unit/popover-content.test.ts`：進度 0/1/2/3/4 對 15 人逐一斷言文字（含空段沿用）
-- [ ] T075 [US3] 追蹤：`trackPerson/untrack`、persist、`TrackingBadge`（側欄區塊＋書籤＋× 取消；長名換行）、`TrackToast`（舞台：側欄右側 2.4s；流式：導覽列上方）、閃動 600ms×2
-- [ ] T076 [US3] 事件格右上書籤、引言左上書籤；00 與關係圖不標亮
-- [ ] T077 [US3] e2e：Popover 邊界翻轉、04 進度不洩漏、追蹤標記與取消、群體不可追蹤
+- [x] T074 [P] [US3] `tests/unit/popover-content.test.ts`：進度 0/1/2/3/4 對 15 人逐一斷言文字（含空段沿用）
+- [x] T075 [US3] 追蹤：`trackPerson/untrack`、persist、`TrackingBadge`（側欄區塊＋書籤＋× 取消；長名換行）、`TrackToast`（舞台：側欄右側 2.4s；流式：導覽列上方）、閃動 600ms×2
+- [x] T076 [US3] 事件格右上書籤、引言左上書籤；00 與關係圖不標亮（**引言左上書籤隨 03 的引言元件於 Phase 8 一併實作**；事件格書籤與「00／關係圖不標亮」已完成並有 e2e）
+- [x] T077 [US3] e2e：Popover 邊界翻轉、04 進度不洩漏、追蹤標記與取消、群體不可追蹤
 
 **Checkpoint 5**：Popover 與追蹤可用；劇透測試全綠；部署。
 
