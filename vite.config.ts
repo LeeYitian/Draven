@@ -8,10 +8,21 @@ import { yamlPlugin } from './scripts/vite-plugin-yaml.ts';
 // 倉庫改名或換自訂網域時，只需要改這一個常數（或用環境變數 VITE_BASE 覆寫）。
 const PRODUCTION_BASE = '/Draven/';
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode, command }) => ({
   base: process.env.VITE_BASE ?? (mode === 'production' ? PRODUCTION_BASE : '/'),
   plugins: [react(), tailwindcss(), yamlPlugin()],
   resolve: {
-    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+    alias: [
+      { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
+      // 正式建置：內容在建置時已由 YAML 外掛驗證，網站不需要 zod（T123）
+      ...(command === 'build'
+        ? [
+            {
+              find: /^\.\/parse\.ts$/,
+              replacement: fileURLToPath(new URL('./src/content/parse.prod.ts', import.meta.url)),
+            },
+          ]
+        : []),
+    ],
   },
 }));

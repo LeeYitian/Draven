@@ -2,7 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 
 // e2e：固定視窗矩陣驗收版面與互動（contracts/layout-and-coordinates.md §7）。
 // 以幾何斷言為主，不做像素截圖比對（字型與抗鋸齒差異大，易誤報）。
-const PORT = 5180;
+// E2E_PREVIEW=1（npm run e2e:prod）：改對打包後的網站（vite preview）跑，其餘與開發模式相同
+const PREVIEW = !!process.env.E2E_PREVIEW;
+const PORT = PREVIEW ? 4180 : 5180;
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -18,8 +20,12 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `npm run dev -- --port ${PORT} --strictPort`,
+    command: PREVIEW
+      ? `npm run preview -- --port ${PORT} --strictPort`
+      : `npm run dev -- --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
+    // preview 要用和建置時一樣的 base（e2e-prod 建置時設 VITE_BASE=/），否則會去 /Draven/ 找檔案
+    env: PREVIEW ? { VITE_BASE: '/' } : {},
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
   },

@@ -320,6 +320,8 @@ export const useAppStore = create<AppState>()((set, get) => {
         page04Unlocked: false,
         axis: { 1: initialAxis(), 2: initialAxis(), 3: initialAxis(), 4: initialAxis() },
         animateEvent: null,
+        compareSlider: 50,
+        spectrum: 100,
         people: { ...initialPeople(), sort: s.people.sort },
       }));
     },

@@ -1,6 +1,6 @@
 import { Chip } from '../../components/ui';
 import { t } from '../../content';
-import { GROUP_IDS, TAG_IDS } from '../../content/schema';
+import { GROUP_IDS, TAG_IDS } from '../../content/constants';
 import { cn } from '../../lib/cn';
 
 const AXES = [1, 2, 3, 4] as const;

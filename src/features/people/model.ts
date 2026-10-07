@@ -4,7 +4,7 @@
  */
 import { getAxisPage, people, personRelations } from '../../content';
 import type { AxisPage, Person, PersonRelation } from '../../content/schema';
-import { GROUP_IDS, WORLD_IDS } from '../../content/schema';
+import { GROUP_IDS, WORLD_IDS } from '../../content/constants';
 import { isOnStage } from '../../store/selectors';
 import {
   assignCenter,

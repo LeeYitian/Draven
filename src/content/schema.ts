@@ -4,6 +4,9 @@
  * 本檔會被 Node 直接執行（scripts/content-check.ts），import 一律寫副檔名。
  */
 import { z } from 'zod';
+import { EDGE_KINDS, GROUP_IDS, TAG_IDS, WORLD_IDS } from './constants.ts';
+
+export { EDGE_KINDS, GROUP_IDS, TAG_IDS, WORLD_IDS };
 
 const id = z
   .string()
@@ -12,22 +15,6 @@ const axisNumber = z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(
 const position = z.tuple([z.number(), z.number()]);
 
 // ── 人物誌用的分類 ───────────────────────────────────────────
-/** 群體（人物誌排列「依群體」）：王廷、魔女集會、盤蛇教會、人馬族、神靈 */
-export const GROUP_IDS = ['royal', 'coven', 'cult', 'centaur', 'deity'] as const;
-/** 關係標籤（人物誌篩選）：人類／外族／朝堂／教會／臣子／家人／朋友／互相監督／互相協助 */
-export const TAG_IDS = [
-  'human',
-  'other',
-  'hall',
-  'church',
-  'vassal',
-  'family',
-  'friend',
-  'supervise',
-  'assist',
-] as const;
-export const WORLD_IDS = ['human', 'underground', 'otherworld'] as const;
-
 export const GroupIdSchema = z.enum(GROUP_IDS);
 export const TagIdSchema = z.enum(TAG_IDS);
 export const WorldIdSchema = z.enum(WORLD_IDS);
@@ -117,7 +104,6 @@ export const UiSchema: z.ZodType<UiTree> = z.lazy(() =>
 );
 
 // ── 主軸頁（pages/01–04.yaml）────────────────────────────────
-export const EDGE_KINDS = ['key', 'relation', 'conflict'] as const;
 export const EdgeKindSchema = z.enum(EDGE_KINDS);
 
 export const AxisEventSchema = z.strictObject({

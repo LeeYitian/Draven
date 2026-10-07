@@ -1,5 +1,4 @@
 import { Eye } from 'lucide-react';
-import type { KeyboardEvent } from 'react';
 import { Bookmark } from '../../components/ui';
 import { t } from '../../content';
 import type { Person } from '../../content/schema';
@@ -84,17 +83,13 @@ export function PersonCard({
   onActivate,
   onTrack,
 }: PersonCardProps) {
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget) return; // 內部「追蹤」按鈕自己處理
-    if (event.key !== 'Enter' && event.key !== ' ') return;
-    event.preventDefault();
-    onActivate(person.id);
-  };
+  const label = t('people.cardLabel', { name: person.name, role: person.role });
 
   return (
     <div
       className="person-slot"
       data-person-slot={person.id}
+      data-dim={dim || undefined}
       style={{
         transform: `translate(${rect.x}px, ${rect.y}px)`,
         width: rect.w,
@@ -102,9 +97,8 @@ export function PersonCard({
         opacity: dim ? 0.7 : 1,
       }}
     >
+      {/* 卡片本身不是按鈕（裡面還有「追蹤」按鈕，按鈕不能包按鈕）：疊一顆透明的整張卡按鈕負責聚焦與鍵盤，點擊冒泡到卡片 */}
       <div
-        role="button"
-        tabIndex={0}
         className="person-card"
         data-fill
         data-person={person.id}
@@ -113,30 +107,37 @@ export function PersonCard({
         data-center={center || undefined}
         data-compact={compact || undefined}
         data-tracked={tracked || undefined}
-        aria-label={t('people.cardLabel', { name: person.name, role: person.role })}
         onClick={() => onActivate(person.id)}
-        onKeyDown={onKeyDown}
       >
+        <button type="button" className="card-hit" aria-label={label} />
         {compact ? (
           <>
-            <span className="person-card__name">{person.name}</span>
-            <span className="person-card__role truncate">{person.role}</span>
+            <span className="person-card__name" aria-hidden="true">{person.name}</span>
+            <span className="person-card__role truncate" aria-hidden="true">
+              {person.role}
+            </span>
           </>
         ) : (
           <>
             <div className="flex items-center justify-between gap-2">
-              <span className="person-card__name">{person.name}</span>
+              <span className="person-card__name" aria-hidden="true">
+                {person.name}
+              </span>
               <TrackButton person={person} tracked={tracked} onTrack={onTrack} />
             </div>
             <div className="flex items-center gap-2">
-              <span className="person-card__role min-w-0 flex-1 truncate">{person.role}</span>
+              <span className="person-card__role min-w-0 flex-1 truncate" aria-hidden="true">
+                {person.role}
+              </span>
               {person.spoilerAxis && (
                 <span className="flex-none rounded-[3px] border border-dashed border-neutral-400 px-1.5 text-aux leading-[18px] text-neutral-600">
                   {t('people.spoilerTag', { axis: pad(person.spoilerAxis) })}
                 </span>
               )}
             </div>
-            <div className="person-card__intro line-clamp-2">{person.intro}</div>
+            <div className="person-card__intro line-clamp-2" aria-hidden="true">
+              {person.intro}
+            </div>
           </>
         )}
       </div>

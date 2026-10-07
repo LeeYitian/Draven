@@ -361,9 +361,9 @@ test.describe('流式版人物誌', () => {
   test('點卡→中心視角（膠囊＋連線）；再點中心卡就地展開；追蹤後關閉回原頁', async ({ page }) => {
     await openPage(page, { w: 390, h: 844 }, '#/axis/1');
     await page.locator('nav').getByRole('button', { name: '人物誌' }).click();
-    await page.locator('[data-flow-person="elian"] [role="button"][data-person]').click();
+    await page.locator('[data-flow-person="elian"] .card-hit, [data-flow-person="elian"] [role="button"][data-person]').click();
     await expect(page.locator('[data-pill]')).toHaveCount(3);
-    await page.locator('[data-flow-person="elian"] [role="button"][data-person]').click();
+    await page.locator('[data-flow-person="elian"] .card-hit, [data-flow-person="elian"] [role="button"][data-person]').click();
     await expect(page.locator('[data-flow-expanded]')).toBeVisible();
     await page.locator('[data-track="elian"]').click(); // 中心卡上的「追蹤」
     await expect.poll(() => hash(page)).toBe('#/axis/1');

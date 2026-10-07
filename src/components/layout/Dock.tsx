@@ -197,7 +197,7 @@ function BottomDock() {
               <span className="text-aux text-accent-800">{t('tracking.badge')}</span>
             </button>
           ) : (
-            <div className={`${cellClass} text-neutral-400`}>
+            <div className={`${cellClass} text-neutral-600`}>
               <Eye size={20} strokeWidth={1.5} />
               <span className="text-aux">{t('dock.untracked')}</span>
             </div>
@@ -208,7 +208,7 @@ function BottomDock() {
             aria-haspopup="dialog"
             onClick={() => setPagesMenu(true)}
           >
-            <DisplayNum className="text-[21px]">{pad(d.page)}</DisplayNum>
+            <DisplayNum className="text-[21px] text-accent-700">{pad(d.page)}</DisplayNum>
             <span className="text-aux">{t('dock.pages')}</span>
           </button>
         </div>

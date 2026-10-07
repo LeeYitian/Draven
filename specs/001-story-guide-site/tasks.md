@@ -211,14 +211,14 @@
 
 ## Phase 9：Polish 與交付
 
-- [ ] T120 以 `LayoutEditor` 校正 01–04 全部桌機／流式座標；人工檢查線上文字不互蓋
-- [ ] T121 版面溢出走查（G-05）：25 個事件×矩陣×compact，左欄無溢出（Playwright 斷言 `scrollHeight ≤ clientHeight`）
-- [ ] T122 無障礙：角色／標籤檢查、鍵盤走完全站、`aria-live`、對比（含 02 age=1）、`inert` 行為
-- [ ] T123 效能：Lighthouse、bundle 分析（目前 gzip 106KB，其中 zod 佔大宗：正式版可跳過執行期 zod 驗證——建置時 content:check 已驗證——或改用 zod/mini）（`React.lazy` 分割 04／LayoutEditor）、拖曳／畫線 fps 檢查
-- [ ] T124 [手動] 真機檢查清單：iPhone Safari、Android Chrome（捲動 vs 關係圖、3D 翻面、字型載入、底部導覽列安全區）
-- [ ] T125 「重置進度」入口（清除追蹤、伏筆、遮罩）與文案
-- [ ] T126 `README.md`（開發、改文字、部署）＋校對 quickstart.md；更新教學中的實際檔案與網址
-- [ ] T127 最終驗收：對照 spec 的 SC-001…SC-007 與全部 Acceptance Scenarios；`npm run check`、`npm run build`、e2e 全綠後最後一次部署
+- [x] T120 以 `LayoutEditor` 校正 01–04 全部桌機／流式座標；人工檢查線上文字不互蓋
+- [x] T121 版面溢出走查（G-05）：25 個事件×矩陣×compact，左欄無溢出（Playwright 斷言 `scrollHeight ≤ clientHeight`）
+- [x] T122 無障礙：角色／標籤檢查、鍵盤走完全站、`aria-live`、對比（含 02 age=1）、`inert` 行為
+- [x] T123 效能：Lighthouse、bundle 分析（目前 gzip 106KB，其中 zod 佔大宗：正式版可跳過執行期 zod 驗證——建置時 content:check 已驗證——或改用 zod/mini）（`React.lazy` 分割 04／LayoutEditor）、拖曳／畫線 fps 檢查
+- [x] T124 [手動] 真機檢查清單：iPhone Safari、Android Chrome（捲動 vs 關係圖、3D 翻面、字型載入、底部導覽列安全區）
+- [x] T125 「重置進度」入口（清除追蹤、伏筆、遮罩）與文案
+- [x] T126 `README.md`（開發、改文字、部署）＋校對 quickstart.md；更新教學中的實際檔案與網址
+- [x] T127 最終驗收：對照 spec 的 SC-001…SC-007 與全部 Acceptance Scenarios；`npm run check`、`npm run build`、e2e 全綠後最後一次部署
 
 ---
 

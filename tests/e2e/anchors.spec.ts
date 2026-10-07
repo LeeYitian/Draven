@@ -91,6 +91,7 @@ test.describe('舞台版：框格跟隨文字（視窗矩陣，含 compact）', 
   test('各尺寸的框格相對於所屬錨點的位置一致（非 compact 的四種尺寸，框格 y－錨點 y 的差 ≤ 2px）', async ({
     browser,
   }) => {
+    test.setTimeout(120_000); // 開四個視窗各自等字型與量測，整套跑時機器忙會超過預設的 45 秒
     const offsets: Record<string, number[]> = {};
     for (const size of STAGE_SIZES.filter((s) => !s.compact)) {
       const page = await browser.newPage();
@@ -223,13 +224,27 @@ test.describe('舞台版：拖曳放置', () => {
     await seed(page);
     await openEvent6(page, { w: 1440, h: 720 });
     await page.locator('nav').first().getByRole('button', { name: /^伏筆/ }).click();
-    await dragKeyword(page, 'cold-hand', 'forgotten-gift');
-    await expect(page.locator('[data-hint-slot="forgotten-gift"]')).toHaveAttribute('data-state', 'wrong');
-    await expect(page.locator('[data-hint-slot="forgotten-gift"]')).toContainText('不是這個');
+    await dragKeyword(page, 'cold-hand', 'forgotten-gift', false);
+    // 「答錯」只維持 300ms：放開前先掛 MutationObserver 記下框格狀態的每一次變化，不靠斷言去搶時間
+    await page.evaluate(() => {
+      const slot = document.querySelector('[data-hint-slot="forgotten-gift"]')!;
+      const log: { state: string | null; text: string }[] = [];
+      (window as unknown as { __slotLog: typeof log }).__slotLog = log;
+      new MutationObserver(() =>
+        log.push({ state: slot.getAttribute('data-state'), text: slot.textContent ?? '' }),
+      ).observe(slot, { attributes: true, childList: true, subtree: true, characterData: true });
+    });
+    await page.mouse.up();
     await expect(page.locator('[data-hint-keyword="cold-hand"]')).toHaveAttribute('data-state', 'idle');
     await expect(page.locator('[data-hint-slot="forgotten-gift"]')).toHaveAttribute('data-state', 'empty', {
-      timeout: 1500,
+      timeout: 2000,
     });
+    const log = await page.evaluate(
+      () => (window as unknown as { __slotLog: { state: string; text: string }[] }).__slotLog,
+    );
+    const wrong = log.filter((entry) => entry.state === 'wrong');
+    expect(wrong.length, '框格出現過「答錯」狀態').toBeGreaterThan(0);
+    expect(wrong.some((entry) => entry.text.includes('不是這個'))).toBe(true);
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem('draven:hints')!).solved)).toEqual([]);
   });
 
@@ -365,6 +380,7 @@ test.describe('流式版註記列', () => {
   }
 
   test('元件圖鑑 #/__kit 的「伏筆註記列」比較區：四種寬度都渲染出 2 個註記列', async ({ page }) => {
+    test.skip(!!process.env.E2E_PREVIEW, '元件圖鑑只在開發模式存在，正式建置會移除');
     await page.setViewportSize({ width: 1400, height: 900 });
     await page.goto('/#/__kit');
     await page.locator('[data-kit-note-sample]').first().waitFor();

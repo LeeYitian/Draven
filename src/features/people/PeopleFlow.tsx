@@ -247,18 +247,23 @@ function FlowCenterView({
             expanded ? 'w-full' : 'w-[200px]',
           )}
         >
+          {/* 裡面有「追蹤」按鈕，所以卡片本身不是按鈕：疊一顆透明的整張卡按鈕負責聚焦與鍵盤，點擊冒泡到這裡 */}
           <div
-            role="button"
-            tabIndex={0}
             data-person={centerPerson.id}
             data-center
-            aria-label={t('people.cardLabel', { name: centerPerson.name, role: centerPerson.role })}
-            className="flex cursor-pointer flex-col gap-0.5 px-3 py-2"
+            className="relative flex cursor-pointer flex-col gap-0.5 px-3 py-2"
             onClick={() => onExpand(!expanded)}
-            onKeyDown={activateOnKey(() => onExpand(!expanded))}
           >
+            <button
+              type="button"
+              className="card-hit"
+              aria-expanded={expanded}
+              aria-label={t('people.cardLabel', { name: centerPerson.name, role: centerPerson.role })}
+            />
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[18px] font-semibold">{centerPerson.name}</span>
+              <span className="text-[18px] font-semibold" aria-hidden="true">
+                {centerPerson.name}
+              </span>
               <TrackButton
                 person={centerPerson}
                 tracked={trackedId === centerPerson.id}
@@ -310,7 +315,7 @@ function FlowCenterView({
               {layout.others.map((o) => {
                 const person = people.find((p) => p.id === o.id)!;
                 return (
-                  <div key={o.id} className="h-12 opacity-70">
+                  <div key={o.id} data-dim className="h-12 opacity-70">
                     <CompactCard person={person} {...cardProps(person)} onActivate={onCenter} />
                   </div>
                 );

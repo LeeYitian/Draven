@@ -524,11 +524,12 @@
   .event-cell[data-state='upcoming'] {
     border-top-color: var(--color-divider);
   }
+  /* 「未到」只靠淡一階的字色（neutral-600，仍有 4.5:1）與較淺的上緣線表達，不再用更淺的灰，否則文字對比不足 */
   .event-cell[data-state='upcoming'] .event-cell__num {
-    color: var(--color-neutral-400);
+    color: var(--color-neutral-600);
   }
   .event-cell[data-state='upcoming'] .event-cell__title {
-    color: var(--color-neutral-500);
+    color: var(--color-neutral-600);
   }
   .event-cell[data-state='upcoming'] .event-cell__chev {
     color: var(--color-neutral-400);
@@ -728,6 +729,7 @@
     height: 100%;
   }
   .person-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -746,22 +748,23 @@
       box-shadow 180ms ease,
       border-color 180ms ease;
   }
+  /* 灰階（尚未登場）的文字用 neutral-600：仍達 WCAG AA 4.5:1；與「已登場」的區別靠墨色字、金頂線與身分的金色 */
   .person-card__name {
     font-size: 19px;
     font-weight: 600;
     line-height: 1.3;
-    color: var(--color-neutral-500);
+    color: var(--color-neutral-600);
   }
   .person-card__role {
     font-size: var(--fs-aux);
-    color: var(--color-neutral-500);
+    color: var(--color-neutral-600);
   }
   .person-card__intro {
     max-height: 45px;
     overflow: hidden;
     font-size: 14px;
     line-height: 1.6;
-    color: var(--color-neutral-500);
+    color: var(--color-neutral-600);
   }
   .person-card[data-on] {
     border-top-color: var(--color-accent);
@@ -1169,6 +1172,11 @@
   white-space: nowrap;
   transform: translateX(-50%);
 }
+.spectrum__name .link-name {
+  display: inline-block;
+  min-height: 24px; /* 目標尺寸至少 24px */
+  line-height: 24px;
+}
 .spectrum__name[data-current] {
   font-weight: 600;
   color: var(--color-accent-800);
@@ -1177,8 +1185,8 @@
   position: absolute;
   top: 12px;
   box-sizing: border-box;
-  width: 20px;
-  height: 20px;
+  width: 24px; /* 設計稿 20px；WCAG 2.2 目標尺寸至少 24px */
+  height: 24px;
   background: var(--color-bg);
   border: 1.5px solid var(--color-accent);
   border-radius: 50%;
@@ -1199,8 +1207,8 @@
 }
 .spectrum__thumb[data-dragging],
 .spectrum__thumb:focus-visible {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   box-shadow: var(--shadow-md);
 }
 .spectrum__thumb:focus-visible {
@@ -1818,4 +1826,28 @@ html[data-layout='stage'] .layer-head-slot[data-first] .layer-band__head {
   .postcard-lift {
     animation: none !important;
   }
+}
+
+/* 整張卡的透明按鈕：卡片裡還有別的按鈕（追蹤）時，用它負責聚焦／鍵盤／螢幕閱讀器，避免「按鈕包按鈕」 */
+.card-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: inherit;
+}
+.person-card .track-btn,
+[data-center] .track-btn {
+  position: relative;
+  z-index: 1;
+}
+
+/* 中心視角裡「沒有直接關係」的卡片整張 0.7 透明：字一律改用墨色，淡出後仍有 4.5:1 的對比（灰階的灰、已登場的金色字淡出後都不夠） */
+[data-dim] .person-card .person-card__name,
+[data-dim] .person-card .person-card__role,
+[data-dim] .person-card .person-card__intro {
+  color: var(--color-ink);
 }

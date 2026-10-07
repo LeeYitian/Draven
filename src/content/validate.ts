@@ -545,10 +545,16 @@ export function validateContent(bundle: ContentBundle): Issue[] {
   const typos = people.flatMap((p) =>
     p.aliases.filter((a) => a.typo).map((a) => ({ text: a.text, id: p.id })),
   );
+  // 先把正確的全名與別名遮掉（例如「艾莉絲」裡的「艾莉」不是錯字），再找錯字
+  const valid = people
+    .flatMap((p) => [p.name, ...p.aliases.filter((a) => !a.typo).map((a) => a.text)])
+    .sort((a, b) => b.length - a.length);
+  const mask = (text: string) => valid.reduce((acc, v) => acc.split(v).join(' '), text);
   for (const [key, page] of pages)
     page.events.forEach((e, i) => {
+      const masked = mask(e.text);
       for (const t of typos)
-        if (e.text.includes(t.text))
+        if (masked.includes(t.text))
           add(
             'warning',
             `pages/${key}.yaml`,

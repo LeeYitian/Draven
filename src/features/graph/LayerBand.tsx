@@ -68,7 +68,6 @@ export function LayerHead({
           className="layer-band__head"
           data-layer-head={band.id}
           aria-expanded={!collapsed}
-          aria-label={t(collapsed ? 'layer.expand' : 'layer.collapse', { name: label })}
           style={{ height: band.height <= COLLAPSED_HEIGHT + 0.5 ? '100%' : undefined }}
           onClick={onToggle}
         >

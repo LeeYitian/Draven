@@ -18,7 +18,8 @@
     "content:check": "node scripts/content-check.ts",
     "check": "npm run lint && npm run typecheck && npm run content:check && npm test",
     "format": "prettier --write .",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "e2e:prod": "node scripts/e2e-prod.ts"
   },
   "dependencies": {
     "lucide-react": "^1.52.0",
@@ -27,6 +28,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/vite": "^4.3.3",

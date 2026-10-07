@@ -73,8 +73,8 @@ graph:
     - { id: earth-dragon, kind: person, sub: 上古地龍, layer: border }
     - { id: snake-god, kind: person, sub: 環繞世界的巨蛇, layer: otherworld }
   edges:
-    - { id: lioran-bishop, from: lioran, to: bishop, label: 傳授召喚儀式, kind: relation, event: 2 }
-    - { id: bishop-lioran, from: bishop, to: lioran, label: 扣留, kind: conflict, event: 2 }
+    - { id: lioran-bishop, from: lioran, to: bishop, label: 傳授召喚儀式, kind: relation, event: 2, labelOffset: [0, -4] }
+    - { id: bishop-lioran, from: bishop, to: lioran, label: 扣留, kind: conflict, event: 2, labelOffset: [0, 16] }
     - { id: dravin-velo, from: dravin, to: velo, label: 謀劃, kind: relation, event: 4 }
     - { id: dravin-bishop, from: dravin, to: bishop, label: 下令押回, kind: relation, event: 4 }
     - { id: elian-bren, from: elian, to: bren, label: 威壓話術, kind: conflict, event: 5 }
@@ -92,7 +92,7 @@ graph:
       kind: relation
       event: 6
     - { id: fane-elian, from: fane, to: elian, label: 同行・棒喝, kind: key, event: 6 }
-    - { id: elian-shadow, from: elian, to: shadow-man, label: 擋下黑水・立誓, kind: key, event: 7 }
+    - { id: elian-shadow, from: elian, to: shadow-man, label: 擋下黑水・立誓, kind: key, event: 7, labelOffset: [38, -16] }
     - { id: shadow-snake, from: shadow-man, to: snake-god, label: 被帶回異界, kind: relation, event: 7 }
     - { id: bishop-snake, from: bishop, to: snake-god, label: 思念・遭冷落, kind: conflict, event: 7 }
     - { id: dragon-bishop, from: earth-dragon, to: bishop, label: 送回異界, kind: relation, event: 7 }

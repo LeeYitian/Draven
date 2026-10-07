@@ -5,6 +5,7 @@ import { NameLink, RichText } from '../../components/text/RichText';
 import { Eyebrow, Kbd } from '../../components/ui';
 import { getPerson, t, worldIntro } from '../../content';
 import { navigate, routeForPage } from '../../lib/hash-router';
+import { ResetProgress } from './ResetProgress';
 import { CONTENT, STAGE } from '../../lib/stage-metrics';
 
 /**
@@ -133,6 +134,9 @@ export function WorldIntro() {
         <CoreRelation />
         <Worlds />
         <AxisList />
+        <div className="border-t border-divider pt-2">
+          <ResetProgress />
+        </div>
       </main>
     );
   }
@@ -159,9 +163,12 @@ export function WorldIntro() {
       <Worlds />
       <div className="flex min-w-0 flex-col">
         <AxisList />
-        <div className="mt-auto flex items-center gap-1.5 text-aux text-neutral-600">
-          <Kbd>↓</Kbd>
-          {t('keys.enterFirst')}
+        <div className="mt-auto flex flex-col gap-2.5">
+          <ResetProgress />
+          <div className="flex items-center gap-1.5 text-aux text-neutral-600">
+            <Kbd>↓</Kbd>
+            {t('keys.enterFirst')}
+          </div>
         </div>
       </div>
     </main>

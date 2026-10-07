@@ -1,15 +1,16 @@
 # Quickstart：開發、改文字、驗收、部署
 
-> 專案尚未建立（Phase 1 之後才有 `package.json`）；本文件描述**建立後**的標準流程，並列出可直接拿來驗收的情境。
+> 日常開發與改文字的說明也寫在專案根目錄的 `README.md`；本文件另外列出可直接拿來驗收的情境。
 
 ## 1. 開發
 ```bash
 npm install            # 第一次
-npm run dev            # 開發伺服器（含 /__kit 元件圖鑑、?debug=anchors 錨點除錯）
+npm run dev            # 開發伺服器（含 /#/__kit 元件圖鑑）
 npm run check          # lint＋型別＋內容驗證＋單元測試（CI 也跑這個）
-npm run e2e            # Playwright 視窗矩陣（需先 npx playwright install）
+npm run e2e            # Playwright 視窗矩陣（需先 npx playwright install chromium）
+npm run e2e:prod       # 同一批 e2e，改對打包後的網站跑
 npm run build          # 產生 dist/（base=/Draven/）
-npm run preview        # 在本機預覽 dist（用 /Draven/ 路徑）
+npm run preview        # 在本機預覽 dist（網址 http://localhost:4173/Draven/）
 ```
 
 ## 2. 要改文字，只改這裡
@@ -25,7 +26,7 @@ npm run preview        # 在本機預覽 dist（用 /Draven/ 路徑）
 在文字中：`{p:id}` 人名、`{t:id}` 名詞、`{x:spectrum|見下方 ↓}` 交叉連結、`{h:hint-id|片語}` 伏筆回收處（規則見 contracts/content-markup.md）。改完執行 `npm run content:check`，錯誤會指出檔案與位置。**不需要動任何 `.tsx`。**
 
 ## 3. 校正關係圖節點位置（開發模式）
-`npm run dev` → 打開 `http://localhost:5173/?editor=1#/axis/1`（`?editor=1` 寫在 `#` 之前的一般查詢字串）→ 拖曳節點 → 按「複製座標」→ 貼到該頁 YAML 的 `graph.layout.desktop`（或 `flow`）。桌機與流式各自一組。
+`npm run dev` → 打開 `http://localhost:5173/?editor=1#/axis/1`（`?editor=1` 寫在 `#` 之前的一般查詢字串）→ 拖曳節點 → 按「複製座標」→ 貼到該頁 YAML 的 `graph.layout.desktop`（或 `flow`）。桌機與流式各自一組；座標只寫展開狀態（03 的各層區域由節點位置推算）。
 
 ## 4. 部署
 見 `docs/部署教學-GitHub-Pages.md`。日常：`git push origin main` → 1–3 分鐘自動上線。
@@ -61,4 +62,5 @@ npm run preview        # 在本機預覽 dist（用 /Draven/ 路徑）
 ## 6. 常見操作
 - 新增一個事件：在該頁 YAML `events` 加一項、`graph.edges` 補 `event: n`、必要時補 `participants`；事件列會自動變成 N+1 等分。
 - 新增一個人物：`people.yaml` 加一筆（含 `aliases`、`popover` 4 段）；在需要的頁面 `graph.nodes` 與座標中加入。
-- 換明信片插圖：把圖放到 `public/images/postcard-front.jpg`（建議 760×460 以上），不需改程式。
+- 換明信片插圖：把圖放進 `public/images/`，改 `04.yaml` 的 `extras.postcard.frontImage`／`frontAlt`（建議 1200–1600 寬的 JPG／WebP），不需改程式。
+- 重置進度：00 頁底部的「重置進度」（清除追蹤、伏筆、04 遮罩紀錄）。

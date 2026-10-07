@@ -1,23 +1,18 @@
 /**
- * 內容載入器：讀取 src/content/** 的 YAML，用 zod 驗證，並提供查詢函式與 t()。
+ * 內容載入器：讀取 src/content/** 的 YAML，（開發與測試時用 zod 驗證，見 parse.ts；正式建置在建置時驗證）並提供查詢函式與 t()。
  * 畫面上所有文字都從這裡取得（憲章 I）。結構錯誤在載入時就丟出（正式建置前 content:check 已擋下）。
  */
 import { buildAliasEntries, createLinkifier } from './aliases.ts';
 import { parseMarkup, type MarkupNode } from './markup.ts';
-import {
-  AxisPageSchema,
-  GlossaryFileSchema,
-  HintsFileSchema,
-  PeopleFileSchema,
-  UiSchema,
-  WorldIntroSchema,
-  type AxisPage,
-  type Hint,
-  type Person,
-  type PersonRelation,
-  type Term,
-  type UiTree,
-  type WorldIntro,
+import { parseContent } from './parse.ts';
+import type {
+  AxisPage,
+  Hint,
+  Person,
+  PersonRelation,
+  Term,
+  UiTree,
+  WorldIntro,
 } from './schema.ts';
 import glossaryRaw from './glossary.yaml';
 import hintsRaw from './hints.yaml';
@@ -27,13 +22,13 @@ import worldRaw from './pages/00.yaml';
 
 export type { AxisPage, Hint, MarkupNode, Person, PersonRelation, Term, WorldIntro };
 
-const peopleFile = PeopleFileSchema.parse(peopleRaw);
+const peopleFile = parseContent.people(peopleRaw);
 export const people: readonly Person[] = peopleFile.people;
 /** 跨主軸、貫穿故事的人物關係（人物中心視角用） */
 export const personRelations: readonly PersonRelation[] = peopleFile.relations;
-export const terms: readonly Term[] = GlossaryFileSchema.parse(glossaryRaw).terms;
-export const hints: readonly Hint[] = HintsFileSchema.parse(hintsRaw).hints;
-const ui: UiTree = UiSchema.parse(uiRaw);
+export const terms: readonly Term[] = parseContent.glossary(glossaryRaw).terms;
+export const hints: readonly Hint[] = parseContent.hints(hintsRaw).hints;
+const ui: UiTree = parseContent.ui(uiRaw);
 
 const peopleById = new Map(people.map((p) => [p.id, p]));
 const termsById = new Map(terms.map((t) => [t.id, t]));
@@ -44,13 +39,13 @@ export const getTerm = (id: string): Term | undefined => termsById.get(id);
 export const getHint = (id: string): Hint | undefined => hintsById.get(id);
 
 /** 00 世界觀導讀的全部文字 */
-export const worldIntro: WorldIntro = WorldIntroSchema.parse(worldRaw);
+export const worldIntro: WorldIntro = parseContent.world(worldRaw);
 
 // ── 主軸頁（pages/01–04.yaml；尚未建立的頁回傳 undefined）────────────────
 const pageModules = import.meta.glob('./pages/0[1-4].yaml', { eager: true, import: 'default' });
 const pages = new Map<number, AxisPage>();
 for (const [path, raw] of Object.entries(pageModules)) {
-  const page = AxisPageSchema.parse(raw);
+  const page = parseContent.page(raw);
   const expected = Number(/0([1-4])\.yaml$/.exec(path)![1]);
   if (page.axis !== expected) throw new Error(`${path}: axis（${page.axis}）與檔名不一致`);
   pages.set(page.axis, page);

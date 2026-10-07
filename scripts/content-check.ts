@@ -84,6 +84,8 @@ if (bundle.ui) {
           message: `ui key "${m[2]}" 在 ui.yaml 中沒有定義`,
         });
     }
+    // 三元運算等寫法（t(x ? 'a.b' : 'a.c')）：程式裡出現的字串常值剛好等於某個 key，也算使用
+    for (const key of defined) if (code.includes(`'${key}'`) || code.includes(`"${key}"`)) used.add(key);
     // 動態 key：t(`people.tags.${id}`) → 視為使用了 people.tags. 底下的所有 key
     for (const m of code.matchAll(/\bt\(\s*`([A-Za-z0-9_.]*)\$\{/g)) usedPrefixes.add(m[1]!);
   }

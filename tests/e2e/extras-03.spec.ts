@@ -12,17 +12,21 @@ const onlyUnderground = (page: Page) => page.getByRole('button', { name: '只看
 async function bandHeight(page: Page, id: string) {
   return band(page, id).evaluate((el) => (el as HTMLElement).offsetHeight);
 }
-const bandHeights = async (page: Page) => [
-  await bandHeight(page, 'human'),
-  await bandHeight(page, 'border'),
-  await bandHeight(page, 'otherworld'),
-];
+// 三層高度要在同一個瞬間一起讀（動畫進行中分開讀會讀到不同時間點）
+const bandHeights = (page: Page) =>
+  page.evaluate(() =>
+    ['human', 'border', 'otherworld'].map(
+      (id) => (document.querySelector('[data-layer="' + id + '"]') as HTMLElement).offsetHeight,
+    ),
+  );
 const hiddenNodes = (page: Page) =>
   page.evaluate(() =>
     [...document.querySelectorAll<HTMLElement>('[data-node][data-hidden]')]
       .map((e) => e.dataset.node!)
       .sort(),
   );
+// offsetHeight 是四捨五入的整數，三層各自捨入後的總和可能差 1–2
+const expectNear = (actual: number, expected: number) => expect(Math.abs(actual - expected)).toBeLessThanOrEqual(2);
 const settle = (page: Page) => page.waitForTimeout(450); // 收合動畫 300ms
 
 test.describe('舞台版 03：三界分層', () => {
@@ -37,7 +41,7 @@ test.describe('舞台版 03：三界分層', () => {
     await expect(head(page, 'border')).toContainText('地底交界 · 4');
     await expect(head(page, 'otherworld')).toContainText('異界 · 1');
     const heights = await bandHeights(page);
-    expect(Math.round(heights.reduce((a, b) => a + b, 0))).toBe(457);
+    expectNear(heights.reduce((a, b) => a + b, 0), 457);
     for (const id of ['human', 'border', 'otherworld'])
       await expect(head(page, id)).toHaveAttribute('aria-expanded', 'true');
   });
@@ -49,7 +53,7 @@ test.describe('舞台版 03：三界分層', () => {
     await expect(head(page, 'otherworld')).toContainText('異界 · 1 · 已收合');
     const heights = await bandHeights(page);
     expect(heights[2]).toBe(46);
-    expect(Math.round(heights.reduce((a, b) => a + b, 0))).toBe(457);
+    expectNear(heights.reduce((a, b) => a + b, 0), 457);
     expect(await hiddenNodes(page)).toEqual(['snake-god']);
     // 其他層變高
     expect(heights[0]).toBeGreaterThan(0);
@@ -101,7 +105,7 @@ test.describe('舞台版 03：三界分層', () => {
     const heights = await bandHeights(page);
     expect(heights[0]).toBe(46);
     expect(heights[2]).toBe(46);
-    expect(Math.round(heights[1]!)).toBe(457 - 92);
+    expectNear(heights[1]!, 457 - 92);
     expect((await hiddenNodes(page)).sort()).toEqual([
       'bishop',
       'bren',
@@ -147,7 +151,7 @@ test.describe('舞台版 03：三界分層', () => {
       samples.push((await bandHeights(page)).reduce((a, b) => a + b, 0));
       await page.waitForTimeout(40);
     }
-    for (const s of samples) expect(Math.round(s)).toBe(457);
+    for (const s of samples) expectNear(s, 457);
   });
 
   test('同一對人物的兩條相反的線（傳授召喚儀式／扣留）分在兩側、不疊在一起', async ({ page }) => {

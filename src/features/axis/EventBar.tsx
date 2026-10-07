@@ -58,7 +58,7 @@ function EventCell({ event, state, tracked, marked, flow, onSelect }: EventCellP
       data-marked={marked || undefined}
       data-event={event.n}
       aria-current={state === 'current' ? 'step' : undefined}
-      aria-label={t('axis.eventButton', { n: event.n, title: event.title })}
+      aria-label={t('axis.eventButton', { n: String(event.n).padStart(2, '0'), title: event.title })}
       title={event.title}
       onClick={() => onSelect(event.n)}
     >

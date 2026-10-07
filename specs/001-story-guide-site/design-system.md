@@ -24,7 +24,7 @@
   --color-divider: color-mix(in srgb, #201f1d 16%, transparent);
 
   --color-neutral-100: #f8f4f4;  --color-neutral-200: #eae7e7;  --color-neutral-300: #d7d3d3;
-  --color-neutral-400: #bab6b6;  --color-neutral-500: #9b9797;  --color-neutral-600: #7d7979;
+  --color-neutral-400: #bab6b6;  --color-neutral-500: #9b9797;  --color-neutral-600: #6a6666;
   --color-neutral-700: #605d5d;  --color-neutral-800: #444141;  --color-neutral-900: #2d2b2b;
 
   --color-accent-100: #fff3e4;   --color-accent-200: #ffe3bf;   --color-accent-300: #facb8d;
@@ -179,3 +179,5 @@
 | `FLOW_MAX_W` | 640〔暫定 G-01〕 | clarifications |
 
 > 這些數字只出現在這一個檔案（及 Tailwind 版型類別中相對應的 `w-[…]`／`h-[…]`），由它同時供應 slot 計算與 CSS 變數，避免兩處不同步。
+
+> **對比修正（Phase 9 · T122）**：`--color-neutral-600` 由設計稿的 `#7d7979` 改為 `#6a6666`。原值在 `#f3f2f2` 紙色上只有 3.84:1，輔助小字（13px）達不到 WCAG AA 的 4.5:1；新值在乾淨紙色上約 5.1:1，在 02 最舊的紙色（age=1）上約 4.7:1。

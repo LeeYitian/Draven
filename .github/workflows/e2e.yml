@@ -28,6 +28,8 @@ jobs:
       # 瀏覽器本體不在 npm 套件裡，要另外下載（--with-deps 同時裝系統需要的函式庫）
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e
+      # 也對「打包後的網站」跑一次：確認正式建置（內容在建置時驗證、不帶 zod）的行為與開發模式一致
+      - run: npm run e2e:prod
       - uses: actions/upload-artifact@v5
         if: failure()
         with:
