@@ -381,7 +381,7 @@ export function PeopleFlow() {
             data-progress-badge
             className="rounded-md border border-divider px-2 py-0.5 text-aux text-neutral-700"
           >
-            {t('people.progress', { page: pad(v.progress) })} · {t('people.progressLegend')}
+            {t('people.progress', { page: pad(v.progress) })} · {t('people.instruction')}
           </span>
           <span className="ml-auto" />
           <button

@@ -16,19 +16,19 @@ events:
     tag: 起源
     participants: [bishop, snake-god, dravin]
     text: >-
-      {h:bishop-scent|教會把孩子任命為主教送往異界}，藉以控制盤蛇神。德雷文統一國家的舉動增強了盤蛇的力量，教會誤以為獲得回應，廢除舊俗、提前帶回主教。
+      {h:bishop-scent|教會把小孩子任命為主教送往異界}，藉以控制盤蛇神。德雷文統一國家的舉動增強了盤蛇的力量，教會誤以為此為盤蛇對信仰的回應，廢除舊俗、提前召回這一代主教。
   - n: 2
     title: 召喚儀式
     tag: 教會
     participants: [lioran, bishop, elian]
     text: >-
-      利歐蘭以想交流信仰的精靈身分進入盤蛇教會，教主教召喚儀式。主教對召喚而來的存在說出連精靈都沒聽過的「神語」，確信那是盤蛇大人；利歐蘭施展破魔法術後陷入昏睡，被主教扣留在教會。
+      利歐蘭以想交流信仰的精靈身分進入盤蛇教會，教主教召喚儀式。主教對召喚而來的存在說出連精靈都沒聽過的「神語」，確信應召而來的存在是盤蛇大人；利歐蘭施展破魔法術後陷入昏睡，被主教扣留。
   - n: 3
     title: 主教發狂
     tag: 教會
     participants: [bishop, snake-god]
     text: >-
-      {h:divine-language|從小被盤蛇照顧、教他說話}的主教，回到人間後思念盤蛇，模仿德雷文拉攏貴族，想把盤蛇神召到人間；教會成員接連陷入嬰兒狀昏迷。教會坍塌後，主教在大洞邊召喚盤蛇，失敗了。
+      {h:divine-language|從小被盤蛇照顧、教他說話}的主教，回到人間後思念盤蛇，想把盤蛇神召到人間；教會成員接連陷入嬰兒狀昏迷。教會坍塌後，主教在大洞邊召喚盤蛇，失敗了。
   - n: 4
     title: 順勢收攏
     tag: 王廷
@@ -47,13 +47,13 @@ events:
     # 露米沒有節點，只供追蹤人物使用
     participants: [nor, elian, fane, lioran, bren, rumi]
     text: >-
-      教會坍塌後，諾爾和露米趕到大洞邊。法恩救出昏迷的利歐蘭，利歐蘭提醒艾利安：靈體沒有人類的情感，不要情感用事。艾利安{h:useful-to-witch|受諾爾之託和法恩深入地底}，找到布倫；法恩告訴布倫盤蛇神不是人類。{h:forgotten-gift|法恩用馬蹄鐵敲出火}、燒鬃毛蓋過{h:spirit-scent|盤蛇的氣味}，並棒喝艾利安：界線不可能消失。
+      教會坍塌後，諾爾和露米趕到大洞邊。被救出的利歐蘭提醒艾利安：靈體沒有人類的情感，不要情感用事。艾利安{h:useful-to-witch|受諾爾之託和法恩深入地底}，找到布倫。{h:forgotten-gift|法恩用馬蹄鐵敲出火}、燒鬃毛蓋過{h:spirit-scent|盤蛇的氣味}，助兩人逃脫。
   - n: 7
     title: 承諾與終局
     tag: 地底 · 異界
     participants: [elian, shadow-man, snake-god, bishop, earth-dragon, nor]
     text: >-
-      艾利安擋下黑水、承諾讓德雷文公開教會歷史，{h:laughing-cry-man|男人}被盤蛇神帶走。被送到異界的主教，沒有得到盤蛇的注意。諾爾稱艾利安為德雷文的繼承人。
+      艾利安對黑影男人承諾讓德雷文公開教會歷史，{h:laughing-cry-man|黑影男人}再次被盤蛇神帶走。主教因禍得福如願回到異界，然而一切終究只是他一廂情願。
 
 graph:
   layers:
@@ -78,7 +78,7 @@ graph:
     - { id: dravin-velo, from: dravin, to: velo, label: 謀劃, kind: relation, event: 4 }
     - { id: dravin-bishop, from: dravin, to: bishop, label: 下令押回, kind: relation, event: 4 }
     - { id: elian-bren, from: elian, to: bren, label: 威壓話術, kind: conflict, event: 5 }
-    - { id: nor-elian, from: nor, to: elian, label: 託付入地底, kind: key, event: 6 }
+    - { id: nor-elian, from: nor, to: elian, label: 接受考驗進入地底, kind: key, event: 6 }
     - id: lioran-elian
       from: lioran
       to: elian
@@ -92,7 +92,7 @@ graph:
       kind: relation
       event: 6
     - { id: fane-elian, from: fane, to: elian, label: 同行・棒喝, kind: key, event: 6 }
-    - { id: elian-shadow, from: elian, to: shadow-man, label: 擋下黑水・立誓, kind: key, event: 7, labelOffset: [38, -16] }
+    - { id: elian-shadow, from: elian, to: shadow-man, label: 擋下攻擊・立誓, kind: key, event: 7, labelOffset: [38, -16] }
     - { id: shadow-snake, from: shadow-man, to: snake-god, label: 被帶回異界, kind: relation, event: 7 }
     - { id: bishop-snake, from: bishop, to: snake-god, label: 思念・遭冷落, kind: conflict, event: 7 }
     - { id: dragon-bishop, from: earth-dragon, to: bishop, label: 送回異界, kind: relation, event: 7 }
@@ -139,8 +139,10 @@ quotes:
     text: 「我會讓陛下把教會的歷史公諸於世，你們的存在和故事將會被後人傳誦。」
     speaker: elian
     event: 7
+    showFromEvent: 7
   - id: trade-off
     title: 事後對法恩
     text: 「果然很多事情不能兩全，是我還沒學會取捨。」
     speaker: elian
     event: 7
+    showFromEvent: 7

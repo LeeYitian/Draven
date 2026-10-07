@@ -15,19 +15,19 @@ events:
     tag: 朝堂
     participants: [dravin, old-nobles]
     text: >-
-      德雷文強迫守舊貴族送子弟至異族領地任交流特使：對朝臣稱是「眼線」，實為逼年輕一代理解異族。
+      德雷文強迫守舊的貴族送子弟至異族領地任交流特使：對朝臣稱是「眼線」，實為逼年輕一代理解異族。
   - n: 2
     title: 異族入朝
     tag: 朝堂
     participants: [dravin, fane, elis]
     text: >-
-      人馬少族長法恩經艾莉絲引薦，在她答應以魔法契約擔保後成為特使；他為外派子弟提出條件：充滿好奇心且處事圓融，要「朋友」，不要「眼線」。
+      人馬少族長法恩經艾莉絲引薦，在她答應以魔法契約擔保後成為特使；他提議外派的貴族子弟必須充滿好奇心且處事圓融，要「朋友」，不要「眼線」。
   - n: 3
     title: 朝堂博弈
     tag: 朝堂
     participants: [dravin, old-nobles, minor-nobles, fane]
     text: >-
-      貴族聯手抗命；法恩反問他們是否怕能力不如異族，德雷文順勢施壓，再以「東方晨星」名號分化小貴族，迫使貴族交出名單。
+      貴族聯手抗命；法恩諷刺他們是否怕能力不如異族，德雷文以「東方晨星」名號分化小貴族，迫使貴族交出外派人員名單。
   - n: 4
     title: 酒吧衝突
     tag: 基層
@@ -40,7 +40,7 @@ events:
     # 露米、諾爾沒有節點，只供追蹤人物使用
     participants: [dravin, fane, bren, rumi, nor]
     text: >-
-      德雷文、魔女、法恩、布倫對跨種族交流各執一詞（{x:spectrum|見下方 ↓}）。
+      德雷文、魔女、法恩、布倫對跨種族交流各執一詞。
   - n: 6
     title: 地底迴響
     tag: 信仰
@@ -132,16 +132,16 @@ extras:
     rightLabel: 無分種族共榮
     hint: 拖曳指標，或聚焦後用 ← →
     defaultPosition: 100
-    crossLinkEvent: 5
+    showFromEvent: 5
     stances:
-      - personId: rumi
+      - personId: nor
         label: 魔女
         position: 10
-        quote: 「人類就不該和其他種族扯上關係，我們彼此之間有太多差異了。」
-      - personId: nor
+        quote: 「德雷文的想法是好的，但他也太理想了。」
+      - personId: rumi
         label: 集會領袖
         position: 30
-        quote: 「德雷文的想法是好的，但他也太理想了。」
+        quote: 「人類就不該和其他種族扯上關係，我們彼此之間有太多差異了。」
       - personId: fane
         label: 人馬族實務派
         position: 50

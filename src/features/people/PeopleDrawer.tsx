@@ -111,7 +111,7 @@ function StageDrawer({ closing }: { closing: boolean }) {
           data-progress-badge
           className="flex items-center gap-1.5 rounded-md border border-divider px-2.5 py-[3px] text-aux text-neutral-700"
         >
-          {t('people.progress', { page: pad(v.progress) })} · {t('people.progressLegend')}
+          {t('people.progress', { page: pad(v.progress) })} · {t('people.instruction')}
         </span>
         {v.tag && (
           <span className="text-aux text-accent-800">
