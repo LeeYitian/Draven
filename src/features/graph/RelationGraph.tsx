@@ -19,8 +19,16 @@ import { GraphControls } from './GraphControls';
 import { GraphEdge } from './GraphEdge';
 import { GraphLegend } from './GraphLegend';
 import { GraphNode } from './GraphNode';
-import { LayerBand } from './LayerBand';
-import { edgeSegment, nodeBox, normalizeLayout, projectNodes, type Box, type Vec } from './layout';
+import { LayerBand, LayerHead } from './LayerBand';
+import {
+  edgeSegment,
+  nodeBox,
+  normalizeLayout,
+  offsetSegment,
+  projectNodes,
+  type Box,
+  type Vec,
+} from './layout';
 import {
   UNDERGROUND_LAYER,
   collapseTargets,
@@ -166,6 +174,13 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
   const isNodeHidden = (id: string) =>
     (groupHidden && nodeById.get(id)?.kind === 'group') || layerCollapsedOf(id);
 
+  // 同一對人物有兩條方向相反的線（例如 03 的「傳授召喚儀式」與「扣留」）：各自往旁邊錯開，才不會疊成一條
+  const twinned = new Set(
+    graph.edges
+      .filter((e) => graph.edges.some((o) => o.id !== e.id && o.from === e.to && o.to === e.from))
+      .map((e) => e.id),
+  );
+
   const summaries = visible.filter((e) => view.legendOn[e.kind]);
   const name = (id: string) => {
     const node = nodeById.get(id);
@@ -221,14 +236,8 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
             <LayerBand
               key={layer.id}
               band={layered.bands[i]!}
-              label={layer.label}
-              count={layer.nodes.length}
               first={i === 0}
-              collapsible={!!layer.collapsible}
               collapsed={!!collapsedMap[layer.id]}
-              onToggle={() =>
-                setLayerCollapsed(axis, { ...collapsedMap, [layer.id]: !collapsedMap[layer.id] })
-              }
             />
           ))}
         <svg
@@ -272,6 +281,7 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
                 );
               }
             }
+            if (segment && twinned.has(edge.id)) segment = offsetSegment(segment, 7);
             return (
               <GraphEdge
                 key={edge.id}
@@ -286,6 +296,21 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
             );
           })}
         </svg>
+        {layered &&
+          layers!.map((layer, i) => (
+            <LayerHead
+              key={layer.id}
+              band={layered.bands[i]!}
+              label={layer.label}
+              count={layer.nodes.length}
+              first={i === 0}
+              collapsible={!!layer.collapsible}
+              collapsed={!!collapsedMap[layer.id]}
+              onToggle={() =>
+                setLayerCollapsed(axis, { ...collapsedMap, [layer.id]: !collapsedMap[layer.id] })
+              }
+            />
+          ))}
         {graph.nodes.map((node) => {
           const [x, y] = position(node.id);
           return (

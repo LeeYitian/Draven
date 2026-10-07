@@ -137,9 +137,10 @@ export function useNodeDrag({
     const current = offsets[a.id];
     // 最新位移可能還沒反映到這次渲染：由 start/pointer 重新計算
     const p = graphPoint(event.clientX, event.clientY);
-    const from: Vec = cancelled && current
-      ? current
-      : [a.origin[0] + p[0] - a.start[0], a.origin[1] + p[1] - a.start[1]];
+    const from: Vec =
+      cancelled && current
+        ? current
+        : [a.origin[0] + p[0] - a.start[0], a.origin[1] + p[1] - a.start[1]];
     if (persist) setOffsets((prev) => ({ ...prev, [a.id]: from }));
     else springBack(a.id, from);
   };

@@ -80,10 +80,17 @@ export function GraphControls({
     </Chip>
   );
 
+  // 舞台版的控制列已經很擠（要讓出第一層的層名），「只看地底」只留圖示；流式版有字
   const undergroundChip = onlyUnderground && (
-    <Chip variant="toggle" pressed={onlyUnderground.pressed} onClick={onlyUnderground.onToggle}>
+    <Chip
+      variant="toggle"
+      pressed={onlyUnderground.pressed}
+      title={t('layer.onlyUnderground')}
+      aria-label={t('layer.onlyUnderground')}
+      onClick={onlyUnderground.onToggle}
+    >
       <Layers size={14} strokeWidth={1.5} aria-hidden="true" />
-      {t('layer.onlyUnderground')}
+      {mode === 'flow' && t('layer.onlyUnderground')}
     </Chip>
   );
 

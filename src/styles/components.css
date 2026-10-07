@@ -1489,7 +1489,45 @@ html[data-aged] .age-vignette {
   position: fixed;
 }
 
+/* 層頭的容器（畫在連線之上）：只讓層頭本身接受點擊，其餘穿透到下面的關係圖 */
+.layer-head-slot {
+  position: absolute;
+  right: 0;
+  left: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+button.layer-band__head {
+  pointer-events: auto;
+}
 /* 舞台版：第一層的層名要讓開左上角的「人物關係」標題 */
-html[data-layout='stage'] .layer-band[data-first] .layer-band__head {
-  padding-left: 100px;
+html[data-layout='stage'] .layer-head-slot[data-first] .layer-band__head {
+  padding-left: 84px;
+}
+
+/* ── 引言卡（03）：被追蹤者的引言左上掛書籤（不用底色，避免和 hover 混淆）── */
+.quote {
+  position: relative;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px 12px 8px 24px;
+  border-left: 1px solid var(--color-divider);
+}
+.quote[data-current] {
+  border-left-color: var(--color-accent);
+}
+.quote__bookmark {
+  position: absolute;
+  top: 8px;
+  left: 6px;
+}
+.quote__text {
+  margin: 2px 0 0;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.quote__who {
+  margin-top: 2px;
+  font-size: var(--fs-aux);
+  color: var(--color-neutral-600);
 }

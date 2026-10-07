@@ -17,23 +17,13 @@ export interface LayerBandProps {
   onToggle: () => void;
 }
 
-/**
- * 分層關係圖的一層（畫布座標）：虛線上緣、層頭（層名＋人數＋收合箭頭）、收合時 neutral-100 底。
- * 層頭整條可點（收合後整個 46 高的帶狀區域都是層頭）。
- */
+/** 一層的底（畫在連線之下）：虛線上緣、收合時 neutral-100 底 */
 export function LayerBand({
   band,
-  label,
-  count,
   first,
-  collapsible,
   collapsed,
-  onToggle,
-}: LayerBandProps) {
-  const text = collapsed
-    ? `${t('layer.count', { name: label, n: count })} · ${t('layer.collapsed')}`
-    : t('layer.count', { name: label, n: count });
-
+}: Pick<LayerBandProps, 'band' | 'first' | 'collapsed'>) {
+  const shade = Math.round(band.t * 100);
   return (
     <div
       className="layer-band"
@@ -44,8 +34,33 @@ export function LayerBand({
         top: band.top,
         height: band.height,
         // 收合程度連續變化：底色濃度跟著動
-        backgroundColor: `color-mix(in oklch, var(--color-neutral-100) ${Math.round(band.t * 100)}%, transparent)`,
+        backgroundColor: `color-mix(in oklch, var(--color-neutral-100) ${shade}%, transparent)`,
       }}
+    />
+  );
+}
+
+/**
+ * 一層的層頭（畫在連線之上，才不會被連線的 hover 命中區擋住點擊）：層名＋人數＋收合箭頭。
+ * 可收合時整條層頭都能點（收合後整個 46 高的帶狀區域都是層頭）；只標示分區時不接受操作。
+ */
+export function LayerHead({
+  band,
+  label,
+  count,
+  first,
+  collapsible,
+  collapsed,
+  onToggle,
+}: LayerBandProps) {
+  const base = t('layer.count', { name: label, n: count });
+  const text = collapsed ? `${base} · ${t('layer.collapsed')}` : base;
+
+  return (
+    <div
+      className="layer-head-slot"
+      data-first={first || undefined}
+      style={{ top: band.top, height: band.height }}
     >
       {collapsible ? (
         <button

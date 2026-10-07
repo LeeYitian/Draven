@@ -1,7 +1,7 @@
 # 第三主軸：王權和神權的博弈
 # 敘述依「內容準備與設計稿修改」修訂（新增事件 02 召喚儀式、利歐蘭與露米的出場）。
 # 伏筆回收處用 {h:id|片語} 標出（每條恰一個，build 時驗證）；人名與名詞自動辨識。
-# 本檔先支援伏筆（Phase 7）：三界分層收合、引言等 03 專屬互動於 Phase 8 補上。
+# 三界分層（可收合）與兩則引言見 graph.layers／quotes。
 axis: 3
 number: '03'
 category: 第三主軸 · 政治陰謀與神話悲劇
@@ -57,9 +57,9 @@ events:
 
 graph:
   layers:
-    - { id: human, label: 人間, nodes: [dravin, velo, bren, bishop, nor, lioran] }
-    - { id: border, label: 地底交界, nodes: [fane, elian, shadow-man, earth-dragon] }
-    - { id: otherworld, label: 異界, nodes: [snake-god] }
+    - { id: human, label: 人間, collapsible: true, nodes: [dravin, velo, bren, bishop, nor, lioran] }
+    - { id: border, label: 地底交界, collapsible: true, nodes: [fane, elian, shadow-man, earth-dragon] }
+    - { id: otherworld, label: 異界, collapsible: true, nodes: [snake-god] }
   nodes:
     - { id: dravin, kind: person, sub: 國王, layer: human }
     - { id: velo, kind: person, sub: 家庭教師, layer: human }
@@ -100,33 +100,47 @@ graph:
     - { kind: key, label: 本篇關鍵 }
     - { kind: relation, label: 關係 }
     - { kind: conflict, label: 操弄／執念 }
-  # 暫定座標（Phase 8 加上三界分層底色後再用 ?editor=1 校正器微調）
+  # 座標（設計時的畫布尺寸內的 px，只寫「展開狀態」；各層的帶狀區域由節點位置推出，收合時節點自動重新置中）。
+  # 桌機畫布 628×457：「人間」層 6 個節點在 628 寬下拆成兩列。流式版 342×740（節點多、容器窄，每層拆成三列；
+  # 座標以搜尋程式在 342／272 兩種容器寬度下求得，Phase 9 再用 ?editor=1 校正器微調）。
   layout:
     desktop:
       size: [628, 457]
       nodes:
-        dravin: [100, 70]
-        velo: [314, 70]
-        bren: [528, 70]
-        bishop: [100, 150]
-        nor: [314, 150]
-        lioran: [528, 150]
-        fane: [80, 265]
-        elian: [240, 265]
-        shadow-man: [400, 265]
-        earth-dragon: [560, 265]
-        snake-god: [314, 385]
+        velo: [82, 76]
+        dravin: [290, 76]
+        nor: [498, 76]
+        bishop: [66, 146]
+        lioran: [282, 146]
+        bren: [562, 146]
+        elian: [266, 246]
+        fane: [546, 246]
+        earth-dragon: [74, 316]
+        shadow-man: [418, 316]
+        snake-god: [234, 392]
     flow:
-      size: [342, 460]
+      size: [342, 740]
       nodes:
-        dravin: [56, 40]
-        velo: [171, 40]
-        bren: [286, 40]
-        bishop: [56, 112]
-        nor: [171, 112]
-        lioran: [286, 112]
-        fane: [56, 210]
-        elian: [171, 210]
-        shadow-man: [286, 210]
-        earth-dragon: [171, 282]
-        snake-god: [171, 400]
+        dravin: [126, 80]
+        velo: [271, 80]
+        lioran: [146, 160]
+        bishop: [286, 160]
+        nor: [56, 240]
+        bren: [201, 240]
+        elian: [96, 390]
+        fane: [156, 470]
+        shadow-man: [61, 550]
+        earth-dragon: [221, 550]
+        snake-god: [286, 690]
+
+quotes:
+  - id: promise
+    title: 對黑影男人的承諾
+    text: 「我會讓陛下把教會的歷史公諸於世，你們的存在和故事將會被後人傳誦。」
+    speaker: elian
+    event: 7
+  - id: trade-off
+    title: 事後對法恩
+    text: 「果然很多事情不能兩全，是我還沒學會取捨。」
+    speaker: elian
+    event: 7

@@ -147,3 +147,17 @@ export function labelPosition(start: Vec, end: Vec, labelOffset: Vec = [0, 0]): 
   const lift = dy <= dx * 0.25 ? -8 : 0;
   return [mx + labelOffset[0], my + lift + labelOffset[1]];
 }
+
+/** 把線段沿自己的方向的「左側」平移 dist（兩條方向相反的平行線各移 +dist 就會分在兩側） */
+export function offsetSegment(seg: Segment, dist: number): Segment {
+  const dx = seg.end[0] - seg.start[0];
+  const dy = seg.end[1] - seg.start[1];
+  const d = Math.hypot(dx, dy) || 1;
+  const nx = (-dy / d) * dist;
+  const ny = (dx / d) * dist;
+  return {
+    start: [seg.start[0] + nx, seg.start[1] + ny],
+    end: [seg.end[0] + nx, seg.end[1] + ny],
+    length: seg.length,
+  };
+}

@@ -72,7 +72,7 @@ graph:
     - { kind: relation, label: 關係 }
     - { kind: conflict, label: 試探／誘惑 }
   # 座標（設計時的畫布尺寸內的 px）；載入時除以 size 變成比例，只寫「展開狀態」。
-  # 桌機畫布 628×290（下方還有 147 的比較滑桿）；流式版 342×322（圖例列另加 72）。
+  # 桌機畫布 628×290（下方還有 147 的比較滑桿）；流式版 342×332（圖例列另加 72）。
   layout:
     desktop:
       size: [628, 290]
@@ -84,14 +84,14 @@ graph:
         dravin: [190, 200]
         elian: [400, 200]
     flow:
-      size: [342, 322]
+      size: [342, 332]
       nodes:
-        rumi: [60, 70]
-        elis: [115, 134]
+        rumi: [56, 70]
+        elis: [120, 140]
         nor: [171, 70]
-        sevia: [282, 70]
-        dravin: [60, 280]
-        elian: [282, 280]
+        sevia: [286, 70]
+        dravin: [56, 290]
+        elian: [286, 290]
 
 extras:
   compare:
