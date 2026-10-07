@@ -90,7 +90,7 @@ describe('PopoverLayer（舞台版）', () => {
     start('#/axis/1');
     await userEvent.click(nameLink('德雷文'));
     await userEvent.click(screen.getByRole('button', { name: '在人物誌查看 →' }));
-    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.querySelector('[data-popover]')).toBeNull(); // Popover 已關閉（人物誌本身也是 dialog）
     expect(currentHash()).toBe('#/people');
   });
 

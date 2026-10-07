@@ -127,7 +127,7 @@ test.describe('舞台版 Popover', () => {
     await openPage(page, { w: 1440, h: 720 }, AXIS1);
     await openDravin(page);
     await page.getByRole('button', { name: '在人物誌查看 →' }).click();
-    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(page.locator('[data-popover]')).toHaveCount(0); // Popover 已關閉（人物誌本身也是 dialog）
     expect(new URL(page.url()).hash).toBe('#/people');
   });
 

@@ -34,14 +34,16 @@ function DrawerFrame({
   className: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  // 要在「渲染期間」記下原本聚焦的元素：提交 DOM 時底下的頁面會變 inert，焦點會先掉到 body，
+  // 等到 effect 才讀就太晚了
+  const [previous] = useState(() => document.activeElement as HTMLElement | null);
 
   useEffect(() => {
-    const previous = document.activeElement as HTMLElement | null;
     ref.current?.focus({ preventScroll: true });
     return () => {
       if (previous?.isConnected) previous.focus({ preventScroll: true });
     };
-  }, []);
+  }, [previous]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {

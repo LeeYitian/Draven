@@ -139,17 +139,17 @@
 
 ## Phase 6：User Story 4 — 人物誌（P2）
 
-- [ ] T078 [P] [US4] `tests/unit/slots.test.ts` → `src/features/people/slots.ts`：20 個 grid slot 座標；`arrangeByGroup/ByOrder/ByWorld` 皆在 5×4 內容納 15 人且無重複
-- [ ] T079 [P] [US4] `tests/unit/center.test.ts` → `src/features/people/center.ts`：`CENTER_SLOTS`、`assignCenterSlots`、關係合併（配對合併、「・」串接、線種優先）；**窮舉 15 人×進度 0–4：矩形不重疊、不超出 1344×540、無人遺漏**
-- [ ] T080 [US4] `PeopleDrawer.tsx`：路由 `#/people`、`returnTo`、下方 `inert`、Esc／✕／上一頁、升降 300ms、頁首（標題、進度提示、排列、關閉）
-- [ ] T081 [US4] `PersonCard.tsx`／`CompactCard.tsx`：登場（金頂線）× 選中（浮起）獨立通道；追蹤按鈕（`stopPropagation`、追蹤中狀態）；劇透小標
-- [ ] T082 [US4] `FilterBar.tsx`：群體／主軸／關係標籤三組單選、再點取消、`overflow-x:auto` 容量處理
-- [ ] T083 [US4] `ArrangeSwitch.tsx`＋transform 過渡位移（360ms、`--ease-out-soft`）；reduced-motion 直接切換
-- [ ] T084 [US4] `CenterView.tsx`：中心卡、環繞 slot 精簡卡、直角折線與線上文字、「沒有直接關係」欄（0.7）、尺寸過渡
-- [ ] T085 [US4] `ExpandedPanel.tsx`：原位放大 600×508（320ms）、scrim、劇透區塊（點擊顯示／隱藏）、追蹤與關閉
-- [ ] T086 [US4] 流式版人物誌：全螢幕、2 欄卡、橫向標籤列、膠囊關係標籤人物中心版、就地展開（直式樹狀**不實作**）
-- [ ] T087 [US4] Popover「在人物誌查看 →」→ 開啟抽屜並以該人為中心（G-10）
-- [ ] T088 [US4] e2e：進度對登場的影響（00／直接進入全灰）、標籤選中不重排、中心視角與展開流程、追蹤後關閉回原頁
+- [x] T078 [P] [US4] `tests/unit/slots.test.ts` → `src/features/people/slots.ts`：20 個 grid slot 座標；`arrangeByGroup/ByOrder/ByWorld` 皆在 5×4 內容納 15 人且無重複
+- [x] T079 [P] [US4] `tests/unit/center.test.ts` → `src/features/people/center.ts`：`CENTER_SLOTS`、`assignCenterSlots`、關係合併（配對合併、「・」串接、線種優先）；**窮舉 15 人×進度 0–4：矩形不重疊、不超出 1344×540、無人遺漏**
+- [x] T080 [US4] `PeopleDrawer.tsx`：路由 `#/people`、`returnTo`、下方 `inert`、Esc／✕／上一頁、升降 300ms、頁首（標題、進度提示、排列、關閉）
+- [x] T081 [US4] `PersonCard.tsx`／`CompactCard.tsx`：登場（金頂線）× 選中（浮起）獨立通道；追蹤按鈕（`stopPropagation`、追蹤中狀態）；劇透小標
+- [x] T082 [US4] `FilterBar.tsx`：群體／主軸／關係標籤三組單選、再點取消、`overflow-x:auto` 容量處理
+- [x] T083 [US4] `ArrangeSwitch.tsx`＋transform 過渡位移（360ms、`--ease-out-soft`）；reduced-motion 直接切換
+- [x] T084 [US4] `CenterView.tsx`：中心卡、環繞 slot 精簡卡、直角折線與線上文字、「沒有直接關係」欄（0.7）、尺寸過渡
+- [x] T085 [US4] `ExpandedPanel.tsx`：原位放大 600×508（320ms）、scrim、劇透區塊（點擊顯示／隱藏）、追蹤與關閉
+- [x] T086 [US4] 流式版人物誌：全螢幕、2 欄卡、橫向標籤列、膠囊關係標籤人物中心版、就地展開（直式樹狀**不實作**）
+- [x] T087 [US4] Popover「在人物誌查看 →」→ 開啟抽屜並以該人為中心（G-10）
+- [x] T088 [US4] e2e：進度對登場的影響（00／直接進入全灰）、標籤選中不重排、中心視角與展開流程、追蹤後關閉回原頁
 
 **Checkpoint 6**：人物誌桌機＋手機可用；窮舉測試全綠；部署。
 
