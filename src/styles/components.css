@@ -380,7 +380,24 @@
     cursor: default;
   }
   /* 有關鍵字被選中／拖曳中：所有空框格變「可以放置」 */
+  /* 兩個控制項的字級／高度（手機版 34 高）；已解開的框格可換行（最長的關鍵字 8 個字） */
+  html[data-layout='flow'] .hint-slot {
+    height: 34px;
+    font-size: 13px;
+  }
+  .hint-slot[data-state='solved'] {
+    height: auto;
+    min-height: 28px;
+    padding: 4px 8px;
+    line-height: 1.25;
+    white-space: normal;
+    text-align: center;
+  }
+  html[data-layout='flow'] .hint-slot[data-state='solved'] {
+    min-height: 34px;
+  }
   .hint-slot[data-state='ready'] {
+    width: 144px;
     color: var(--color-accent-800);
     background: var(--color-accent-100);
     border-color: var(--color-accent);
@@ -394,6 +411,31 @@
   .hint-slot[data-state='wrong'] {
     color: var(--color-neutral-800);
     border-color: var(--color-neutral-700);
+  }
+  /* 答對後淡入的「解開後說明」 */
+  .hint-explain {
+    margin: 6px 0 0;
+    font-size: var(--fs-aux);
+    line-height: 1.5;
+    color: var(--color-neutral-700);
+    animation: var(--animate-fade-in);
+  }
+  /* 手繪感弧線：空框格＝灰色虛線，其餘＝金色實線 */
+  .hint-arc {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 1.25px;
+    stroke-linecap: round;
+  }
+  .hint-arc[data-dim] {
+    stroke: var(--color-neutral-400);
+    stroke-dasharray: 3 3;
+  }
+  .hint-arc-dot {
+    fill: var(--color-accent);
+  }
+  .hint-arc-dot[data-dim] {
+    fill: var(--color-neutral-400);
   }
   .hint-keyword {
     display: inline-flex;
@@ -419,6 +461,16 @@
     color: var(--color-neutral-500);
     border-color: var(--color-divider);
     cursor: default;
+  }
+  .hint-keyword[data-hole] {
+    color: transparent;
+    background: transparent;
+    border: 1px dashed var(--color-accent);
+    box-shadow: none;
+    transform: none;
+  }
+  .hint-keyword[data-hole] > * {
+    visibility: hidden;
   }
   /* 拖曳時原位置留下的虛線空位 */
   .hint-keyword-hole {
@@ -972,6 +1024,35 @@
 }
 .person-card[data-flow-compact] .person-card__role {
   font-size: 12px;
+}
+
+/* 伏筆托盤：從底部升起（240ms） */
+.tray-anim[data-closing='false'] {
+  animation: tray-in 240ms var(--ease-out-soft) both;
+}
+.tray-anim[data-closing='true'] {
+  animation: tray-out 240ms ease-in both;
+}
+@keyframes tray-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes tray-out {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tray-anim {
+    animation-duration: 1ms !important;
+  }
 }
 
 /* ══ 人物誌：抽屜升降與展開浮層的 keyframes（頂層宣告，確保一定會輸出）══ */

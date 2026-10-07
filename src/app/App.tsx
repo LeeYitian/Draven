@@ -8,6 +8,9 @@ import { PopoverLayer } from '../components/text/PopoverLayer';
 import { DisplayNum } from '../components/ui';
 import { getAxisPage, t } from '../content';
 import { AxisPage } from '../features/axis/AxisPage';
+import { HintToast } from '../features/hints/HintToast';
+import { HintTray } from '../features/hints/HintTray';
+import { LiveRegion } from '../features/hints/LiveRegion';
 import { PeopleDrawer } from '../features/people/PeopleDrawer';
 import { useGlobalKeys } from '../features/axis/useGlobalKeys';
 import { WorldIntro } from '../features/world/WorldIntro';
@@ -64,7 +67,10 @@ function Shell() {
   const overlays = (
     <>
       <TrackToast />
+      <HintToast />
+      <HintTray />
       <PopoverLayer />
+      <LiveRegion />
       {drawer.present && <PeopleDrawer closing={drawer.closing} />}
     </>
   );

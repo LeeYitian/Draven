@@ -101,6 +101,7 @@ hints:
   slotTap: 點這裡放入
   slotWrong: 不是這個
   slotLabel: 伏筆框格，第 {n} 處
+  slotState: '{label}：{state}'
   keywordLabel: 伏筆關鍵字：{keyword}
   selectedBanner: 已選「{keyword}」，點頁面上的框格放入。
   collapse: 收合伏筆托盤

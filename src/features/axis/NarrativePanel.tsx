@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLayout } from '../../components/layout/LayoutProvider';
 import { RichText } from '../../components/text/RichText';
 import { Button, DisplayNum, Eyebrow } from '../../components/ui';
@@ -7,6 +7,7 @@ import type { AxisEvent } from '../../content/schema';
 import { AXIS_FRAME, MOTION } from '../../lib/stage-metrics';
 import { useReducedMotion } from '../../lib/useReducedMotion';
 import { useAppStore, type AxisKey } from '../../store/store';
+import { HintSlotLayer } from '../hints/HintSlotLayer';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -24,9 +25,7 @@ function useCrossfade(event: AxisEvent, reduceMotion: boolean) {
     return () => window.clearTimeout(timer);
   }, [event, shown.n, reduceMotion]);
 
-  return reduceMotion
-    ? { shown: event, visible: true }
-    : { shown, visible: event.n === shown.n };
+  return reduceMotion ? { shown: event, visible: true } : { shown, visible: event.n === shown.n };
 }
 
 export interface NarrativePanelProps {
@@ -49,6 +48,7 @@ export function NarrativePanel({ axis, events, onCrossLink }: NarrativePanelProp
   const current = events[eventIndex]!;
   const { shown, visible } = useCrossfade(current, reduceMotion);
   const flow = mode === 'flow';
+  const sectionRef = useRef<HTMLElement>(null);
 
   const body = (
     <div
@@ -99,12 +99,14 @@ export function NarrativePanel({ axis, events, onCrossLink }: NarrativePanelProp
   const { leftWidth, narrativeTextWidth } = AXIS_FRAME.lower;
   return (
     <section
+      ref={sectionRef}
       data-narrative
       className="relative flex-none"
       style={{ width: leftWidth }}
       aria-label={t('axis.eventBar')}
     >
       <div style={{ width: narrativeTextWidth }}>{body}</div>
+      <HintSlotLayer panelRef={sectionRef} eventKey={shown.n} visible={visible} />
     </section>
   );
 }

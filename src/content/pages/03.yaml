@@ -1,0 +1,132 @@
+# 第三主軸：王權和神權的博弈
+# 敘述依「內容準備與設計稿修改」修訂（新增事件 02 召喚儀式、利歐蘭與露米的出場）。
+# 伏筆回收處用 {h:id|片語} 標出（每條恰一個，build 時驗證）；人名與名詞自動辨識。
+# 本檔先支援伏筆（Phase 7）：三界分層收合、引言等 03 專屬互動於 Phase 8 補上。
+axis: 3
+number: '03'
+category: 第三主軸 · 政治陰謀與神話悲劇
+title: 王權和神權的博弈
+oneLiner: 主教打破人與神靈的平衡，王廷順勢收攏神權，艾利安在地底學會取捨。
+coreTheme: 秩序勝於盲目的愛與執念；成長，是學會取捨並承擔代價。
+eventsHeading: 事件進程
+
+events:
+  - n: 1
+    title: 舊俗與失衡
+    tag: 起源
+    participants: [bishop, snake-god, dravin]
+    text: >-
+      {h:bishop-scent|教會把孩子任命為主教送往異界}，藉以控制盤蛇神。德雷文統一國家的舉動增強了盤蛇的力量，教會誤以為獲得回應，廢除舊俗、提前帶回主教。
+  - n: 2
+    title: 召喚儀式
+    tag: 教會
+    participants: [lioran, bishop, elian]
+    text: >-
+      利歐蘭以想交流信仰的精靈身分進入盤蛇教會，教主教召喚儀式。主教對召喚而來的存在說出連精靈都沒聽過的「神語」，確信那是盤蛇大人；利歐蘭施展破魔法術後陷入昏睡，被主教扣留在教會。
+  - n: 3
+    title: 主教發狂
+    tag: 教會
+    participants: [bishop, snake-god]
+    text: >-
+      {h:divine-language|從小被盤蛇照顧、教他說話}的主教，回到人間後思念盤蛇，模仿德雷文拉攏貴族，想把盤蛇神召到人間；教會成員接連陷入嬰兒狀昏迷。教會坍塌後，主教在大洞邊召喚盤蛇，失敗了。
+  - n: 4
+    title: 順勢收攏
+    tag: 王廷
+    participants: [dravin, velo, bishop]
+    text: >-
+      德雷文下令救援昏迷的人，並以罔顧人命為由押回主教；臣屬認為這是收攏神權的好機會，德雷文和維洛討論如何趁機壓制神權。
+  - n: 5
+    title: 操弄的代價
+    tag: 教會
+    participants: [elian, bren]
+    text: >-
+      艾利安模仿德雷文的威壓話術動搖布倫、闖入休息室；後來在地底被布倫指為欺騙，一時說不出話。
+  - n: 6
+    title: 地底大洞
+    tag: 地底
+    # 露米沒有節點，只供追蹤人物使用
+    participants: [nor, elian, fane, lioran, bren, rumi]
+    text: >-
+      教會坍塌後，諾爾和露米趕到大洞邊。法恩救出昏迷的利歐蘭，利歐蘭提醒艾利安：靈體沒有人類的情感，不要情感用事。艾利安{h:useful-to-witch|受諾爾之託和法恩深入地底}，找到布倫；法恩告訴布倫盤蛇神不是人類。{h:forgotten-gift|法恩用馬蹄鐵敲出火}、燒鬃毛蓋過{h:spirit-scent|盤蛇的氣味}，並棒喝艾利安：界線不可能消失。
+  - n: 7
+    title: 承諾與終局
+    tag: 地底 · 異界
+    participants: [elian, shadow-man, snake-god, bishop, earth-dragon, nor]
+    text: >-
+      艾利安擋下黑水、承諾讓德雷文公開教會歷史，{h:laughing-cry-man|男人}被盤蛇神帶走。被送到異界的主教，沒有得到盤蛇的注意。諾爾稱艾利安為德雷文的繼承人。
+
+graph:
+  layers:
+    - { id: human, label: 人間, nodes: [dravin, velo, bren, bishop, nor, lioran] }
+    - { id: border, label: 地底交界, nodes: [fane, elian, shadow-man, earth-dragon] }
+    - { id: otherworld, label: 異界, nodes: [snake-god] }
+  nodes:
+    - { id: dravin, kind: person, sub: 國王, layer: human }
+    - { id: velo, kind: person, sub: 家庭教師, layer: human }
+    - { id: bren, kind: person, sub: 教會信徒, layer: human }
+    - { id: bishop, kind: person, sub: 盤蛇教會, layer: human }
+    - { id: nor, kind: person, sub: 集會領袖, layer: human }
+    - { id: lioran, kind: person, sub: 精靈, layer: human }
+    - { id: fane, kind: person, sub: 人馬少族長, layer: border }
+    - { id: elian, kind: person, sub: 魔法抗性, layer: border }
+    - { id: shadow-man, kind: person, sub: 教會舊俗留下的怨念, layer: border }
+    - { id: earth-dragon, kind: person, sub: 上古地龍, layer: border }
+    - { id: snake-god, kind: person, sub: 環繞世界的巨蛇, layer: otherworld }
+  edges:
+    - { id: lioran-bishop, from: lioran, to: bishop, label: 傳授召喚儀式, kind: relation, event: 2 }
+    - { id: bishop-lioran, from: bishop, to: lioran, label: 扣留, kind: conflict, event: 2 }
+    - { id: dravin-velo, from: dravin, to: velo, label: 謀劃, kind: relation, event: 4 }
+    - { id: dravin-bishop, from: dravin, to: bishop, label: 下令押回, kind: relation, event: 4 }
+    - { id: elian-bren, from: elian, to: bren, label: 威壓話術, kind: conflict, event: 5 }
+    - { id: nor-elian, from: nor, to: elian, label: 託付入地底, kind: key, event: 6 }
+    - id: lioran-elian
+      from: lioran
+      to: elian
+      label: 提醒：靈體沒有人類的情感
+      kind: relation
+      event: 6
+    - id: fane-bren
+      from: fane
+      to: bren
+      label: 勸阻：盤蛇神不是人類
+      kind: relation
+      event: 6
+    - { id: fane-elian, from: fane, to: elian, label: 同行・棒喝, kind: key, event: 6 }
+    - { id: elian-shadow, from: elian, to: shadow-man, label: 擋下黑水・立誓, kind: key, event: 7 }
+    - { id: shadow-snake, from: shadow-man, to: snake-god, label: 被帶回異界, kind: relation, event: 7 }
+    - { id: bishop-snake, from: bishop, to: snake-god, label: 思念・遭冷落, kind: conflict, event: 7 }
+    - { id: dragon-bishop, from: earth-dragon, to: bishop, label: 送回異界, kind: relation, event: 7 }
+  legend:
+    - { kind: key, label: 本篇關鍵 }
+    - { kind: relation, label: 關係 }
+    - { kind: conflict, label: 操弄／執念 }
+  # 暫定座標（Phase 8 加上三界分層底色後再用 ?editor=1 校正器微調）
+  layout:
+    desktop:
+      size: [628, 457]
+      nodes:
+        dravin: [100, 70]
+        velo: [314, 70]
+        bren: [528, 70]
+        bishop: [100, 150]
+        nor: [314, 150]
+        lioran: [528, 150]
+        fane: [80, 265]
+        elian: [240, 265]
+        shadow-man: [400, 265]
+        earth-dragon: [560, 265]
+        snake-god: [314, 385]
+    flow:
+      size: [342, 460]
+      nodes:
+        dravin: [56, 40]
+        velo: [171, 40]
+        bren: [286, 40]
+        bishop: [56, 112]
+        nor: [171, 112]
+        lioran: [286, 112]
+        fane: [56, 210]
+        elian: [171, 210]
+        shadow-man: [286, 210]
+        earth-dragon: [171, 282]
+        snake-god: [171, 400]

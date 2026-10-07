@@ -11,6 +11,11 @@ export function useStageRef(): RefObject<HTMLDivElement | null> {
   return ref;
 }
 
+/** 舞台版以外（流式版）沒有舞台元素，回傳 null；供兩種版型共用的元件使用 */
+export function useOptionalStageRef(): RefObject<HTMLDivElement | null> | null {
+  return useContext(StageRefContext);
+}
+
 /**
  * 舞台版容器：固定 1440×720，依倍率置中縮放（方式 A：transform）。
  * 舞台外的空白由 <html> 的 surface 底色填滿（index.css）。
