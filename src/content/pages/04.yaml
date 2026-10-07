@@ -1,0 +1,152 @@
+# 第四主軸：母愛與地龍契約
+# 敘述依「內容準備與設計稿修改」修訂（預言拆成兩次、03 相反的合作、05 明信片與龍尾、06 停在失憶後）。
+# 伏筆回收處用 {h:id|片語} 標出（每條恰一個，build 時驗證）；人名與名詞自動辨識。
+axis: 4
+number: '04'
+category: 第四主軸 · 命運起點與情感高潮
+title: 母愛與地龍契約
+oneLiner: 為解開德雷文的詛咒，艾莉絲在地底與主教合作，付出被遺忘的代價。
+coreTheme: 母愛的極致不是擁有，而是成全。
+eventsHeading: 事件進程
+
+events:
+  - n: 1
+    title: 森林預言
+    tag: 過去
+    participants: [dravin, centaur-seer]
+    text: >-
+      六歲的德雷文迷失森林，人馬預言家開導他，並預言他將在「生」與「死」之間抉擇。
+  - n: 2
+    title: 踏上尋龍之路
+    tag: 起因
+    participants: [dravin, elis, centaur-seer]
+    text: >-
+      {h:cold-hand|雙頭蛇詛咒使德雷文在衰弱與新生間輪迴}。他接受死亡，艾莉絲不能。預言家告訴她施咒的人已死，又預言她將到地底深處，和與她截然相反的人合作；尋求其他方法無果後，她隻身入地底尋找地龍。
+  - n: 3
+    title: 相反的合作
+    tag: 地底
+    participants: [elis, bishop, nor, snake-god]
+    text: >-
+      艾莉絲遇見被諾爾重傷的主教。{h:second-prophecy|一個為救人類養子，一個為救非人養育者}，出於相同的愛而合作。
+  - n: 4
+    title: 地龍契約
+    tag: 地龍巢穴
+    participants: [earth-dragon, bishop, elis]
+    text: >-
+      地龍送主教前往異界；指出詛咒源於革新招致的恨意。解咒條件：艾莉絲{h:not-mother-again|放棄「母親」身分}，德雷文將忘記她。
+  - n: 5
+    title: 詛咒消解
+    tag: 王宮
+    participants: [elis, earth-dragon, dravin]
+    text: >-
+      艾莉絲留下明信片，請地龍現出龍尾，讓一直想看龍的德雷文看看。詛咒消失，關於艾莉絲的記憶也一併消失。{h:similar-name|解咒後，德雷文想不起自己為什麼替艾利安取了這個名字}。
+  - n: 6
+    title: 重新認識
+    tag: 之後
+    participants: [elis, dravin]
+    text: >-
+      艾莉絲問地龍，詛咒解除後能不能重新認識德雷文，地龍說當然可以。她希望兩人都成長之後，重新建立更穩固的關係。
+
+graph:
+  layers:
+    - { id: son, label: 為了人類養子, nodes: [centaur-seer, dravin, elis, nor] }
+    - { id: caregiver, label: 為了非人養育者, nodes: [bishop, snake-god, earth-dragon] }
+  nodes:
+    - { id: centaur-seer, kind: person, sub: 人馬族的預言家, layer: son }
+    - { id: dravin, kind: person, sub: 詛咒解除，遺忘艾莉絲, layer: son }
+    - { id: elis, kind: person, sub: 長生魔女 · 養母, layer: son }
+    - { id: nor, kind: person, sub: 集會領袖, layer: son }
+    - { id: bishop, kind: person, sub: 盤蛇教會 · 半身是血, layer: caregiver }
+    - { id: snake-god, kind: person, sub: 環繞世界的巨蛇, layer: caregiver }
+    - { id: earth-dragon, kind: person, sub: 上古地龍, layer: caregiver }
+  edges:
+    # 背景關係：進頁就畫好，不參與逐步推進
+    - { id: elis-dravin, from: elis, to: dravin, label: 養母, kind: key, event: bg }
+    - { id: seer-dravin, from: centaur-seer, to: dravin, label: 生與死的抉擇, kind: relation, event: 1 }
+    - { id: seer-elis, from: centaur-seer, to: elis, label: 地底的合作, kind: relation, event: 2 }
+    - id: elis-bishop
+      from: elis
+      to: bishop
+      label: 相反動機・相同的愛
+      kind: key
+      both: true
+      event: 3
+    - { id: bishop-snake, from: bishop, to: snake-god, label: 報答養育之恩, kind: key, event: 3 }
+    - { id: nor-bishop, from: nor, to: bishop, label: 重傷, kind: conflict, event: 3 }
+    - id: elis-dragon
+      from: elis
+      to: earth-dragon
+      label: 契約：放棄母親身分
+      kind: key
+      both: true
+      event: 4
+    - { id: dragon-bishop, from: earth-dragon, to: bishop, label: 送往異界, kind: relation, event: 4 }
+  legend:
+    - { kind: key, label: 本篇關鍵 }
+    - { kind: relation, label: 關係 }
+    - { kind: conflict, label: 攻擊 }
+  # 座標只寫展開狀態；桌機 628×457（上區為了人類養子、下區為了非人養育者），流式 342×560。
+  layout:
+    desktop:
+      size: [628, 457]
+      nodes:
+        centaur-seer: [272, 84]
+        dravin: [496, 154]
+        nor: [72, 224]
+        elis: [288, 224]
+        earth-dragon: [360, 318]
+        bishop: [168, 380]
+        snake-god: [488, 380]
+    flow:
+      size: [342, 560]
+      nodes:
+        dravin: [156, 80]
+        nor: [66, 160]
+        centaur-seer: [281, 160]
+        elis: [156, 240]
+        earth-dragon: [281, 390]
+        bishop: [56, 470]
+        snake-god: [286, 470]
+
+extras:
+  mirror:
+    rows:
+      - { key: identity, label: 身分背景 }
+      - { key: choice, label: 選擇 }
+      - { key: motive, label: 動機 }
+    sideA:
+      personId: elis
+      subtitle: 為了人類的養子
+      cells:
+        identity: 長生魔女。撿到人類孤兒德雷文，把他養大成人。
+        choice: 放棄「母親」身分，讓德雷文忘記她，換取詛咒解除。
+        motive: 救她的人類養子：「為了德雷文，我什麼都願意做。」
+    sideB:
+      personId: bishop
+      subtitle: 為了非人的養育者
+      cells:
+        identity: 盤蛇教會主教。幼時被送往異界，由盤蛇神養大。
+        choice: 放棄在人間鑽營的一切權力，讓地龍送他到盤蛇身邊。
+        motive: 報答非人養育者：「我要報恩，幫助盤蛇大人。」
+  postcard:
+    frontImage: images/postcard-placeholder.svg
+    frontAlt: 魔法明信片的正面插圖（素材待提供，目前是占位圖）
+    backTitle: 魔法明信片上的留言
+    backText: 「媽媽很愛你，等詛咒解除再重新開始吧。」
+    caption: 解咒後，德雷文看著「媽媽」與「艾莉絲」的字眼，只感到陌生
+  choice:
+    lines:
+      - 失去身分，好過失去德雷文。
+      - 在「保留母親記憶」與「拯救養子生命」之間
+    messages:
+      - 「媽媽很愛你，等詛咒解除再重新開始吧。」
+      - 解咒後，德雷文看著「媽媽」與「艾莉絲」的字眼，只感到陌生
+  cover:
+    title: 第四主軸含有結局
+    body: 這一頁會揭露詛咒的真相與最終的選擇。建議讀完前三條主軸後再打開。
+    button: 我準備好了，打開
+  eventExtras:
+    byEvent:
+      '3': mirror
+      '5': postcard
+    default: choice

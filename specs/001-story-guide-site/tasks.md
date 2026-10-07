@@ -197,13 +197,13 @@
 - [x] T112 [US6] 引言區（預設整頁常駐、`showFromEvent` 可調、被追蹤者書籤、`overflow-y:auto`）；流式版三層可收合區塊；「人間」層 6 節點在關係圖 628 寬下拆兩列
 
 ### 6d　04 遮罩、鏡像卡、明信片
-- [ ] T113 [US6] `pages/04.yaml`：6 個事件（含伏筆 #3 新句）、節點、連線、鏡像卡兩面三欄、明信片、抉擇＋留言、遮罩文案
-- [ ] T114 [US6] `SpoilerCover.tsx`（G-14 已同意）：只蓋頁首以下、背後內容 `inert`、←→ 無效（↑↓ 與側欄可用）、sessionStorage、`progress()` 在打開前回傳 3、打開後才獲得 04 伏筆；單元測試涵蓋三點
-- [ ] T115 [US6] `MirrorCard.tsx`：三層元素（閒置 rotateY ±8°／翻面 180°／厚度陰影）、`backface-visibility`（含 `-webkit-`）、reduced-motion 改淡入
-- [ ] T116 [US6] `Postcard.tsx`：`plate` 樣式正面（占位圖 `public/images/`）、背面留言、翻面 600ms、說明行
-- [ ] T117 [US6] `ChoiceBlock.tsx` 與「事件→專屬區塊」對應（3 鏡像、5 明信片、其餘抉擇）；流式版縮小版（G-02）
-- [ ] T118 [US6] 伏筆回收標記：把 `hints.yaml` 的 12 個回收處 `{h:…}` 寫入 02／03／04 對應事件敘述；`content:check` 全通過
-- [ ] T119 [P] [US6] e2e：各頁專屬互動、04 遮罩流程、方向鍵不干擾滑桿
+- [x] T113 [US6] `pages/04.yaml`：6 個事件（含伏筆 #3 新句）、節點、連線、鏡像卡兩面三欄、明信片、抉擇＋留言、遮罩文案
+- [x] T114 [US6] `SpoilerCover.tsx`（G-14 已同意）：只蓋頁首以下、背後內容 `inert`、←→ 無效（↑↓ 與側欄可用）、sessionStorage、`progress()` 在打開前回傳 3、打開後才獲得 04 伏筆；單元測試涵蓋三點
+- [x] T115 [US6] `MirrorCard.tsx`：三層元素（閒置 rotateY ±8°／翻面 180°／厚度陰影）、`backface-visibility`（含 `-webkit-`）、reduced-motion 改淡入
+- [x] T116 [US6] `Postcard.tsx`：`plate` 樣式正面（占位圖 `public/images/`）、背面留言、翻面 600ms、說明行
+- [x] T117 [US6] `ChoiceBlock.tsx` 與「事件→專屬區塊」對應（3 鏡像、5 明信片、其餘抉擇）；流式版縮小版（G-02）
+- [x] T118 [US6] 伏筆回收標記：把 `hints.yaml` 的 12 個回收處 `{h:…}` 寫入 02／03／04 對應事件敘述；`content:check` 全通過
+- [x] T119 [P] [US6] e2e：各頁專屬互動、04 遮罩流程、方向鍵不干擾滑桿
 
 **Checkpoint 8**：01–04 全部內容與專屬互動完成（桌機＋手機）；部署。
 

@@ -17,11 +17,11 @@ import { naturalBands } from '../../src/features/graph/layers';
 
 type Mode = 'stage' | 'flow';
 
-/** 估計節點實際高度：姓名一行＋副標（每行約 7 個全形字）；副標可用 \n 指定換行 */
+/** 估計節點實際高度：姓名一行＋副標（每行約 6 個全形字：節點文字寬 92px、13px 字）；副標可用 \n 指定換行 */
 function estimateHeight(mode: Mode, sub: string): number {
   const lines = sub
     .split('\n')
-    .reduce((n, part) => n + Math.max(1, Math.ceil([...part].length / 7)), 0);
+    .reduce((n, part) => n + Math.max(1, Math.ceil([...part].length / 6)), 0);
   return mode === 'stage' ? 14 + 22 + lines * 20 : 10 + 20 + lines * 18;
 }
 
@@ -53,7 +53,7 @@ function segmentHitsBox(a: Vec, b: Vec, center: Vec, box: Box, pad: number) {
   return false;
 }
 
-const AXES = [1, 2, 3] as const;
+const AXES = [1, 2, 3, 4] as const;
 const CASES = [
   ['stage', 628],
   ['flow', 342],

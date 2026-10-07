@@ -73,12 +73,21 @@ compare:
   valueText: 左欄 {left}%、右欄 {right}%
 
 mirror:
+  label: 兩位養育者的對照卡
   flipHint: 點擊翻面
   flip: 翻到另一面
+  sideLabel: '{name}：{subtitle}'
 
 postcard:
   flip: 翻面明信片
   flipHint: 點擊翻面
+
+choice:
+  title: 艾莉絲的抉擇
+  messagesTitle: 魔法明信片上的留言
+
+cover:
+  label: 劇透提醒
 
 # Popover
 popover:

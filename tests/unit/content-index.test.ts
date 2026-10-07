@@ -31,10 +31,10 @@ describe('content loader', () => {
     expect([1, 2, 3, 4].map(count)).toEqual([1, 8, 2, 1]);
   });
 
-  it('已建立的主軸頁可取得；尚未建立的回傳 undefined（04 在 Phase 8 後段補上）', () => {
+  it('已建立的主軸頁可取得；尚未建立的回傳 undefined（01–04 都已建立）', () => {
     expect(getAxisPage(1)?.title).toBe('統一之杖：荊棘之王德雷文');
     expect(getAxisPage(2)?.title).toBe('魔女集會與時間考驗');
-    expect(getAxisPage(4)).toBeUndefined();
+    expect(getAxisPage(4)?.title).toBe('母愛與地龍契約');
   });
 });
 

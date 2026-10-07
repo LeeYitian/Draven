@@ -16,7 +16,7 @@ export function QuoteList({ axis, quotes }: { axis: AxisKey; quotes: readonly Qu
   return (
     <div
       data-quotes
-      className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto stage:pr-1 flow:flex-none"
+      className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto stage:w-[470px] stage:pr-1 flow:flex-none"
     >
       {shown.map((q) => (
         <figure

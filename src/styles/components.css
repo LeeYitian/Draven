@@ -1531,3 +1531,291 @@ html[data-layout='stage'] .layer-head-slot[data-first] .layer-band__head {
   font-size: var(--fs-aux);
   color: var(--color-neutral-600);
 }
+
+/* ══ 04：鏡像對照卡內容、明信片、抉擇區塊、劇透遮罩（Phase 8 · 6d）══ */
+.mirror-stage {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip; /* 閒置傾斜與厚度陰影會讓投影超出一點點，不能撐出橫向捲軸 */
+}
+[data-layout='flow'] .mirror-stage {
+  padding: 0 10px;
+}
+.mirror-idle {
+  width: 430px;
+  max-width: 100%;
+  transform-style: preserve-3d;
+}
+.mirror-stage:hover .mirror-idle,
+.mirror-stage:focus-within .mirror-idle {
+  animation-play-state: paused; /* 讀字時別讓卡片一直在轉 */
+}
+.mirror-card {
+  cursor: pointer;
+}
+.mirror-face__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding-bottom: 6px;
+}
+.mirror-face__name {
+  font-size: 17px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.mirror-face__sub {
+  white-space: nowrap;
+}
+.mirror-face__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: auto;
+  padding: 2px 4px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--color-neutral-600);
+  white-space: nowrap;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+.mirror-face__hint:hover {
+  color: var(--color-accent-800);
+}
+.mirror-row {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  min-height: 0;
+  padding-top: 6px;
+  overflow: hidden;
+  border-top: 1px solid var(--color-divider);
+}
+.mirror-row__label {
+  font-size: var(--fs-aux);
+  letter-spacing: 0.2em;
+  color: var(--color-accent-700);
+}
+.mirror-row__text {
+  font-size: 15px;
+  line-height: 1.55;
+}
+[data-layout='flow'] .mirror-card {
+  height: 312px;
+}
+[data-layout='flow'] .mirror-face {
+  padding: 14px 16px;
+}
+[data-layout='flow'] .mirror-row {
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 6px;
+}
+[data-layout='flow'] .mirror-row__text {
+  font-size: 14px;
+}
+
+/* 明信片 400×250：正面 plate（襯底＋內嵌圖）、背面留言；翻面 600ms、微上浮 */
+.postcard-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  width: 400px;
+  max-width: 100%;
+  margin: 0;
+}
+.postcard-lift {
+  width: 100%;
+  perspective: 900px;
+}
+.postcard-lift[data-lift='1'] {
+  animation: postcard-lift-a 600ms var(--ease-flip);
+}
+.postcard-lift[data-lift='0'] {
+  animation: postcard-lift-b 600ms var(--ease-flip);
+}
+@keyframes postcard-lift-a {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes postcard-lift-b {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.postcard {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 3; /* 400×240：下方區放得下「卡片＋一行說明」（設計稿 400×250 的 G-25 暫定值再縮 10px） */
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  transform-style: preserve-3d;
+  transition: transform 600ms var(--ease-flip);
+}
+.postcard[data-flipped] {
+  transform: rotateY(180deg);
+}
+.postcard__face {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  padding: 18px 26px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-neutral-400);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.postcard__face[data-side='front'] {
+  padding: 12px;
+  background: var(--color-surface);
+}
+.postcard__face[data-side='back'] {
+  transform: rotateY(180deg);
+}
+.postcard__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 1px solid var(--color-neutral-300);
+}
+.postcard__hint {
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  padding: 1px 6px;
+  font-size: 12px;
+  color: var(--color-neutral-700);
+  background: color-mix(in oklch, var(--color-bg) 85%, transparent);
+}
+.postcard__text {
+  display: block;
+  font-size: 19px;
+  line-height: 1.7;
+}
+.postcard__caption {
+  font-size: var(--fs-aux);
+  line-height: 1.4;
+  color: var(--color-neutral-600);
+  text-align: center;
+}
+
+/* 「艾莉絲的抉擇」與留言 */
+.choice {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+}
+.choice__lines {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.choice__line {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+.choice__messages-title {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-divider);
+}
+.choice__messages {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.choice__message {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-neutral-800);
+}
+
+/* 04 劇透遮罩：不透明紙色（不模糊），蓋在頁首以下 */
+.spoiler-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  padding: 24px;
+  background: var(--color-bg);
+}
+.spoiler-cover__box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  max-width: 460px;
+  text-align: center;
+}
+.spoiler-cover__title {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.25;
+}
+.spoiler-cover__body {
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.8;
+  color: var(--color-neutral-700);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* 翻面改為淡入淡出：不旋轉、不上浮 */
+  .mirror-card[data-flipped],
+  .postcard[data-flipped] {
+    transform: none;
+  }
+  .mirror-face,
+  .postcard__face {
+    transition: opacity 250ms ease;
+    -webkit-backface-visibility: visible;
+    backface-visibility: visible;
+  }
+  .mirror-face[data-side='b'],
+  .postcard__face[data-side='back'] {
+    opacity: 0;
+    transform: none;
+  }
+  .mirror-card[data-flipped] .mirror-face[data-side='a'],
+  .postcard[data-flipped] .postcard__face[data-side='front'] {
+    opacity: 0;
+  }
+  .mirror-card[data-flipped] .mirror-face[data-side='b'],
+  .postcard[data-flipped] .postcard__face[data-side='back'] {
+    opacity: 1;
+  }
+  .postcard-lift {
+    animation: none !important;
+  }
+}

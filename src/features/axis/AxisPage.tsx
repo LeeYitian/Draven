@@ -5,10 +5,11 @@ import { useLayout } from '../../components/layout/LayoutProvider';
 import { Kbd } from '../../components/ui';
 import { getAxisPage, t } from '../../content';
 import { persistentStorage } from '../../lib/storage';
-import { type AxisKey } from '../../store/store';
+import { useAppStore, type AxisKey } from '../../store/store';
 import { useUiStore } from '../../store/ui';
 import { AxisExtras } from '../extras/AxisExtras';
 import { CompareSlider } from '../extras/CompareSlider';
+import { SpoilerCover } from '../extras/SpoilerCover';
 import { RelationGraph } from '../graph/RelationGraph';
 import { EventBar, EventsLabel } from './EventBar';
 import { NarrativePanel } from './NarrativePanel';
@@ -52,6 +53,7 @@ function KeysHint() {
 export function AxisPage({ axis }: { axis: AxisKey }) {
   const { mode } = useLayout();
   const page = getAxisPage(axis);
+  const unlocked = useAppStore((s) => s.page04Unlocked);
   if (!page) return null;
 
   /** 事件文字裡的 {x:target|…}：目前只有 spectrum（01 邊界之辯） */
@@ -75,11 +77,14 @@ export function AxisPage({ axis }: { axis: AxisKey }) {
           <EventsLabel axis={axis} heading={page.eventsHeading} total={page.events.length} />
         }
         events={<EventBar axis={axis} events={page.events} />}
-        narrative={
-          <NarrativePanel axis={axis} events={page.events} onCrossLink={onCrossLink} />
-        }
+        narrative={<NarrativePanel axis={axis} events={page.events} onCrossLink={onCrossLink} />}
         extras={<AxisExtras page={page} />}
         compare={page.extras.compare ? <CompareSlider compare={page.extras.compare} /> : undefined}
+        cover={
+          axis === 4 && !unlocked && page.extras.cover ? (
+            <SpoilerCover cover={page.extras.cover} />
+          ) : undefined
+        }
         graph={<RelationGraph axis={axis} page={page} />}
       />
       {/* 02 的時間感：邊緣暈影（在 main 之外，才不會被內容的 sepia 濾鏡影響，也不會成為 fixed 的包含區塊） */}

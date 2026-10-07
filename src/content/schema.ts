@@ -298,6 +298,10 @@ export const WorldIntroSchema = z.strictObject({
 
 export type AxisExtrasBoundary = z.infer<typeof BoundaryDebateSchema>;
 export type AxisExtrasCompare = NonNullable<z.infer<typeof AxisExtrasSchema>['compare']>;
+export type AxisExtrasMirror = NonNullable<z.infer<typeof AxisExtrasSchema>['mirror']>;
+export type AxisExtrasPostcard = NonNullable<z.infer<typeof AxisExtrasSchema>['postcard']>;
+export type AxisExtrasChoice = NonNullable<z.infer<typeof AxisExtrasSchema>['choice']>;
+export type AxisExtrasCover = NonNullable<z.infer<typeof AxisExtrasSchema>['cover']>;
 export type AxisExtras = z.infer<typeof AxisExtrasSchema>;
 export type WorldIntro = z.infer<typeof WorldIntroSchema>;
 export type Person = z.infer<typeof PersonSchema>;

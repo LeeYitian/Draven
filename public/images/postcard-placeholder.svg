@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 460" role="img">
+  <rect width="760" height="460" fill="#eae7e7"/>
+  <rect x="28" y="28" width="704" height="404" fill="none" stroke="#bab6b6" stroke-width="2" stroke-dasharray="10 8"/>
+  <path d="M120 330 C 240 250, 330 360, 430 280 S 600 230, 650 170" fill="none" stroke="#c28d41" stroke-width="3" stroke-linecap="round"/>
+  <path d="M650 170 l-30 6 m30 -6 l-8 28" fill="none" stroke="#c28d41" stroke-width="3" stroke-linecap="round"/>
+  <text x="380" y="396" text-anchor="middle" font-family="serif" font-size="22" fill="#605d5d" letter-spacing="6">插圖待提供</text>
+</svg>

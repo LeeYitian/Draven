@@ -273,7 +273,8 @@ test.describe('舞台版人物誌：互動', () => {
     await settle(page);
     const labels = await page.locator('.rel__label').allTextContents();
     expect(labels.length).toBeGreaterThan(3);
-    expect(labels).toContain('養父子'); // 01 的背景關係；02–04 的內容檔尚未建立
+    // 同一對人物在不同主軸的關係線會合併成一個標籤（例如 01 的背景關係「養父子」與 02 的「照顧・引導」）
+    expect(labels.some((l) => l.includes('養父子'))).toBe(true);
     // 線在位移結束後才顯示
     expect(await page.locator('[data-rel]').first().evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
 

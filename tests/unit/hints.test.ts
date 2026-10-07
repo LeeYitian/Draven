@@ -55,9 +55,11 @@ describe('獲得規則（進入主軸時）', () => {
   it('資料驗證：每條伏筆的回收處文字中，{h:id} 恰有一個，且位於指定的頁與事件（已建立的頁）', () => {
     for (const hint of hints) {
       const page = getAxisPage(hint.recycle.axis);
-      if (!page) continue; // 02、04 的內容檔尚未建立
-      const event = page.events.find((e) => e.n === hint.recycle.event)!;
-      const refs = collectRefs(parseMarkup(event.text)).filter((r) => r.type === 'h' && r.arg === hint.id);
+      expect(page, hint.id + ' 的回收頁').toBeDefined(); // 12 條回收處都已寫進 01–04
+      const event = page!.events.find((e) => e.n === hint.recycle.event)!;
+      const refs = collectRefs(parseMarkup(event.text)).filter(
+        (r) => r.type === 'h' && r.arg === hint.id,
+      );
       expect(refs, hint.id).toHaveLength(1);
     }
   });

@@ -14,6 +14,8 @@ export interface PageFrameProps {
   extras?: ReactNode;
   /** 02 比較滑桿：舞台版橫跨兩欄放在最底（下方區改為 敘述＋關係圖 290／滑桿 147）；流式版在關係圖之後 */
   compare?: ReactNode;
+  /** 04 劇透遮罩：有值時頁首以下蓋上遮罩，底下的內容 inert（流式版直接取代頁首以下的內容） */
+  cover?: ReactNode;
   /** 關係圖 */
   graph: ReactNode;
 }
@@ -24,6 +26,24 @@ export interface PageFrameProps {
  * 左欄 620（敘述文字 470＋旁註欄 150）、欄距 40、右欄 628（關係圖）。
  * 流式版改為單欄堆疊：頁首、事件列（黏在頂端）、敘述、關係圖、專屬區塊。
  */
+/** 劇透遮罩存在時，遮罩底下的內容：不可操作、不被讀出；流式版連版面都不佔（遮罩直接取代它） */
+function Behind({
+  covered,
+  flow,
+  children,
+}: {
+  covered: boolean;
+  flow?: boolean;
+  children: ReactNode;
+}) {
+  if (!covered) return <>{children}</>;
+  return (
+    <div inert className={flow ? 'hidden' : 'contents'}>
+      {children}
+    </div>
+  );
+}
+
 export function PageFrame({
   header,
   eventsLabel,
@@ -31,6 +51,7 @@ export function PageFrame({
   narrative,
   extras,
   compare,
+  cover,
   graph,
 }: PageFrameProps) {
   const { mode } = useLayout();
@@ -39,18 +60,21 @@ export function PageFrame({
     return (
       <main data-page-main className="flex flex-col gap-[26px]">
         {header}
-        {/* 事件列黏在視窗頂端；左右各延伸到螢幕邊緣（抵銷容器的 24px 邊距） */}
-        <div
-          data-sticky-bar
-          className="sticky top-0 z-(--z-page) -mx-6 flex flex-col gap-2 border-b border-divider bg-bg pt-2.5"
-        >
-          <div className="px-6">{eventsLabel}</div>
-          {events}
-        </div>
-        {narrative}
-        {graph}
-        {compare}
-        {extras}
+        {cover}
+        <Behind covered={!!cover} flow>
+          {/* 事件列黏在視窗頂端；左右各延伸到螢幕邊緣（抵銷容器的 24px 邊距） */}
+          <div
+            data-sticky-bar
+            className="sticky top-0 z-(--z-page) -mx-6 flex flex-col gap-2 border-b border-divider bg-bg pt-2.5"
+          >
+            <div className="px-6">{eventsLabel}</div>
+            {events}
+          </div>
+          {narrative}
+          {graph}
+          {compare}
+          {extras}
+        </Behind>
       </main>
     );
   }
@@ -71,50 +95,60 @@ export function PageFrame({
       <div className="flex-none" style={{ height: h.height }}>
         {header}
       </div>
-      {/* 分隔線：頁首底（y100）到 y116 之間留 16，線畫在 y116 */}
-      <div
-        className="flex-none border-b border-divider"
-        style={{ height: divider.y - (h.y + h.height) }}
-      />
-      <div className="flex-none" style={{ height: eventLabelRow.y - divider.y }} />
-      <div
-        className="flex flex-none items-center justify-between"
-        style={{ height: eventLabelRow.height }}
-      >
-        {eventsLabel}
-      </div>
-      <div
-        className="flex-none"
-        style={{ height: eventRow.y - (eventLabelRow.y + eventLabelRow.height) }}
-      />
-      <div className="flex-none" style={{ height: eventRow.height }}>
-        {events}
-      </div>
-      <div className="flex-none" style={{ height: lower.y - (eventRow.y + eventRow.height) }} />
-      <div
-        className={compare ? 'grid min-h-0 flex-none' : 'grid min-h-0 flex-1'}
-        style={{
-          gridTemplateColumns: `${lower.leftWidth}px minmax(0, 1fr)`,
-          columnGap: lower.gap,
-          height: compare ? lowerWithCompare.graphHeight : undefined,
-        }}
-      >
-        <div className="flex min-h-0 min-w-0 flex-col gap-[22px]">
-          {narrative}
-          {extras}
+      <Behind covered={!!cover}>
+        {/* 分隔線：頁首底（y100）到 y116 之間留 16，線畫在 y116 */}
+        <div
+          className="flex-none border-b border-divider"
+          style={{ height: divider.y - (h.y + h.height) }}
+        />
+        <div className="flex-none" style={{ height: eventLabelRow.y - divider.y }} />
+        <div
+          className="flex flex-none items-center justify-between"
+          style={{ height: eventLabelRow.height }}
+        >
+          {eventsLabel}
         </div>
-        <div className="relative min-w-0">{graph}</div>
-      </div>
-      {compare && (
         <div
           className="flex-none"
+          style={{ height: eventRow.y - (eventLabelRow.y + eventLabelRow.height) }}
+        />
+        <div className="flex-none" style={{ height: eventRow.height }}>
+          {events}
+        </div>
+        <div className="flex-none" style={{ height: lower.y - (eventRow.y + eventRow.height) }} />
+        <div
+          className={compare ? 'grid min-h-0 flex-none' : 'grid min-h-0 flex-1'}
           style={{
-            marginTop:
-              lower.height - lowerWithCompare.graphHeight - lowerWithCompare.compareSliderHeight,
-            height: lowerWithCompare.compareSliderHeight,
+            gridTemplateColumns: `${lower.leftWidth}px minmax(0, 1fr)`,
+            columnGap: lower.gap,
+            height: compare ? lowerWithCompare.graphHeight : undefined,
           }}
         >
-          {compare}
+          <div className="flex min-h-0 min-w-0 flex-col gap-[22px]">
+            {narrative}
+            {extras}
+          </div>
+          <div className="relative min-w-0">{graph}</div>
+        </div>
+        {compare && (
+          <div
+            className="flex-none"
+            style={{
+              marginTop:
+                lower.height - lowerWithCompare.graphHeight - lowerWithCompare.compareSliderHeight,
+              height: lowerWithCompare.compareSliderHeight,
+            }}
+          >
+            {compare}
+          </div>
+        )}
+      </Behind>
+      {cover && (
+        <div
+          className="absolute z-(--z-cover)"
+          style={{ top: h.y + h.height, right: 0, bottom: 0, left: 0 }}
+        >
+          {cover}
         </div>
       )}
     </main>
