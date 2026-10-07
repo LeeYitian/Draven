@@ -196,7 +196,7 @@ test.describe('舞台版 04：專屬區塊', () => {
   test('明信片：點擊翻面 600ms、背面是留言；翻面時微微上浮；說明在卡片下方', async ({ page }) => {
     await toEvent(page, 5);
     await expect(page.locator('.postcard img')).toBeVisible();
-    // 占位圖載入成功
+    // 插圖載入成功
     expect(
       await page.locator('.postcard img').evaluate((e) => (e as HTMLImageElement).naturalWidth),
     ).toBeGreaterThan(0);

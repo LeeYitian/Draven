@@ -218,12 +218,12 @@ describe('04 明信片', () => {
   });
   const postcard = () => document.querySelector('.postcard') as HTMLElement;
 
-  it('正面是插圖（占位圖、有替代文字）、背面是留言；卡片下方一行說明', () => {
+  it('正面是插圖（插圖、有替代文字）、背面是留言；卡片下方一行說明', () => {
     start();
     toEvent(5);
     const img = postcard().querySelector('img')!;
-    expect(img.getAttribute('src')).toBe('/images/postcard-placeholder.svg');
-    expect(img.getAttribute('alt')).toContain('素材待提供');
+    expect(img.getAttribute('src')).toBe('/images/sample.png');
+    expect(img.getAttribute('alt')).toContain('魔女');
     expect(postcard()).toHaveTextContent('魔法明信片上的留言');
     expect(postcard()).toHaveTextContent('媽媽很愛你，等詛咒解除再重新開始吧。');
     expect(document.querySelector('.postcard__caption')).toHaveTextContent(
