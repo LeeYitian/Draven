@@ -129,7 +129,7 @@ extras:
         choice: 放棄在人間鑽營的一切權力，讓地龍送他到盤蛇身邊。
         motive: 報答非人養育者：「我要報恩，幫助盤蛇大人。」
   postcard:
-    frontImage: images/sample.png
+    frontImage: images/sample.webp
     frontAlt: 戴著兜帽、拿著法杖的魔女，與長著龍尾的男子並肩走在地底的隧道裡
     backTitle: 魔法明信片上的留言
     backText: 「媽媽很愛你，等詛咒解除再重新開始吧。」

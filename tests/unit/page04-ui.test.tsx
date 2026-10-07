@@ -222,7 +222,7 @@ describe('04 明信片', () => {
     start();
     toEvent(5);
     const img = postcard().querySelector('img')!;
-    expect(img.getAttribute('src')).toBe('/images/sample.png');
+    expect(img.getAttribute('src')).toBe('/images/sample.webp');
     expect(img.getAttribute('alt')).toContain('魔女');
     expect(postcard()).toHaveTextContent('魔法明信片上的留言');
     expect(postcard()).toHaveTextContent('媽媽很愛你，等詛咒解除再重新開始吧。');
