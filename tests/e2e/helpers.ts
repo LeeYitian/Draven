@@ -61,6 +61,7 @@ export function stageOverflow(page: Page) {
     for (const el of stage.querySelectorAll<HTMLElement>('*')) {
       const r = el.getBoundingClientRect();
       if (r.width === 0 || r.height === 0) continue;
+      if (el.closest('.sr-only')) continue; // 螢幕閱讀器專用的視覺隱藏元素（1×1、刻意裁切）
       const right = (r.right - sr.left) / k;
       const bottom = (r.bottom - sr.top) / k;
       const left = (r.left - sr.left) / k;

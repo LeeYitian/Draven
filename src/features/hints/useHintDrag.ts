@@ -51,6 +51,8 @@ export function useHintDrag({
     active.current = null;
     setImage(null);
     useUiStore.getState().setHintDragging(false);
+    // 拖曳結束（含 Esc／縮放取消）之後放開滑鼠會補一個 click，要吞掉，免得又 toggle 選取
+    if (a?.dragging) suppressClick.current = true;
     if (a?.dragging && deselect) useAppStore.getState().selectHint(null);
   }, []);
 

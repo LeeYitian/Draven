@@ -1,4 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
+import { RichText } from '../components/text/RichText';
+import { getAxisPage } from '../content';
 
 // 開發專用「元件圖鑑」：把共用樣式的每個狀態列出來，對照設計稿 §6 目視驗收（任務 T018）。
 // 只在開發模式、網址 #/__kit 時載入，不進正式版。
@@ -547,6 +549,27 @@ export default function Kit() {
               他模仿德雷文的威壓話術動搖布倫、闖入教會休息室。
             </p>
           </div>
+        </div>
+      </Section>
+
+      <Section
+        id="J"
+        title="伏筆註記列（手機版）"
+        note="03 事件 06；寬 320／360／390／640；註記列必須 display:block，上一行字距不可被拉開"
+      >
+        <div className="flex flex-wrap items-start gap-8">
+          {[320, 360, 390, 640].map((w) => (
+            <div key={w} className="flex flex-col gap-2">
+              <span className="text-aux text-neutral-600">寬 {w}（內容寬 {w - 48}）</span>
+              <p
+                className="m-0 border border-divider bg-bg p-0 text-justify text-[15px] leading-[1.85]"
+                style={{ width: w - 48 }}
+                data-kit-note-sample
+              >
+                <RichText text={getAxisPage(3)!.events[5]!.text} noteRows />
+              </p>
+            </div>
+          ))}
         </div>
       </Section>
 

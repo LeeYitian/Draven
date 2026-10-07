@@ -1,0 +1,38 @@
+name: E2E (Playwright)
+
+# 端對端測試（真瀏覽器、六種桌機視窗＋六種流式視窗）。
+# 刻意和部署分開：只在 PR 與手動觸發時跑，失敗不會擋住部署（部署只看 lint／型別／內容驗證／單元測試）。
+# 想在本機跑：npm run e2e（第一次先 npx playwright install chromium）。
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # 瀏覽器本體不在 npm 套件裡，要另外下載（--with-deps 同時裝系統需要的函式庫）
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
+      - uses: actions/upload-artifact@v5
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

@@ -159,20 +159,20 @@
 
 > 本階段先用一份 **03 事件 06 的測試資料**（含 3 個 `{h:}`）驗證；02–04 完整內容在 Phase 8 補上。
 
-- [ ] T089 [P] [US5] `tests/unit/hints.test.ts`：獲得規則（01→1、02→8、03→2、04→1）、不補發、04 遮罩時機、答對／答錯判定、持久化
-- [ ] T090 [P] [US5] `tests/unit/measure.test.ts` → `src/features/hints/measure.ts`：`measureAnchors`（假 rects）、防撞排序、弧線路徑（hash 擾動可重現）
-- [ ] T091 [US5] `src/features/hints/hints store`＋獲得提示（合併、3 秒、hover 暫停）＋側欄徽章閃動
-- [ ] T092 [US5] `HintTray.tsx`：舞台版高 168（不蓋側欄／頁首、無 scrim、240ms）；空狀態；流式版底部面板
-- [ ] T093 [US5] `HintKeyword.tsx`：idle／selected／solved
-- [ ] T094 [US5] `HintAnchor`（雙底線）＋`HintSlotLayer.tsx`／`HintSlot.tsx`：旁註欄定位、防撞、四狀態（空／可放置／鎖定／答錯）
-- [ ] T095 [US5] `HintArc.tsx`：手繪感弧線、同行錯開、空框格虛線
-- [ ] T096 [US5] 重新量測觸發：`ResizeObserver`、`fonts.ready`＋`loadingdone`、事件切換、compact／版型變更
-- [ ] T097 [US5] `useHintDrag.ts`：Pointer Events、拖曳影像（`localPoint`）、原位虛線空位、命中測試、視窗縮放時取消
-- [ ] T098 [US5] 點選替代＋鍵盤（Enter／Tab）＋流式版說明條「已選『…』，點頁面上的框格放入。取消」
-- [ ] T099 [US5] 答對（鎖定、光暈閃動、淡入說明）／答錯（震動 300ms、回托盤）、`aria-live`、reduced-motion 以文字與框色表達
-- [ ] T100 [US5] 流式版 `NoteRow`：**`display:block`**（不可 inline-block，會讓兩端對齊拉伸上一行）、50px 註記列、並排／放不下則堆疊、短弧線；插入點集中在 `src/features/hints/note-placement.ts` 的 `resolveNoteInsertionPoint()`（策略 `after-punct` 預設，可替換為 `after-sentence`／`after-line`／`author`）；`tests/unit/note-placement.test.ts`（插入點、`display:block` 屬性）；`/__kit` 加「伏筆註記列」比較區（寬 320／360／390／640）；e2e 斷言註記列上方一行平均字寬 ≈ 字級。**依據與已知排版風險：`docs/設計決策-手機版伏筆註記列位置.md`**
-- [ ] T101 [P] [US5] `tests/e2e/anchors.spec.ts`：矩陣各桌機尺寸（含 compact）框格舞台座標差 ≤ 2px、框格互不相交；改字型／事件切換後仍成立；同時建立 `.github/workflows/e2e.yml`（PR 與手動觸發、不擋部署）
-- [ ] T102 [P] [US5] `tests/e2e/touch.spec.ts`：觸控模擬點選放置；關係圖放大前單指仍可捲動頁面
+- [x] T089 [P] [US5] `tests/unit/hints.test.ts`：獲得規則（01→1、02→8、03→2、04→1）、不補發、04 遮罩時機、答對／答錯判定、持久化
+- [x] T090 [P] [US5] `tests/unit/measure.test.ts` → `src/features/hints/measure.ts`：`measureAnchors`（假 rects）、防撞排序、弧線路徑（hash 擾動可重現）
+- [x] T091 [US5] `src/features/hints/hints store`＋獲得提示（合併、3 秒、hover 暫停）＋側欄徽章閃動
+- [x] T092 [US5] `HintTray.tsx`：舞台版高 168（不蓋側欄／頁首、無 scrim、240ms）；空狀態；流式版底部面板
+- [x] T093 [US5] `HintKeyword.tsx`：idle／selected／solved
+- [x] T094 [US5] `HintAnchor`（雙底線）＋`HintSlotLayer.tsx`／`HintSlot.tsx`：旁註欄定位、防撞、四狀態（空／可放置／鎖定／答錯）
+- [x] T095 [US5] `HintArc.tsx`：手繪感弧線、同行錯開、空框格虛線
+- [x] T096 [US5] 重新量測觸發：`ResizeObserver`、`fonts.ready`＋`loadingdone`、事件切換、compact／版型變更
+- [x] T097 [US5] `useHintDrag.ts`：Pointer Events、拖曳影像（`localPoint`）、原位虛線空位、命中測試、視窗縮放時取消
+- [x] T098 [US5] 點選替代＋鍵盤（Enter／Tab）＋流式版說明條「已選『…』，點頁面上的框格放入。取消」
+- [x] T099 [US5] 答對（鎖定、光暈閃動、淡入說明）／答錯（震動 300ms、回托盤）、`aria-live`、reduced-motion 以文字與框色表達
+- [x] T100 [US5] 流式版 `NoteRow`：**`display:block`**（不可 inline-block，會讓兩端對齊拉伸上一行）、50px 註記列、並排／放不下則堆疊、短弧線；插入點集中在 `src/features/hints/note-placement.ts` 的 `resolveNoteInsertionPoint()`（策略 `after-punct` 預設，可替換為 `after-sentence`／`after-line`／`author`）；`tests/unit/note-placement.test.ts`（插入點、`display:block` 屬性）；`/__kit` 加「伏筆註記列」比較區（寬 320／360／390／640）；e2e 斷言註記列上方一行平均字寬 ≈ 字級。**依據與已知排版風險：`docs/設計決策-手機版伏筆註記列位置.md`**
+- [x] T101 [P] [US5] `tests/e2e/anchors.spec.ts`：矩陣各桌機尺寸（含 compact）框格舞台座標差 ≤ 2px、框格互不相交；改字型／事件切換後仍成立；同時建立 `.github/workflows/e2e.yml`（PR 與手動觸發、不擋部署）
+- [x] T102 [P] [US5] `tests/e2e/touch.spec.ts`：觸控模擬點選放置；關係圖放大前單指仍可捲動頁面
 
 **Checkpoint 7**：伏筆完整流程（桌機拖曳、手機點選）；幾何斷言通過；部署。
 
