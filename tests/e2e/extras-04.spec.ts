@@ -201,21 +201,22 @@ test.describe('舞台版 04：專屬區塊', () => {
       await page.locator('.postcard img').evaluate((e) => (e as HTMLImageElement).naturalWidth),
     ).toBeGreaterThan(0);
     const before = await stageRect(page, '.postcard');
+    // 翻面的 600ms 內由頁面自己逐格（rAF）記錄上浮量：中途有上浮（translateY < -2），結束後回到原位。
+    // 不在測試端一格一格輪詢——機器忙時來回的延遲可能整個錯過 600ms。
+    await page.evaluate(() => {
+      const w = window as unknown as { __lift: number };
+      w.__lift = 0;
+      const lift = document.querySelector('.postcard-lift')!;
+      const tick = () => {
+        w.__lift = Math.max(w.__lift, -new DOMMatrix(getComputedStyle(lift).transform).m42);
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
     await page.locator('.postcard').click();
     await expect(page.locator('.postcard')).toHaveAttribute('data-flipped');
-    // 翻面的 600ms 內取樣：中途有上浮（translateY < -2），結束後回到原位
-    let highest = 0;
-    for (let i = 0; i < 12; i++) {
-      highest = Math.max(
-        highest,
-        -(await page.evaluate(
-          () =>
-            new DOMMatrix(getComputedStyle(document.querySelector('.postcard-lift')!).transform)
-              .m42,
-        )),
-      );
-      await page.waitForTimeout(40);
-    }
+    await page.waitForTimeout(800);
+    const highest = await page.evaluate(() => (window as unknown as { __lift: number }).__lift);
     expect(highest).toBeGreaterThan(2);
     await page.waitForTimeout(700);
     const m = await page
