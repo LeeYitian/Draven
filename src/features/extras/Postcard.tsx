@@ -46,9 +46,11 @@ export function Postcard({ postcard }: { postcard: AxisExtrasPostcard }) {
           </button>
         </div>
       </div>
-      <figcaption className="postcard__caption">
-        <RichText text={postcard.caption} />
-      </figcaption>
+      {postcard.caption && (
+        <figcaption className="postcard__caption">
+          <RichText text={postcard.caption} />
+        </figcaption>
+      )}
     </figure>
   );
 }

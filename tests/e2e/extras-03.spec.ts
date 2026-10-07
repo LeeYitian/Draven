@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { FLOW_SIZES, STAGE_SIZES, intersects, nodeRects, openPage, stageOverflow } from './helpers';
+import { AXIS_FRAME } from '../../src/lib/stage-metrics';
 
 // US6c：03 三界分層（收合、只看地底、跨層線改連層頭）與兩則引言。
 
@@ -37,14 +38,14 @@ test.describe('舞台版 03：三界分層', () => {
     await page.waitForTimeout(2500);
   });
 
-  test('三個層頭：層名＋人數；層高加起來等於畫布 457', async ({ page }) => {
+  test('三個層頭：層名＋人數；層高加起來等於畫布高度', async ({ page }) => {
     await expect(head(page, 'human')).toContainText('人間 · 6');
     await expect(head(page, 'border')).toContainText('地底交界 · 4');
     await expect(head(page, 'otherworld')).toContainText('異界 · 1');
     const heights = await bandHeights(page);
     expectNear(
       heights.reduce((a, b) => a + b, 0),
-      457,
+      AXIS_FRAME.lower.height,
     );
     for (const id of ['human', 'border', 'otherworld'])
       await expect(head(page, id)).toHaveAttribute('aria-expanded', 'true');
@@ -59,7 +60,7 @@ test.describe('舞台版 03：三界分層', () => {
     expect(heights[2]).toBe(46);
     expectNear(
       heights.reduce((a, b) => a + b, 0),
-      457,
+      AXIS_FRAME.lower.height,
     );
     expect(await hiddenNodes(page)).toEqual(['snake-god']);
     // 其他層變高
@@ -112,7 +113,7 @@ test.describe('舞台版 03：三界分層', () => {
     const heights = await bandHeights(page);
     expect(heights[0]).toBe(46);
     expect(heights[2]).toBe(46);
-    expectNear(heights[1]!, 457 - 92);
+    expectNear(heights[1]!, AXIS_FRAME.lower.height - 92);
     expect((await hiddenNodes(page)).sort()).toEqual([
       'bishop',
       'bren',
@@ -158,7 +159,7 @@ test.describe('舞台版 03：三界分層', () => {
       samples.push((await bandHeights(page)).reduce((a, b) => a + b, 0));
       await page.waitForTimeout(40);
     }
-    for (const s of samples) expectNear(s, 457);
+    for (const s of samples) expectNear(s, AXIS_FRAME.lower.height);
   });
 
   test('同一對人物的兩條相反的線（傳授召喚儀式／扣留）分在兩側、不疊在一起', async ({ page }) => {

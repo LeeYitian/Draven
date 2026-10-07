@@ -222,7 +222,8 @@ export const AxisExtrasSchema = z.strictObject({
       frontAlt: z.string().min(1),
       backTitle: z.string().min(1),
       backText: z.string().min(1),
-      caption: z.string().min(1),
+      /** 卡片下方一行說明；留空（yaml 的 caption: 後面不寫）就不顯示 */
+      caption: z.string().min(1).nullish(),
     })
     .optional(),
   choice: z

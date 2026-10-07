@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/app/App';
+import { getAxisPage } from '../../src/content';
 import { usePopoverStore } from '../../src/store/popover';
 import { resetStoreForTests, useAppStore } from '../../src/store/store';
 import { useUiStore } from '../../src/store/ui';
@@ -63,8 +64,13 @@ describe('01 邊界之辯光譜', () => {
     const ids = [...document.querySelectorAll('[data-stance]')].map((e) =>
       e.getAttribute('data-stance'),
     );
-    expect(ids).toEqual(['rumi', 'nor', 'fane', 'bren', 'dravin']);
-    expect(document.querySelector('[data-stance="dravin"]')).toHaveAttribute('data-current');
+    const expected = [...getAxisPage(1)!.extras.boundary!.stances]
+      .sort((a, b) => a.position - b.position)
+      .map((x) => x.personId);
+    expect(ids).toEqual(expected);
+    expect(document.querySelector(`[data-stance="${expected.at(-1)}"]`)).toHaveAttribute(
+      'data-current',
+    );
   });
 
   it('← 往左一個立場，→ 往右；盡頭不動；Home／End 跳到兩端', async () => {

@@ -514,7 +514,7 @@
     gap: 10px;
     box-sizing: border-box;
     min-width: 0;
-    height: 56px;
+    height: 44px;
     padding: 0 12px;
     text-align: left;
     background: transparent;
@@ -1532,9 +1532,9 @@ html[data-aged] .age-vignette {
 button.layer-band__head {
   pointer-events: auto;
 }
-/* 舞台版：第一層的層名要讓開左上角的「人物關係」標題 */
+/* 舞台版：「人物關係」標題與右上的按鈕同一列（圖的功能列）；第一層的層名是圖的內容，放在這一列的下面 */
 html[data-layout='stage'] .layer-head-slot[data-first] .layer-band__head {
-  padding-left: 84px;
+  padding-top: 32px;
 }
 
 /* ── 引言卡（03）：被追蹤者的引言左上掛書籤（不用底色，避免和 hover 混淆）── */

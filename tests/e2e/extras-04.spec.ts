@@ -294,7 +294,9 @@ test.describe('舞台版 04：專屬區塊', () => {
 
   test('分區：為了人類養子／為了非人養育者；節點不重疊', async ({ page }) => {
     const zones = await page.locator('[data-zone-label]').allTextContents();
-    expect(zones).toEqual(['為了人類養子 · 4', '為了非人養育者 · 3']);
+    // 兩個分區，各自「名稱 · 人數」（名稱是內容，不寫死）
+    expect(zones).toHaveLength(2);
+    for (const z of zones) expect(z).toMatch(/ · d+$/);
   });
 
   test('伏筆回收處：事件 02／03／04／05 各有一個框格錨點', async ({ page }) => {

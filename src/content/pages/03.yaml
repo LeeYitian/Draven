@@ -115,9 +115,9 @@ graph:
         bren: [562, 146]
         elian: [266, 246]
         fane: [546, 246]
-        earth-dragon: [74, 316]
-        shadow-man: [418, 316]
-        snake-god: [234, 392]
+        earth-dragon: [74, 306]
+        shadow-man: [418, 306]
+        snake-god: [234, 386]
     flow:
       size: [342, 740]
       nodes:

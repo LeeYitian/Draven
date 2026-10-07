@@ -25,14 +25,15 @@ export const CONTENT = { x: 112, width: 1288 } as const;
 
 /** 主軸頁框架網格（§1-A；01–04 統一，clarifications G-05） */
 export const AXIS_FRAME = {
-  header: { y: 28, height: 72, rightColumnWidth: 460 },
-  divider: { y: 116 },
-  /** 小標列加高到 36（放大的方向鍵提示）；多出的 16 由分隔線／小標／事件列之間的間距吸收，事件列與下方區座標不變 */
-  eventLabelRow: { y: 120, height: 36 },
-  eventRow: { y: 162, height: 56, gap: 8 },
+  // 頁首與事件列壓縮（頁首 72→64、事件列 56→44、各段間距收緊），把下方區從 457 加高到 509，給關係圖更多上下空間
+  header: { y: 20, height: 64, rightColumnWidth: 460 },
+  divider: { y: 92 },
+  /** 小標列 36（放大的方向鍵提示） */
+  eventLabelRow: { y: 96, height: 36 },
+  eventRow: { y: 134, height: 44, gap: 8 },
   lower: {
-    y: 238,
-    height: 457,
+    y: 186,
+    height: 509,
     /** 左欄＝敘述文字 470＋旁註欄 150 */
     leftWidth: 620,
     narrativeTextWidth: 470,
@@ -41,8 +42,8 @@ export const AXIS_FRAME = {
     /** 右欄（關係圖） */
     rightWidth: 628,
   },
-  /** 02 的下方區較矮（比較滑桿佔下方 147），關係圖高度 290 */
-  lowerWithCompare: { graphHeight: 290, compareSliderHeight: 147 },
+  /** 02 的下方區較矮（比較滑桿佔下方 147），關係圖高度 342 */
+  lowerWithCompare: { graphHeight: 342, compareSliderHeight: 147 },
 } as const;
 
 /** 事件列等分：寬 = (內容寬 − 間距總和) ÷ 事件數 */

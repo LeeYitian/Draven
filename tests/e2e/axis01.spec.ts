@@ -9,6 +9,7 @@ import {
   stageCenter,
   stageOverflow,
 } from './helpers';
+import { AXIS_FRAME } from '../../src/lib/stage-metrics';
 
 // US2：01 主軸頁的事件推進、焦點、畫線、拖曳、縮放與版面（所有視窗矩陣）。
 // 座標以幾何斷言為主；動畫以「進行中的 DOM 狀態」判斷，不比對像素。
@@ -307,13 +308,14 @@ test.describe('舞台版 01：版面幾何（視窗矩陣）', () => {
       await openPage(page, size, AXIS1);
       expect(await stageOverflow(page)).toEqual([]);
 
-      // 節點中心：圖框左 772、上 238＋設計座標（628×457 畫布，邊框畫在最上層，不佔畫布）
+      // 節點中心：圖框左 772、上緣＝下方區 y；設計座標以 628×457 為準，依畫布高度等比（邊框畫在最上層，不佔畫布）
+      const { y: top, height } = AXIS_FRAME.lower;
       const dravin = await stageCenter(page, '[data-node-wrapper="dravin"]');
       expect(dravin.x).toBeCloseTo(772 + 314, 0);
-      expect(dravin.y).toBeCloseTo(238 + 80, 0);
+      expect(dravin.y).toBeCloseTo(top + (80 * height) / 457, 0);
       const bren = await stageCenter(page, '[data-node-wrapper="bren"]');
       expect(bren.x).toBeCloseTo(772 + 558, 0);
-      expect(bren.y).toBeCloseTo(238 + 376, 0);
+      expect(bren.y).toBeCloseTo(top + (376 * height) / 457, 0);
 
       const rects = await nodeRects(page);
       for (let i = 0; i < rects.length; i++)
