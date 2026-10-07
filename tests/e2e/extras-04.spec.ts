@@ -124,11 +124,16 @@ test.describe('舞台版 04：專屬區塊', () => {
     await openPage(page, { w: 1440, h: 720 }, AXIS4);
   });
 
-  test('事件 03 鏡像卡 430×268、事件 05 明信片 400×240、其餘「艾莉絲的抉擇」', async ({ page }) => {
+  test('事件 03 鏡像卡 430×268、事件 05 明信片 400×240、事件 06 抉擇、其餘沒有', async ({
+    page,
+  }) => {
     const kinds: string[] = [];
     for (let n = 1; n <= 6; n++) {
       await toEvent(page, n);
-      kinds.push((await page.locator('[data-event-extra]').getAttribute('data-event-extra'))!);
+      const extra = page.locator('[data-event-extra]');
+      kinds.push(
+        (await extra.count()) === 0 ? 'none' : (await extra.getAttribute('data-event-extra'))!,
+      );
       if (n === 3) {
         const r = await localSize(page, '.mirror-card');
         expect(r).toEqual({ w: 430, h: 268 });
@@ -138,7 +143,13 @@ test.describe('舞台版 04：專屬區塊', () => {
         expect(r).toEqual({ w: 400, h: 240 });
       }
     }
-    expect(kinds).toEqual(['choice', 'choice', 'mirror', 'choice', 'postcard', 'choice']);
+    expect(kinds).toEqual(['none', 'none', 'mirror', 'none', 'postcard', 'choice']);
+  });
+
+  test('明信片：閒置時外層和鏡像卡一樣 rotateY ±8° 來回', async ({ page }) => {
+    await toEvent(page, 5);
+    const idle = page.locator('.postcard-idle');
+    expect(await idle.evaluate((e) => getComputedStyle(e).animationName)).toBe('mirror-idle');
   });
 
   test('鏡像卡：點擊翻面（rotateY 180°）；閒置時外層 rotateY ±8° 來回', async ({ page }) => {
@@ -195,6 +206,8 @@ test.describe('舞台版 04：專屬區塊', () => {
 
   test('明信片：點擊翻面 600ms、背面是留言；翻面時微微上浮；說明在卡片下方', async ({ page }) => {
     await toEvent(page, 5);
+    // 閒置傾斜（rotateY ±8°）會讓卡片的投影位置一直在變；這個測試要量「回到原位」，先停掉它
+    await page.addStyleTag({ content: '.postcard-idle { animation: none !important; }' });
     await expect(page.locator('.postcard img')).toBeVisible();
     // 插圖載入成功
     expect(
@@ -250,6 +263,11 @@ test.describe('舞台版 04：專屬區塊', () => {
         for (let n = 1; n <= 6; n++) {
           await toEvent(page, n);
           expect(await stageOverflow(page), '事件 ' + n).toEqual([]);
+          // 只有事件 03、05、06 有專屬區塊
+          if ((await page.locator('[data-event-extra]').count()) === 0) {
+            expect([3, 5, 6], '事件 ' + n + ' 沒有專屬區塊').not.toContain(n);
+            continue;
+          }
           const extra = await stageRect(page, '[data-event-extra]');
           const nar = await stageRect(page, '[data-narrative-body]');
           const graph = await stageRect(page, '[data-graph-viewport]');
@@ -276,7 +294,9 @@ test.describe('舞台版 04：專屬區塊', () => {
 
   test('分區：為了人類養子／為了非人養育者；節點不重疊', async ({ page }) => {
     const zones = await page.locator('[data-zone-label]').allTextContents();
-    expect(zones).toEqual(['為了人類養子 · 4', '為了非人養育者 · 3']);
+    // 兩個分區，各自「名稱 · 人數」（名稱是內容，不寫死）
+    expect(zones).toHaveLength(2);
+    for (const z of zones) expect(z).toMatch(/ · d+$/);
   });
 
   test('伏筆回收處：事件 02／03／04／05 各有一個框格錨點', async ({ page }) => {
@@ -320,6 +340,9 @@ test.describe('減少動態：04 翻面改為淡入淡出', () => {
     await page.waitForTimeout(400);
     expect(await opacity('.postcard__face[data-side="front"]')).toBe('0');
     expect(await opacity('.postcard__face[data-side="back"]')).toBe('1');
+    expect(
+      await page.locator('.postcard-idle').evaluate((e) => getComputedStyle(e).animationName),
+    ).toBe('none');
     expect(await page.locator('.postcard').evaluate((e) => getComputedStyle(e).transform)).toBe(
       'none',
     );
@@ -343,7 +366,7 @@ test.describe('流式版 04', () => {
       async ({ page }) => {
         await unlockedInit(page);
         await openPage(page, size, AXIS4);
-        for (const n of [3, 5, 1]) {
+        for (const n of [3, 5, 6]) {
           await page.locator('[data-event="' + n + '"]').dispatchEvent('click');
           await page.waitForTimeout(350);
           const extra = page.locator('[data-event-extra]');

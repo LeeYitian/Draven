@@ -171,14 +171,6 @@ describe('01 主軸頁（舞台版）', () => {
     expect(list()).toHaveTextContent('德雷文 → 法恩：任命特使・遴選子弟');
   });
 
-  it('事件 5 的「見下方 ↓」交叉連結存在（光譜區塊於 Phase 8 實作）', () => {
-    start();
-    act(() => useAppStore.getState().selectEvent(1, 5));
-    return vi.waitFor(() =>
-      expect(screen.getByRole('button', { name: '見下方 ↓' })).toBeInTheDocument(),
-    );
-  });
-
   it('只有舞台版第一次進入顯示方向鍵提示，之後不再顯示', () => {
     vi.useFakeTimers();
     const first = start();

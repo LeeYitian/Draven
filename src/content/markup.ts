@@ -5,12 +5,11 @@
  *
  *   {p:id}  {p:id|顯示文字}   人名（點擊開 Popover）
  *   {t:id}  {t:id|顯示文字}   名詞
- *   {x:target|文字}           交叉連結
  *   {h:hint-id|片語}          伏筆回收處（雙底線；框格依其位置放置）
  *   \{  \}                    純文字的大括號
  * 可巢狀（最多 2 層，例如 {h:gift|{p:fane}用馬蹄鐵}）。
  */
-export type MarkerType = 'p' | 't' | 'x' | 'h';
+export type MarkerType = 'p' | 't' | 'h';
 
 export type MarkupNode =
   | { type: 'text'; text: string; auto?: undefined }
@@ -33,7 +32,7 @@ export class MarkupError extends Error {
   }
 }
 
-const MARKER_TYPES = new Set<string>(['p', 't', 'x', 'h']);
+const MARKER_TYPES = new Set<string>(['p', 't', 'h']);
 const MAX_DEPTH = 2;
 
 export function parseMarkup(input: string): MarkupNode[] {

@@ -139,12 +139,11 @@ describe('validateContent：行內標記', () => {
     );
   });
 
-  it('未知名詞與未知交叉連結目標', () => {
+  it('未知名詞', () => {
     const p = page();
-    p.events[0]!.text = '{t:nope}與{x:somewhere|到這裡}';
+    p.events[0]!.text = '{t:nope}';
     const out = messages(validateContent(bundle({ pages: { '01': p } }))).join('\n');
     expect(out).toContain('未知名詞 id "nope"');
-    expect(out).toContain('未知的交叉連結目標 "somewhere"');
   });
 });
 

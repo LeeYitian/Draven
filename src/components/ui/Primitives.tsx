@@ -2,8 +2,28 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
 /** 方向鍵提示（←→↑↓） */
-export function Kbd({ children, className }: { children: ReactNode; className?: string }) {
-  return <kbd className={cn('kbd', className)}>{children}</kbd>;
+export function Kbd({
+  children,
+  className,
+  size,
+  nudge,
+}: {
+  children: ReactNode;
+  className?: string;
+  /** 放大版鍵帽：lg 36×36、md 36×34、sm 28×28 */
+  size?: 'lg' | 'md' | 'sm';
+  /** 鍵帽輪流被按下的動畫；'late' 晚 0.8s 開始，兩顆鍵交替 */
+  nudge?: 'first' | 'late';
+}) {
+  return (
+    <kbd
+      className={cn('kbd', nudge && 'key-hint', className)}
+      data-size={size}
+      data-delay={nudge === 'late' || undefined}
+    >
+      {children}
+    </kbd>
+  );
 }
 
 /** 小標：13px、字距 .2em；accent 版字距 .24em、金色 */

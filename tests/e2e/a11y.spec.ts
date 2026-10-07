@@ -111,6 +111,8 @@ test.describe('axe：02 最舊的紙色與其他狀態', () => {
 
   test('01 光譜拖到中間、03 收合三層', async ({ page }) => {
     await openPage(page, STAGE, '#/axis/1');
+    await page.locator('[data-event="5"]').click(); // 光譜從事件 05 起才出現
+    await page.waitForTimeout(400); // 等敘述淡入完成，axe 才不會量到半透明的文字
     await page.locator('[data-spectrum-thumb]').focus();
     await page.keyboard.press('ArrowLeft');
     await scan(page, '01 光譜');
@@ -169,6 +171,7 @@ test.describe('鍵盤與語意合約', () => {
 
   test('光譜與比較滑桿是 slider：有名稱、aria-valuenow、aria-valuetext', async ({ page }) => {
     await openPage(page, STAGE, '#/axis/1');
+    await page.locator('[data-event="5"]').click(); // 光譜從事件 05 起才出現
     const spectrum = page.getByRole('slider', { name: '邊界之辯光譜' });
     await expect(spectrum).toHaveAttribute('aria-valuenow', '100');
     expect(await spectrum.getAttribute('aria-valuetext')).toContain('德雷文');

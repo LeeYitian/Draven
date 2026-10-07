@@ -1,27 +1,19 @@
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { useLayout } from '../../components/layout/LayoutProvider';
+import { useMemo, useRef, type KeyboardEvent } from 'react';
 import { NameLink, RichText } from '../../components/text/RichText';
 import { Eyebrow } from '../../components/ui';
 import { getPerson, t } from '../../content';
 import type { AxisExtrasBoundary } from '../../content/schema';
-import { useReducedMotion } from '../../lib/useReducedMotion';
 import { useAppStore } from '../../store/store';
-import { useUiStore } from '../../store/ui';
 import { clampPercent, nearestIndex, snapPosition, stepPosition } from './spectrum';
 import { useTrackDrag } from './useTrackDrag';
-
-/** 流式版要先捲到光譜再閃動：等平滑捲動大致結束（ms） */
-const SCROLL_SETTLE = 380;
 
 /**
  * 01 邊界之辯光譜（設計稿 D2）。
  * 指標是 role="slider"：拖曳時連續移動、最近立場即時切換、放開吸附（200ms）；← → 跳到上／下一個立場，
  * 並 preventDefault，所以不會換事件或換頁（contracts/state-and-events §2）。
- * 軌道下的人名可開 Popover；事件 05 的「見下方 ↓」會讓整個區塊閃動。
+ * 軌道下的人名可開 Popover。
  */
 export function BoundarySpectrum({ boundary }: { boundary: AxisExtrasBoundary }) {
-  const { mode } = useLayout();
-  const reduceMotion = useReducedMotion();
   const value = useAppStore((s) => s.spectrum);
   const setSpectrum = useAppStore((s) => s.setSpectrum);
   const stances = useMemo(
@@ -58,39 +50,10 @@ export function BoundarySpectrum({ boundary }: { boundary: AxisExtrasBoundary })
     setSpectrum(next);
   };
 
-  // ── 交叉連結：閃動（舞台版光譜已在畫面上；流式版先捲過去）──
-  const flashToken = useUiStore((s) => s.spectrumFlash);
-  const [baseline] = useState(flashToken); // 掛載前的點擊不重播
-  const [flashing, setFlashing] = useState(0);
-  useEffect(() => {
-    if (flashToken === baseline) return;
-    const flow = mode === 'flow';
-    const wait = flow && !reduceMotion ? SCROLL_SETTLE : 0;
-    if (flow)
-      rootRef.current?.scrollIntoView({
-        block: 'center',
-        behavior: reduceMotion ? 'auto' : 'smooth',
-      });
-    const start = window.setTimeout(() => {
-      thumbRef.current?.focus({ preventScroll: true });
-      setFlashing(flashToken);
-    }, wait);
-    // 「減少動態」時不播放動畫，改以靜態外框與底色停留 1.2 秒
-    const end = window.setTimeout(() => setFlashing(0), wait + (reduceMotion ? 1200 : 600));
-    return () => {
-      window.clearTimeout(start);
-      window.clearTimeout(end);
-    };
-  }, [flashToken, baseline, mode, reduceMotion]);
-
   const off = Math.abs(value - current.position) > 0.5;
 
   return (
     <section ref={rootRef} data-spectrum className="spectrum" aria-label={t('spectrum.label')}>
-      {/* 閃動用的外框＋底色疊層：以 key 重新掛載來重播動畫，不影響光譜本身（焦點、拖曳都留著） */}
-      {flashing > 0 && (
-        <span key={flashing} data-spectrum-flash className="spectrum__flash" aria-hidden="true" />
-      )}
       <div className="spectrum__head">
         <Eyebrow>{boundary.title}</Eyebrow>
         <span className="spectrum__hint">{boundary.hint}</span>

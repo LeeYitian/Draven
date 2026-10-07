@@ -37,12 +37,12 @@ export function PageHeader({ number, category, title, oneLiner, coreTheme }: Pag
   }
 
   return (
-    <header className="grid h-[72px] grid-cols-[minmax(0,1fr)_460px] items-end gap-12">
+    <header className="grid h-[64px] grid-cols-[minmax(0,1fr)_460px] items-end gap-12">
       <div className="flex items-end gap-[22px]">
         <DisplayNum className="text-[64px] leading-[0.8]">{number}</DisplayNum>
         <div>
           <Eyebrow accent>{category}</Eyebrow>
-          <h1 className="mt-1.5 text-[34px] leading-[1.15]">{title}</h1>
+          <h1 className="mt-1 text-[32px] leading-[1.1]">{title}</h1>
         </div>
       </div>
       <div>

@@ -1,6 +1,7 @@
 import { Eye, ScrollText, Users, X } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
+import { useState, type ReactNode, type Ref } from 'react';
 import { getAxisPage, getPerson, t } from '../../content';
+import { useFbLinked, useFbPulseScheduler, useFbPulseTarget } from '../../features/hints/fbPulse';
 import { navigate, openPeople, routeForPage } from '../../lib/hash-router';
 import { useAppStore } from '../../store/store';
 import { useUiStore } from '../../store/ui';
@@ -25,7 +26,21 @@ function useDock() {
   const trayOpen = useUiStore((s) => s.hintsTrayOpen);
   const toggleTray = useUiStore((s) => s.toggleHintsTray);
   const tracked = trackedId ? getPerson(trackedId) : undefined;
-  return { page, peopleOpen, owned, toastToken, tracked, feedback, untrack, trayOpen, toggleTray };
+  // 伏筆連動脈衝：頁面上有未填框格時，「伏筆」按鈕與框格同步閃動
+  useFbPulseScheduler();
+  const linked = useFbLinked();
+  return {
+    page,
+    peopleOpen,
+    owned,
+    toastToken,
+    tracked,
+    feedback,
+    untrack,
+    trayOpen,
+    toggleTray,
+    linked,
+  };
 }
 
 export function Dock() {
@@ -42,18 +57,25 @@ function DockItem({
   label,
   active,
   onClick,
+  buttonRef,
+  linked,
   children,
 }: {
   icon: ReactNode;
   label: string;
   active?: boolean;
   onClick: () => void;
+  /** 伏筆連動脈衝的目標（只有「伏筆」按鈕需要） */
+  buttonRef?: Ref<HTMLButtonElement>;
+  linked?: boolean;
   children?: ReactNode;
 }) {
   return (
     <button
+      ref={buttonRef}
       type="button"
       className={itemClass}
+      data-fb-linked={linked || undefined}
       data-active={active || undefined}
       aria-pressed={active}
       onClick={onClick}
@@ -81,6 +103,7 @@ function HintsBadge({ count, token }: { count: number; token: number }) {
 
 function SideDock() {
   const d = useDock();
+  const pulseRef = useFbPulseTarget<HTMLButtonElement>(d.linked);
   return (
     <nav
       aria-label={t('dock.nav')}
@@ -97,6 +120,8 @@ function SideDock() {
         label={t('dock.hints')}
         active={d.trayOpen}
         onClick={d.toggleTray}
+        buttonRef={pulseRef}
+        linked={d.linked}
       >
         <HintsBadge count={d.owned} token={d.toastToken} />
       </DockItem>
@@ -143,9 +168,16 @@ function SideDock() {
           </button>
         ))}
       </div>
-      <div className="mt-2 flex gap-[3px]" aria-label={t('keys.pages')}>
-        <Kbd className="w-[22px]! min-w-[22px]!">↑</Kbd>
-        <Kbd className="w-[22px]! min-w-[22px]!">↓</Kbd>
+      <div className="mt-2.5 flex flex-col items-center gap-1.5" aria-label={t('keys.pages')}>
+        <div className="flex gap-1">
+          <Kbd size="sm" nudge="first">
+            ↑
+          </Kbd>
+          <Kbd size="sm" nudge="late">
+            ↓
+          </Kbd>
+        </div>
+        <span className="text-aux text-neutral-700">{t('keys.switchAxis')}</span>
       </div>
     </nav>
   );
@@ -157,6 +189,7 @@ const cellClass =
 
 function BottomDock() {
   const d = useDock();
+  const pulseRef = useFbPulseTarget<HTMLButtonElement>(d.linked);
   const setPagesMenu = useUiStore((s) => s.setPagesMenu);
   const pagesMenuOpen = useUiStore((s) => s.pagesMenuOpen);
   const [trackSheet, setTrackSheet] = useState(false);
@@ -175,9 +208,11 @@ function BottomDock() {
             <span className="text-aux">{t('dock.people')}</span>
           </button>
           <button
+            ref={pulseRef}
             type="button"
             className={cellClass}
             aria-pressed={d.trayOpen}
+            data-fb-linked={d.linked || undefined}
             data-active={d.trayOpen || undefined}
             onClick={d.toggleTray}
           >

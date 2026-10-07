@@ -8,6 +8,7 @@ import {
   openPage,
   stageOverflow,
 } from './helpers';
+import { AXIS_FRAME } from '../../src/lib/stage-metrics';
 
 // US6b：02 比較滑桿與時間感、分區關係圖。
 
@@ -43,7 +44,7 @@ test.describe('舞台版 02：版面', () => {
     const g = (await page.locator('[data-graph-viewport]').boundingBox())!;
     const c = (await page.locator('[data-compare]').boundingBox())!;
     const main = (await page.locator('[data-page-main]').boundingBox())!;
-    expect(Math.round(g.height)).toBe(290);
+    expect(Math.round(g.height)).toBe(AXIS_FRAME.lowerWithCompare.graphHeight);
     expect(Math.round(g.width)).toBe(628);
     expect(Math.round(c.width)).toBe(1288);
     expect(Math.round(c.height)).toBe(147);

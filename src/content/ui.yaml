@@ -24,6 +24,7 @@ keys:
   pages: 換頁
   firstTime: 用 ← → 切換事件，關係圖會跟著畫出
   enterFirst: 進入第一主軸
+  switchAxis: 切換主軸
 
 # 重置進度（00 頁底部）
 reset:
@@ -129,7 +130,7 @@ people:
   title: 人物誌
   total: 出場人物 {n}
   progress: 目前進度 {page}
-  progressLegend: 彩色＝已登場
+  instruction: 內容會隨閱讀進度改變
   selected: 已選中 {n} 人
   sortLabel: 排列
   sort:

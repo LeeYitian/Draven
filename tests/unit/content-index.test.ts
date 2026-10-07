@@ -13,10 +13,11 @@ import {
 import { plainText } from '../../src/content/markup.ts';
 
 describe('content loader', () => {
-  it('載入 15 位人物、17 個名詞、12 條伏筆（通過 zod 驗證）', () => {
-    expect(people).toHaveLength(15);
-    expect(terms).toHaveLength(17);
-    expect(hints).toHaveLength(12);
+  it('載入人物、名詞、伏筆（通過 zod 驗證；數量隨內容增減，只檢查有資料且 id 不重複）', () => {
+    for (const list of [people, terms, hints]) {
+      expect(list.length).toBeGreaterThan(0);
+      expect(new Set(list.map((x) => x.id)).size).toBe(list.length);
+    }
   });
 
   it('查詢函式', () => {

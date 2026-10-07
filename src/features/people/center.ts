@@ -134,9 +134,11 @@ export interface LabelPlacement {
 
 /**
  * 線上文字位置：放在「最長的水平線段」的中點、線上方 6px；
- * 沒有夠長（≥ 70）的水平線段時，放在最長垂直線段的旁邊（中心偏右的線在右側）。
+ * 沒有夠長（≥ 70）的水平線段、或文字（依字數估寬）比線段還寬、會蓋到線段兩端的人物卡時，
+ * 放在最長垂直線段的旁邊（中心偏右的線在右側）。
  */
-export function labelPlacement(route: readonly Point[]): LabelPlacement {
+export const LABEL_CHAR_WIDTH = 14;
+export function labelPlacement(route: readonly Point[], text = ''): LabelPlacement {
   let bestH: { len: number; x: number; y: number } | null = null;
   let bestV: { len: number; x: number; y: number } | null = null;
   for (let i = 0; i < route.length - 1; i++) {
@@ -149,7 +151,9 @@ export function labelPlacement(route: readonly Point[]): LabelPlacement {
     if (dx === 0 && dy > 0 && (!bestV || dy > bestV.len))
       bestV = { len: dy, x: p.x, y: (p.y + q.y) / 2 };
   }
-  if (bestH && bestH.len >= 70) return { x: bestH.x, y: bestH.y - 6, anchor: 'middle' };
+  const textWidth = text.length * LABEL_CHAR_WIDTH;
+  if (bestH && bestH.len >= 70 && (textWidth === 0 || textWidth <= bestH.len - 12))
+    return { x: bestH.x, y: bestH.y - 6, anchor: 'middle' };
   const v = bestV ?? bestH!;
   const centerX = CENTER_RECT.x + CENTER_RECT.w / 2;
   return v.x >= centerX
@@ -203,7 +207,7 @@ export function assignCenter(
       rect: s.rect,
       relation,
       route: s.route,
-      label: labelPlacement(s.route),
+      label: labelPlacement(s.route, relation.label),
     };
   });
   const placedIds = new Set([centerId, ...ring.map((r) => r.id)]);

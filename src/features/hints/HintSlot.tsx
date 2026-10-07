@@ -4,6 +4,7 @@ import { getHint, t } from '../../content';
 import { useAppStore } from '../../store/store';
 import { useUiStore } from '../../store/ui';
 import { placeHintAction } from './actions';
+import { useFbLinked, useFbPulseTarget, useReportEmptySlot } from './fbPulse';
 
 /** 答錯震動 300ms；答對光暈閃動 600ms×2（CSS），回饋在這之後由框格自己清掉 */
 const FEEDBACK_MS = { wrong: 300, solved: 1200 } as const;
@@ -58,6 +59,10 @@ export function HintSlot({ hintId, index, cellRef, className, style }: HintSlotP
   const hint = getHint(hintId);
   const { state, dragging, flashing } = useSlotState(hintId);
   const selected = useAppStore((s) => s.hints.selected);
+  const unsolved = state !== 'solved';
+  const linked = useFbLinked() && unsolved;
+  const slotRef = useFbPulseTarget<HTMLSpanElement>(linked);
+  useReportEmptySlot(hintId, slotRef, unsolved);
   if (!hint) return null;
 
   const onActivate = () => {
@@ -78,9 +83,11 @@ export function HintSlot({ hintId, index, cellRef, className, style }: HintSlotP
   return (
     <span ref={cellRef} className={className} style={style} data-hint-cell={hintId}>
       <span
+        ref={slotRef}
         role="button"
         tabIndex={0}
         className="hint-slot"
+        data-fb-linked={linked || undefined}
         data-hint-slot={hintId}
         data-state={state}
         data-shake={state === 'wrong' || undefined}

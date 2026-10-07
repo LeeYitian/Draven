@@ -189,8 +189,8 @@ const BoundaryDebateSchema = z.strictObject({
     )
     .min(2),
   defaultPosition: z.number().min(0).max(100),
-  /** 事件裡的 {x:spectrum|…} 交叉連結所在事件 */
-  crossLinkEvent: z.number().int().min(1),
+  /** 從哪個事件起顯示光譜（預設整頁常駐＝1；設成 5＝讀到事件 05 才出現） */
+  showFromEvent: z.number().int().min(1).default(1),
 });
 
 const CompareColumnSchema = z.strictObject({
@@ -222,7 +222,8 @@ export const AxisExtrasSchema = z.strictObject({
       frontAlt: z.string().min(1),
       backTitle: z.string().min(1),
       backText: z.string().min(1),
-      caption: z.string().min(1),
+      /** 卡片下方一行說明；留空（yaml 的 caption: 後面不寫）就不顯示 */
+      caption: z.string().min(1).nullish(),
     })
     .optional(),
   choice: z
@@ -231,11 +232,11 @@ export const AxisExtrasSchema = z.strictObject({
   cover: z
     .strictObject({ title: z.string().min(1), body: z.string().min(1), button: z.string().min(1) })
     .optional(),
-  /** 04：事件序 → 專屬區塊（3 鏡像卡、5 明信片、其餘抉擇） */
+  /** 04：事件序 → 專屬區塊（3 鏡像卡、5 明信片、6 抉擇）；沒列到的事件用 default（none＝什麼都不顯示） */
   eventExtras: z
     .strictObject({
-      byEvent: z.record(z.string(), z.enum(['mirror', 'postcard', 'choice'])),
-      default: z.enum(['mirror', 'postcard', 'choice']),
+      byEvent: z.record(z.string(), z.enum(['mirror', 'postcard', 'choice', 'none'])),
+      default: z.enum(['mirror', 'postcard', 'choice', 'none']),
     })
     .optional(),
 });

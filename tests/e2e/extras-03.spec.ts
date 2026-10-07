@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { FLOW_SIZES, STAGE_SIZES, intersects, nodeRects, openPage, stageOverflow } from './helpers';
+import { AXIS_FRAME } from '../../src/lib/stage-metrics';
 
 // US6c：03 三界分層（收合、只看地底、跨層線改連層頭）與兩則引言。
 
@@ -26,7 +27,8 @@ const hiddenNodes = (page: Page) =>
       .sort(),
   );
 // offsetHeight 是四捨五入的整數，三層各自捨入後的總和可能差 1–2
-const expectNear = (actual: number, expected: number) => expect(Math.abs(actual - expected)).toBeLessThanOrEqual(2);
+const expectNear = (actual: number, expected: number) =>
+  expect(Math.abs(actual - expected)).toBeLessThanOrEqual(2);
 const settle = (page: Page) => page.waitForTimeout(450); // 收合動畫 300ms
 
 test.describe('舞台版 03：三界分層', () => {
@@ -36,12 +38,15 @@ test.describe('舞台版 03：三界分層', () => {
     await page.waitForTimeout(2500);
   });
 
-  test('三個層頭：層名＋人數；層高加起來等於畫布 457', async ({ page }) => {
+  test('三個層頭：層名＋人數；層高加起來等於畫布高度', async ({ page }) => {
     await expect(head(page, 'human')).toContainText('人間 · 6');
     await expect(head(page, 'border')).toContainText('地底交界 · 4');
     await expect(head(page, 'otherworld')).toContainText('異界 · 1');
     const heights = await bandHeights(page);
-    expectNear(heights.reduce((a, b) => a + b, 0), 457);
+    expectNear(
+      heights.reduce((a, b) => a + b, 0),
+      AXIS_FRAME.lower.height,
+    );
     for (const id of ['human', 'border', 'otherworld'])
       await expect(head(page, id)).toHaveAttribute('aria-expanded', 'true');
   });
@@ -53,7 +58,10 @@ test.describe('舞台版 03：三界分層', () => {
     await expect(head(page, 'otherworld')).toContainText('異界 · 1 · 已收合');
     const heights = await bandHeights(page);
     expect(heights[2]).toBe(46);
-    expectNear(heights.reduce((a, b) => a + b, 0), 457);
+    expectNear(
+      heights.reduce((a, b) => a + b, 0),
+      AXIS_FRAME.lower.height,
+    );
     expect(await hiddenNodes(page)).toEqual(['snake-god']);
     // 其他層變高
     expect(heights[0]).toBeGreaterThan(0);
@@ -105,7 +113,7 @@ test.describe('舞台版 03：三界分層', () => {
     const heights = await bandHeights(page);
     expect(heights[0]).toBe(46);
     expect(heights[2]).toBe(46);
-    expectNear(heights[1]!, 457 - 92);
+    expectNear(heights[1]!, AXIS_FRAME.lower.height - 92);
     expect((await hiddenNodes(page)).sort()).toEqual([
       'bishop',
       'bren',
@@ -151,7 +159,7 @@ test.describe('舞台版 03：三界分層', () => {
       samples.push((await bandHeights(page)).reduce((a, b) => a + b, 0));
       await page.waitForTimeout(40);
     }
-    for (const s of samples) expectNear(s, 457);
+    for (const s of samples) expectNear(s, AXIS_FRAME.lower.height);
   });
 
   test('同一對人物的兩條相反的線（傳授召喚儀式／扣留）分在兩側、不疊在一起', async ({ page }) => {
@@ -173,8 +181,10 @@ test.describe('舞台版 03：三界分層', () => {
 });
 
 test.describe('舞台版 03：引言', () => {
-  test('兩則引言預設整頁常駐（事件 01 就看得到）；說話者沒被追蹤就沒有書籤', async ({ page }) => {
+  test('兩則引言只在事件 07 出現（showFromEvent）；說話者沒被追蹤就沒有書籤', async ({ page }) => {
     await openPage(page, { w: 1440, h: 795 }, AXIS3);
+    await expect(page.locator('[data-quote]')).toHaveCount(0);
+    await page.locator('[data-event="7"]').click();
     await expect(page.locator('[data-quote]')).toHaveCount(2);
     await expect(page.locator('[data-quote="promise"]')).toContainText(
       '我會讓陛下把教會的歷史公諸於世',
@@ -186,14 +196,14 @@ test.describe('舞台版 03：引言', () => {
   test('追蹤艾利安：兩則引言左上掛書籤；事件 07 的引言標示為目前', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('draven:tracked', JSON.stringify('elian')));
     await openPage(page, { w: 1440, h: 795 }, AXIS3);
-    await expect(page.locator('[data-quote] .bookmark')).toHaveCount(2);
-    await expect(page.locator('[data-quote][data-current]')).toHaveCount(0);
     await page.locator('[data-event="7"]').click();
+    await expect(page.locator('[data-quote] .bookmark')).toHaveCount(2);
     await expect(page.locator('[data-quote][data-current]')).toHaveCount(2);
   });
 
   test('說話者名字可開 Popover', async ({ page }) => {
     await openPage(page, { w: 1440, h: 795 }, AXIS3);
+    await page.locator('[data-event="7"]').click();
     await page.locator('[data-quote="promise"] .quote__who [role="button"]').click();
     await expect(page.locator('[data-popover]')).toBeVisible();
   });
@@ -211,6 +221,10 @@ test.describe('舞台版 03：引言', () => {
           await expect(page.locator('[data-narrative-body] h2')).not.toBeEmpty();
           await page.waitForTimeout(250);
           expect(await stageOverflow(page), '事件 ' + n).toEqual([]);
+          if (n < 7) {
+            await expect(page.locator('[data-quotes]'), '事件 ' + n + ' 還沒有引言').toHaveCount(0);
+            continue;
+          }
           const q = (await page.locator('[data-quotes]').boundingBox())!;
           const nar = (await page.locator('[data-narrative-body]').boundingBox())!;
           const g = (await page.locator('[data-graph-viewport]').boundingBox())!;
@@ -233,7 +247,7 @@ test.describe('舞台版 03：引言', () => {
 
   test('敘述很長時引言區可在區塊內捲動（overflow-y: auto）', async ({ page }) => {
     await openPage(page, { w: 1366, h: 640 }, AXIS3);
-    await page.locator('[data-event="6"]').click();
+    await page.locator('[data-event="7"]').click();
     await page.waitForTimeout(300);
     const info = await page.locator('[data-quotes]').evaluate((el) => ({
       overflowY: getComputedStyle(el).overflowY,
@@ -262,6 +276,8 @@ test.describe('流式版 03', () => {
         await settle(page);
         await expect(head(page, 'human')).toHaveAttribute('aria-expanded', 'false');
         expect(await bandHeight(page, 'human')).toBe(46);
+        await page.locator('[data-event="7"]').dispatchEvent('click'); // 引言只在事件 07 出現
+        await page.waitForTimeout(350);
         const g = (await page.locator('[data-graph-viewport]').boundingBox())!;
         const q = (await page.locator('[data-quotes]').boundingBox())!;
         expect(q.y).toBeGreaterThan(g.y + g.height - 1);

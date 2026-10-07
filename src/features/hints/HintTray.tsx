@@ -155,9 +155,9 @@ export function HintTray() {
       >
         <div className="flex items-baseline gap-3.5">
           <h2 className="m-0 font-heading text-[24px] font-medium">{t('hints.title')}</h2>
-          <CountLine />
+          <span className="text-[15px] text-accent-800">{t('hints.howTo')}</span>
           <span className="flex-1" />
-          <span className="text-aux text-neutral-600">{t('hints.howTo')}</span>
+          <CountLine />
           <button
             type="button"
             className="flex h-8 w-8 items-center justify-center self-center rounded-md border border-divider hover:bg-accent-100"

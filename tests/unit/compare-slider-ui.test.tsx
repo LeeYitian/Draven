@@ -2,6 +2,8 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/app/App';
+import { getAxisPage } from '../../src/content';
+import { firstSentence } from '../../src/features/extras/compare';
 import { usePopoverStore } from '../../src/store/popover';
 import { resetStoreForTests, useAppStore } from '../../src/store/store';
 import { useUiStore } from '../../src/store/ui';
@@ -17,6 +19,8 @@ function start(hash = '#/axis/2', size: [number, number] = [1440, 720]) {
 const handle = () => screen.getByRole('slider', { name: '兩種面對時間的方式：左右拖曳比較' });
 const root = () => document.documentElement;
 const col = (side: 'left' | 'right') => document.querySelector(`[data-side="${side}"]`)!;
+// 文字從內容檔讀：改文案不會讓測試失敗，測試只驗證「寬側完整、窄側截短」的行為
+const compare = () => getAxisPage(2)!.extras.compare!;
 
 beforeEach(() => {
   localStorage.clear();
@@ -95,28 +99,36 @@ describe('02 比較滑桿', () => {
     expect(useAppStore.getState().compareSlider).toBe(80);
   });
 
-  it('把手偏右：左側變寬、右側淡出只留標題與首句＋⋯；偏左則相反', () => {
+  it('把手偏右：左側變寬、右側淡出只留標題與首句；偏左則相反', () => {
+    const { left, right } = compare();
     start();
     act(() => useAppStore.getState().setCompare(72));
     expect(col('left')).toHaveAttribute('data-emphasis', 'wide');
     expect(col('right')).toHaveAttribute('data-emphasis', 'narrow');
-    expect(col('right')).toHaveTextContent('國王 · 拒絕時間回溯');
-    expect(col('right')).toHaveTextContent('「我不是選擇死亡。」⋯');
-    expect(col('right')).not.toHaveTextContent('而是死亡是人生必經的一環');
-    expect(col('right')).not.toHaveTextContent('德雷文，拒絕露米'); // 窄側不顯示出處
-    expect(col('left')).toHaveTextContent('德雷文，對解咒後自責的艾利安');
+    // 寬側：標題、整段引言、出處都在
+    expect(col('left')).toHaveTextContent(left.label);
+    expect(col('left')).toHaveTextContent(left.quote);
+    expect(col('left')).toHaveTextContent(left.source);
+    // 窄側：標題＋首句，不顯示出處
+    const first = firstSentence(right.quote);
+    expect(col('right')).toHaveTextContent(right.label);
+    expect(col('right')).toHaveTextContent(first.text);
+    expect(col('right')).not.toHaveTextContent(right.source);
+    if (first.more) expect(col('right')).not.toHaveTextContent(right.quote);
 
     act(() => useAppStore.getState().setCompare(30));
     expect(col('left')).toHaveAttribute('data-emphasis', 'narrow');
     expect(col('right')).toHaveAttribute('data-emphasis', 'wide');
-    expect(col('right')).toHaveTextContent('而是死亡是人生必經的一環');
+    expect(col('right')).toHaveTextContent(right.quote);
   });
 
-  it('孩子欄的引言本身就是一句，窄側也完整顯示（沒有⋯）', () => {
+  it('窄側的「⋯」只在引言真的被截短時才出現（本來就是一句就完整顯示）', () => {
+    const { left, right } = compare();
     start();
     act(() => useAppStore.getState().setCompare(30)); // 左側變窄
-    expect(col('left')).toHaveTextContent('你處的環境讓你什麼都做不了。」');
-    expect(col('left').textContent).not.toContain('⋯');
+    expect(col('left').textContent?.includes('⋯')).toBe(firstSentence(left.quote).more);
+    act(() => useAppStore.getState().setCompare(72)); // 右側變窄
+    expect(col('right').textContent?.includes('⋯')).toBe(firstSentence(right.quote).more);
   });
 });
 

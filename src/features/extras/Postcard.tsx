@@ -18,34 +18,39 @@ export function Postcard({ postcard }: { postcard: AxisExtrasPostcard }) {
     <figure className="postcard-wrap" data-postcard>
       {/* 上浮動畫：兩組同樣的 keyframes 輪流用，每次翻面換一組就會從頭播放 */}
       <div className="postcard-lift" data-lift={flips === 0 ? undefined : flips % 2}>
-        <button
-          type="button"
-          className="postcard"
-          data-flipped={flipped || undefined}
-          aria-pressed={flipped}
-          aria-label={t('postcard.flip')}
-          onClick={() => setFlips((n) => n + 1)}
-        >
-          <span className="postcard__face" data-side="front" aria-hidden={flipped || undefined}>
-            <img
-              className="postcard__img"
-              src={src}
-              alt={flipped ? '' : postcard.frontAlt}
-              draggable={false}
-            />
-            <span className="postcard__hint">{t('postcard.flipHint')}</span>
-          </span>
-          <span className="postcard__face" data-side="back" aria-hidden={!flipped || undefined}>
-            <Eyebrow>{postcard.backTitle}</Eyebrow>
-            <span className="postcard__text">
-              <RichText text={postcard.backText} />
+        {/* 閒置傾斜：和鏡像卡一樣 rotateY ±8° 緩慢來回，滑鼠移上去或聚焦時暫停 */}
+        <div className="postcard-idle">
+          <button
+            type="button"
+            className="postcard"
+            data-flipped={flipped || undefined}
+            aria-pressed={flipped}
+            aria-label={t('postcard.flip')}
+            onClick={() => setFlips((n) => n + 1)}
+          >
+            <span className="postcard__face" data-side="front" aria-hidden={flipped || undefined}>
+              <img
+                className="postcard__img"
+                src={src}
+                alt={flipped ? '' : postcard.frontAlt}
+                draggable={false}
+              />
+              <span className="postcard__hint">{t('postcard.flipHint')}</span>
             </span>
-          </span>
-        </button>
+            <span className="postcard__face" data-side="back" aria-hidden={!flipped || undefined}>
+              <Eyebrow>{postcard.backTitle}</Eyebrow>
+              <span className="postcard__text">
+                <RichText text={postcard.backText} />
+              </span>
+            </span>
+          </button>
+        </div>
       </div>
-      <figcaption className="postcard__caption">
-        <RichText text={postcard.caption} />
-      </figcaption>
+      {postcard.caption && (
+        <figcaption className="postcard__caption">
+          <RichText text={postcard.caption} />
+        </figcaption>
+      )}
     </figure>
   );
 }
