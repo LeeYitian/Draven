@@ -9,7 +9,7 @@ import {
   stageCenter,
   stageOverflow,
 } from './helpers';
-import { AXIS_FRAME } from '../../src/lib/stage-metrics';
+import { AXIS_FRAME, GRAPH_BARS } from '../../src/lib/stage-metrics';
 
 // US2：01 主軸頁的事件推進、焦點、畫線、拖曳、縮放與版面（所有視窗矩陣）。
 // 座標以幾何斷言為主；動畫以「進行中的 DOM 狀態」判斷，不比對像素。
@@ -236,9 +236,12 @@ test.describe('舞台版 01：拖曳、縮放、圖例', () => {
     await page.locator('[data-event="6"]').click();
     await page.getByRole('button', { name: '衝突', exact: true }).click();
     await expect(page.locator('[data-edge="dravin-old"]')).toHaveAttribute('data-hidden');
-    expect(
-      await page.locator('[data-edge="dravin-old"]').evaluate((el) => getComputedStyle(el).opacity),
-    ).toBe('0');
+    // 淡出有 120ms 的過渡：輪詢到完全透明
+    await expect
+      .poll(() =>
+        page.locator('[data-edge="dravin-old"]').evaluate((el) => getComputedStyle(el).opacity),
+      )
+      .toBe('0');
     await page.getByRole('button', { name: '群體', exact: true }).click();
     await expect(page.locator('[data-node][data-hidden]')).toHaveCount(3);
   });
@@ -308,14 +311,16 @@ test.describe('舞台版 01：版面幾何（視窗矩陣）', () => {
       await openPage(page, size, AXIS1);
       expect(await stageOverflow(page)).toEqual([]);
 
-      // 節點中心：圖框左 772、上緣＝下方區 y；設計座標以 628×457 為準，依畫布高度等比（邊框畫在最上層，不佔畫布）
-      const { y: top, height } = AXIS_FRAME.lower;
+      // 節點中心：圖框左 772；畫布在圖框的上下功能列之間（節點的 y 是內容，只檢查在畫布內且上下順序正確）
+      const top = AXIS_FRAME.lower.y + GRAPH_BARS.top;
+      const bottom = AXIS_FRAME.lower.y + AXIS_FRAME.lower.height - GRAPH_BARS.bottom;
       const dravin = await stageCenter(page, '[data-node-wrapper="dravin"]');
       expect(dravin.x).toBeCloseTo(772 + 314, 0);
-      expect(dravin.y).toBeCloseTo(top + (80 * height) / 457, 0);
+      expect(dravin.y).toBeGreaterThan(top);
       const bren = await stageCenter(page, '[data-node-wrapper="bren"]');
       expect(bren.x).toBeCloseTo(772 + 558, 0);
-      expect(bren.y).toBeCloseTo(top + (376 * height) / 457, 0);
+      expect(bren.y).toBeLessThan(bottom);
+      expect(bren.y).toBeGreaterThan(dravin.y);
 
       const rects = await nodeRects(page);
       for (let i = 0; i < rects.length; i++)
@@ -326,7 +331,7 @@ test.describe('舞台版 01：版面幾何（視窗矩陣）', () => {
       const overlays = await page.evaluate(() =>
         [
           ...document.querySelectorAll<HTMLElement>(
-            '[data-graph-legend], [data-graph-viewport] ~ div.absolute.top-2\\.5',
+            '[data-graph-legend], [data-graph-controls]',
           ),
         ].map((el) => {
           const r = el.getBoundingClientRect();

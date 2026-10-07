@@ -113,7 +113,7 @@ export function GraphControls({
   }
 
   return (
-    <div data-graph-controls className="absolute top-2.5 right-2.5 z-[2] flex items-center gap-1.5">
+    <div data-graph-controls className="flex items-center gap-1.5">
       {zoomGroup}
       {undergroundChip}
       {labelsChip}

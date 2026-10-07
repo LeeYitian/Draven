@@ -44,7 +44,7 @@ function EventExtras({ page }: { page: AxisPage }) {
   );
 }
 
-/** 各主軸專屬區塊（PageFrame 的 extras 位置：舞台版在敘述下方，流式版在關係圖之後） */
+/** 各主軸專屬區塊（PageFrame 的 extras 位置：舞台版在敘述下方，流式版在關係圖之前） */
 export function AxisExtras({ page }: { page: AxisPage }) {
   const { boundary, eventExtras } = page.extras;
   if (boundary) return <BoundaryExtra axis={page.axis} boundary={boundary} />;

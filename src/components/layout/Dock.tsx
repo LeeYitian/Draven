@@ -1,6 +1,7 @@
 import { Eye, ScrollText, Users, X } from 'lucide-react';
 import { useState, type ReactNode, type Ref } from 'react';
 import { getAxisPage, getPerson, t } from '../../content';
+import { ResetProgress } from '../../features/world/ResetProgress';
 import { useFbLinked, useFbPulseScheduler, useFbPulseTarget } from '../../features/hints/fbPulse';
 import { navigate, openPeople, routeForPage } from '../../lib/hash-router';
 import { useAppStore } from '../../store/store';
@@ -179,6 +180,9 @@ function SideDock() {
         </div>
         <span className="text-aux text-neutral-700">{t('keys.switchAxis')}</span>
       </div>
+      <div className="mt-2">
+        <ResetProgress placement="dock" />
+      </div>
     </nav>
   );
 }
@@ -197,7 +201,7 @@ function BottomDock() {
   return (
     <>
       <nav aria-label={t('dock.nav')} className="fixed inset-x-0 bottom-0 z-(--z-dock) bg-bg">
-        <div className="mx-auto grid h-[76px] max-w-[640px] grid-cols-4 border-t border-divider pb-3">
+        <div className="mx-auto grid h-[76px] max-w-[640px] grid-cols-5 border-t border-divider pb-3">
           <button
             type="button"
             className={cellClass}
@@ -246,6 +250,7 @@ function BottomDock() {
             <DisplayNum className="text-[21px] text-accent-700">{pad(d.page)}</DisplayNum>
             <span className="text-aux">{t('dock.pages')}</span>
           </button>
+          <ResetProgress placement="cell" />
         </div>
       </nav>
 

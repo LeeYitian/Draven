@@ -247,8 +247,11 @@ test.describe('舞台版 04：專屬區塊', () => {
     expect(Math.round(m)).toBe(180);
     const after = await stageRect(page, '.postcard');
     expect(Math.abs(after.y - before.y)).toBeLessThan(1); // 回到原位
-    const caption = await stageRect(page, '.postcard__caption');
-    expect(caption.y).toBeGreaterThanOrEqual(before.y + before.h - 1);
+    // 說明可留空（沒寫就不顯示）；有顯示時要在卡片下方
+    if ((await page.locator('.postcard__caption').count()) > 0) {
+      const caption = await stageRect(page, '.postcard__caption');
+      expect(caption.y).toBeGreaterThanOrEqual(before.y + before.h - 1);
+    }
     await expect(page.locator('.postcard__face[data-side="back"]')).toContainText('媽媽很愛你');
   });
 
@@ -270,7 +273,7 @@ test.describe('舞台版 04：專屬區塊', () => {
           }
           const extra = await stageRect(page, '[data-event-extra]');
           const nar = await stageRect(page, '[data-narrative-body]');
-          const graph = await stageRect(page, '[data-graph-viewport]');
+          const graph = await stageRect(page, '[data-graph-frame]');
           expect(extra.y, '事件 ' + n + ' 區塊在敘述之下').toBeGreaterThanOrEqual(
             nar.y + nar.h - 1,
           );
@@ -296,7 +299,7 @@ test.describe('舞台版 04：專屬區塊', () => {
     const zones = await page.locator('[data-zone-label]').allTextContents();
     // 兩個分區，各自「名稱 · 人數」（名稱是內容，不寫死）
     expect(zones).toHaveLength(2);
-    for (const z of zones) expect(z).toMatch(/ · d+$/);
+    for (const z of zones) expect(z).toMatch(/ · \d+$/);
   });
 
   test('伏筆回收處：事件 02／03／04／05 各有一個框格錨點', async ({ page }) => {

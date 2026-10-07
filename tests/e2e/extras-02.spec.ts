@@ -8,7 +8,7 @@ import {
   openPage,
   stageOverflow,
 } from './helpers';
-import { AXIS_FRAME } from '../../src/lib/stage-metrics';
+import { AXIS_FRAME, GRAPH_BARS } from '../../src/lib/stage-metrics';
 
 // US6b：02 比較滑桿與時間感、分區關係圖。
 
@@ -44,7 +44,9 @@ test.describe('舞台版 02：版面', () => {
     const g = (await page.locator('[data-graph-viewport]').boundingBox())!;
     const c = (await page.locator('[data-compare]').boundingBox())!;
     const main = (await page.locator('[data-page-main]').boundingBox())!;
-    expect(Math.round(g.height)).toBe(AXIS_FRAME.lowerWithCompare.graphHeight);
+    expect(Math.round(g.height)).toBe(
+      AXIS_FRAME.lowerWithCompare.graphHeight - GRAPH_BARS.top - GRAPH_BARS.bottom,
+    );
     expect(Math.round(g.width)).toBe(628);
     expect(Math.round(c.width)).toBe(1288);
     expect(Math.round(c.height)).toBe(147);
@@ -343,7 +345,8 @@ test.describe('流式版 02', () => {
     const flowBg = () =>
       page.evaluate(() => getComputedStyle(document.querySelector('[data-flow]')!).backgroundColor);
     const clean = await flowBg();
-    await handle(page).scrollIntoViewIfNeeded();
+    // 捲到畫面中央：貼在邊緣會被黏在頂端的事件列蓋住，滑鼠按不到
+    await handle(page).evaluate((el) => el.scrollIntoView({ block: 'center' }));
     const h = (await handle(page).boundingBox())!;
     const t = (await track(page).boundingBox())!;
     await page.mouse.move(h.x + h.width / 2, h.y + h.height / 2);

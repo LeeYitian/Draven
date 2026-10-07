@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { FLOW_SIZES, STAGE_SIZES, intersects, nodeRects, openPage, stageOverflow } from './helpers';
-import { AXIS_FRAME } from '../../src/lib/stage-metrics';
+import { AXIS_FRAME, GRAPH_BARS } from '../../src/lib/stage-metrics';
 
 // US6c：03 三界分層（收合、只看地底、跨層線改連層頭）與兩則引言。
 
@@ -29,6 +29,8 @@ const hiddenNodes = (page: Page) =>
 // offsetHeight 是四捨五入的整數，三層各自捨入後的總和可能差 1–2
 const expectNear = (actual: number, expected: number) =>
   expect(Math.abs(actual - expected)).toBeLessThanOrEqual(2);
+// 畫布高度＝圖框高度 − 上下功能列
+const CANVAS_HEIGHT = AXIS_FRAME.lower.height - GRAPH_BARS.top - GRAPH_BARS.bottom;
 const settle = (page: Page) => page.waitForTimeout(450); // 收合動畫 300ms
 
 test.describe('舞台版 03：三界分層', () => {
@@ -45,7 +47,7 @@ test.describe('舞台版 03：三界分層', () => {
     const heights = await bandHeights(page);
     expectNear(
       heights.reduce((a, b) => a + b, 0),
-      AXIS_FRAME.lower.height,
+      CANVAS_HEIGHT,
     );
     for (const id of ['human', 'border', 'otherworld'])
       await expect(head(page, id)).toHaveAttribute('aria-expanded', 'true');
@@ -60,7 +62,7 @@ test.describe('舞台版 03：三界分層', () => {
     expect(heights[2]).toBe(46);
     expectNear(
       heights.reduce((a, b) => a + b, 0),
-      AXIS_FRAME.lower.height,
+      CANVAS_HEIGHT,
     );
     expect(await hiddenNodes(page)).toEqual(['snake-god']);
     // 其他層變高
@@ -113,7 +115,7 @@ test.describe('舞台版 03：三界分層', () => {
     const heights = await bandHeights(page);
     expect(heights[0]).toBe(46);
     expect(heights[2]).toBe(46);
-    expectNear(heights[1]!, AXIS_FRAME.lower.height - 92);
+    expectNear(heights[1]!, CANVAS_HEIGHT - 92);
     expect((await hiddenNodes(page)).sort()).toEqual([
       'bishop',
       'bren',
@@ -159,7 +161,7 @@ test.describe('舞台版 03：三界分層', () => {
       samples.push((await bandHeights(page)).reduce((a, b) => a + b, 0));
       await page.waitForTimeout(40);
     }
-    for (const s of samples) expectNear(s, AXIS_FRAME.lower.height);
+    for (const s of samples) expectNear(s, CANVAS_HEIGHT);
   });
 
   test('同一對人物的兩條相反的線（傳授召喚儀式／扣留）分在兩側、不疊在一起', async ({ page }) => {
@@ -227,7 +229,7 @@ test.describe('舞台版 03：引言', () => {
           }
           const q = (await page.locator('[data-quotes]').boundingBox())!;
           const nar = (await page.locator('[data-narrative-body]').boundingBox())!;
-          const g = (await page.locator('[data-graph-viewport]').boundingBox())!;
+          const g = (await page.locator('[data-graph-frame]').boundingBox())!;
           expect(q.y, '引言區在敘述之下（事件 ' + n + '）').toBeGreaterThanOrEqual(
             nar.y + nar.height - 1,
           );
@@ -261,7 +263,7 @@ test.describe('舞台版 03：引言', () => {
 test.describe('流式版 03', () => {
   for (const size of FLOW_SIZES) {
     test(
-      size.w + '×' + size.h + '：三層可收合、節點不重疊、引言在關係圖之後、沒有橫向捲動',
+      size.w + '×' + size.h + '：三層可收合、節點不重疊、引言在關係圖之前、沒有橫向捲動',
       async ({ page }) => {
         await openPage(page, size, AXIS3);
         await expect(page.locator('[data-layer-head]')).toHaveCount(3);
@@ -280,7 +282,7 @@ test.describe('流式版 03', () => {
         await page.waitForTimeout(350);
         const g = (await page.locator('[data-graph-viewport]').boundingBox())!;
         const q = (await page.locator('[data-quotes]').boundingBox())!;
-        expect(q.y).toBeGreaterThan(g.y + g.height - 1);
+        expect(q.y + q.height).toBeLessThanOrEqual(g.y + 1); // 引言（專屬區塊）在關係圖上方
         expect(
           await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
         ).toBe(true);

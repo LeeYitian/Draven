@@ -177,7 +177,7 @@ describe('02 時間感（--age）', () => {
 });
 
 describe('02 流式版', () => {
-  it('比較滑桿在關係圖之後、不堆疊（兩欄用 grid 並排）；範圍保證窄側 ≥ 96px', () => {
+  it('比較滑桿在關係圖之前、不堆疊（兩欄用 grid 並排）；範圍保證窄側 ≥ 96px', () => {
     vi.stubGlobal(
       'ResizeObserver',
       class {
@@ -190,7 +190,7 @@ describe('02 流式版', () => {
     expect(track).toBeInTheDocument();
     expect(track.style.gridTemplateColumns).toBe('50% 50%');
     const graph = document.querySelector('[data-graph-viewport]')!;
-    expect(graph.compareDocumentPosition(track) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(graph.compareDocumentPosition(track) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
     vi.unstubAllGlobals();
   });
 });

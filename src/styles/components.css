@@ -1024,7 +1024,20 @@
     transform: translateY(3px);
   }
 }
+@keyframes flowCenterIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
+  .flow-center-in {
+    animation: flowCenterIn 320ms var(--ease-out-soft) both;
+  }
   .key-hint {
     animation: keyNudge 1.6s ease-in-out infinite;
   }
@@ -1531,10 +1544,6 @@ html[data-aged] .age-vignette {
 }
 button.layer-band__head {
   pointer-events: auto;
-}
-/* 舞台版：「人物關係」標題與右上的按鈕同一列（圖的功能列）；第一層的層名是圖的內容，放在這一列的下面 */
-html[data-layout='stage'] .layer-head-slot[data-first] .layer-band__head {
-  padding-top: 32px;
 }
 
 /* ── 引言卡（03）：被追蹤者的引言左上掛書籤（不用底色，避免和 hover 混淆）── */

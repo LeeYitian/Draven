@@ -119,14 +119,12 @@ for (const axis of AXES) {
               expect(p[1] - h / 2, id + ' 上緣 vs 層 ' + layer.id).toBeGreaterThanOrEqual(band.top);
               expect(p[1] + h / 2, id + ' 下緣 vs 層 ' + layer.id).toBeLessThanOrEqual(band.bottom);
             }
-            // 層頭：舞台版第一層要讓開頂端「人物關係」標題與按鈕那一列（往下 32px）；文字約每字 16px＋箭頭 20px
-            const left = 12;
-            const top = mode === 'stage' && i === 0 ? 32 : 6;
+            // 層頭在畫布左上（「人物關係」標題與控制項在畫布之外的上方列）；文字約每字 16px＋箭頭 20px
             const label = {
-              l: left,
-              r: left + 24 + [...layer.label].length * 16 + 40,
-              t: band.top + top,
-              b: band.top + top + (mode === 'stage' && i === 0 ? 16 : 24),
+              l: 12,
+              r: 12 + 24 + [...layer.label].length * 16 + 40,
+              t: band.top + 6,
+              b: band.top + 30,
             };
             for (const node of page.graph.nodes) {
               const p = c.positions[node.id]!;

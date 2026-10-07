@@ -75,14 +75,14 @@ graph:
   # 桌機畫布 628×290（下方還有 147 的比較滑桿）；流式版 342×332（圖例列另加 72）。
   layout:
     desktop:
-      size: [628, 290]
+      size: [628, 258]
       nodes:
-        rumi: [80, 84]
-        elis: [240, 84]
-        nor: [400, 84]
-        sevia: [560, 84]
-        dravin: [190, 200]
-        elian: [400, 200]
+        rumi: [80, 62]
+        elis: [240, 62]
+        nor: [400, 62]
+        sevia: [560, 62]
+        dravin: [190, 214]
+        elian: [400, 214]
     flow:
       size: [342, 332]
       nodes:

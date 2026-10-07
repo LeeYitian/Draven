@@ -88,15 +88,15 @@ graph:
   # 座標只寫展開狀態；桌機 628×457（上區為了人類養子、下區為了非人養育者），流式 342×560。
   layout:
     desktop:
-      size: [628, 457]
+      size: [628, 417]
       nodes:
-        centaur-seer: [272, 84]
-        dravin: [496, 154]
-        nor: [72, 224]
-        elis: [288, 224]
-        earth-dragon: [360, 318]
-        bishop: [168, 380]
-        snake-god: [488, 380]
+        centaur-seer: [272, 62]
+        dravin: [496, 135]
+        nor: [72, 209]
+        elis: [288, 209]
+        earth-dragon: [360, 308]
+        bishop: [168, 373]
+        snake-god: [488, 373]
     flow:
       size: [342, 560]
       nodes:

@@ -5,7 +5,6 @@ import { NameLink, RichText } from '../../components/text/RichText';
 import { Eyebrow, Kbd } from '../../components/ui';
 import { getPerson, t, worldIntro } from '../../content';
 import { navigate, routeForPage } from '../../lib/hash-router';
-import { ResetProgress } from './ResetProgress';
 import { CONTENT, STAGE } from '../../lib/stage-metrics';
 
 /**
@@ -134,9 +133,6 @@ export function WorldIntro() {
         <CoreRelation />
         <Worlds />
         <AxisList />
-        <div className="border-t border-divider pt-2">
-          <ResetProgress />
-        </div>
       </main>
     );
   }
@@ -165,7 +161,6 @@ export function WorldIntro() {
         <AxisList />
         {/* pb-1：鍵帽往下按 2px、箭頭浮動 3px 時，不要超出欄底 */}
         <div className="mt-auto flex flex-col gap-2.5 pb-1">
-          <ResetProgress />
           <div className="key-hint-text flex items-center gap-3">
             <Kbd size="lg" nudge="first">
               ↓

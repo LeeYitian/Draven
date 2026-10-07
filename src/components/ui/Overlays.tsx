@@ -99,7 +99,12 @@ export function Sheet({
   if (!open) return null;
   return (
     <>
-      <div className="fixed inset-0 z-(--z-popover)" onClick={onClose}>
+      {/* 有 bottomOffset（底部導覽列）時，遮罩只蓋到導覽列上緣：導覽列和面板看起來是同一層，不被壓暗 */}
+      <div
+        className="fixed inset-x-0 top-0 z-(--z-popover)"
+        style={{ bottom: bottomOffset }}
+        onClick={onClose}
+      >
         <Scrim tone="ink" />
       </div>
       <div
@@ -108,7 +113,10 @@ export function Sheet({
         aria-labelledby={labelledBy}
         className="sheet fixed inset-x-0 z-(--z-popover) mx-auto max-w-[640px]"
         data-tone={tone}
-        style={{ bottom: bottomOffset }}
+        style={{
+          bottom: bottomOffset,
+          ...(bottomOffset > 0 ? { boxShadow: 'var(--shadow-up)' } : {}),
+        }}
       >
         {children}
       </div>

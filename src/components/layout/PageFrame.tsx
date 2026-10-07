@@ -10,9 +10,9 @@ export interface PageFrameProps {
   events: ReactNode;
   /** 目前事件的敘述面板（舞台版：左欄上方，含右側旁註欄） */
   narrative: ReactNode;
-  /** 本頁專屬區塊（01 光譜、03 引言、04 對照卡…）：舞台版在敘述下方，流式版在關係圖之後 */
+  /** 本頁專屬區塊（01 光譜、03 引言、04 對照卡…）：舞台版在敘述下方，流式版在關係圖之前 */
   extras?: ReactNode;
-  /** 02 比較滑桿：舞台版橫跨兩欄放在最底（下方區改為 敘述＋關係圖 290／滑桿 147）；流式版在關係圖之後 */
+  /** 02 比較滑桿：舞台版橫跨兩欄放在最底（下方區改為 敘述＋關係圖 290／滑桿 147）；流式版在關係圖之前 */
   compare?: ReactNode;
   /** 04 劇透遮罩：有值時頁首以下蓋上遮罩，底下的內容 inert（流式版直接取代頁首以下的內容） */
   cover?: ReactNode;
@@ -22,7 +22,7 @@ export interface PageFrameProps {
 
 /**
  * 主軸頁框架網格（設計稿 §1-A；01–04 統一，clarifications G-05）：
- * 頁首 y20 h64 → 分隔線 y92 → 事件進程小標 y96 h36 → 事件列 y134 h44 → 下方區 y186 h509，
+ * 頁首 y20 h64 → 分隔線 y92 → 事件進程小標 y96 h36 → 事件列 y142 h44 → 下方區 y194 h501，
  * 左欄 620（敘述文字 470＋旁註欄 150）、欄距 40、右欄 628（關係圖）。
  * 流式版改為單欄堆疊：頁首、事件列（黏在頂端）、敘述、關係圖、專屬區塊。
  */
@@ -65,15 +65,16 @@ export function PageFrame({
           {/* 事件列黏在視窗頂端；左右各延伸到螢幕邊緣（抵銷容器的 24px 邊距） */}
           <div
             data-sticky-bar
-            className="sticky top-0 z-(--z-page) -mx-6 flex flex-col gap-2 border-b border-divider bg-bg pt-2.5"
+            className="sticky top-0 z-[5] -mx-6 flex flex-col gap-2 border-b border-divider bg-bg pt-2.5"
           >
             <div className="px-6">{eventsLabel}</div>
             {events}
           </div>
           {narrative}
-          {graph}
-          {compare}
+          {/* 專屬區塊（01 光譜、02 比較滑桿、03 引言、04 對照卡…）全部排在關係圖上方；關係圖在最後，和底部導覽列之間留一點空 */}
           {extras}
+          {compare}
+          <div className="pb-6">{graph}</div>
         </Behind>
       </main>
     );
