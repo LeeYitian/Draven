@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { FLOW_SIZES, STAGE_SIZES, openPage, stageOverflow } from './helpers';
 
-// US6a：01 邊界之辯光譜——拖曳、吸附、鍵盤、交叉連結閃動、版面。
+// US6a：01 邊界之辯光譜——拖曳、吸附、鍵盤、版面。
 
 const AXIS1 = '#/axis/1';
 const thumb = (page: Page) => page.locator('[data-spectrum-thumb]');
@@ -27,6 +27,9 @@ async function dragTo(page: Page, percent: number, release = true) {
 test.describe('舞台版：光譜拖曳與吸附', () => {
   test.beforeEach(async ({ page }) => {
     await openPage(page, { w: 1440, h: 795 }, AXIS1);
+    // 光譜從事件 05 起才出現（showFromEvent）
+    await expect(thumb(page)).toHaveCount(0);
+    await page.locator('[data-event="5"]').click();
   });
 
   test('預設在 100（德雷文）；位置與軌道端點對齊', async ({ page }) => {
@@ -79,7 +82,7 @@ test.describe('舞台版：光譜拖曳與吸附', () => {
     expect(await value(page)).toBe(50);
     await expect(page.locator('[data-event][aria-current="step"]')).toHaveAttribute(
       'data-event',
-      '1',
+      '5',
     );
     expect(page.url()).toContain('#/axis/1');
     await page.keyboard.press('ArrowRight');
@@ -90,7 +93,7 @@ test.describe('舞台版：光譜拖曳與吸附', () => {
     await page.keyboard.press('ArrowRight');
     await expect(page.locator('[data-event][aria-current="step"]')).toHaveAttribute(
       'data-event',
-      '2',
+      '6',
     );
   });
 
@@ -105,19 +108,6 @@ test.describe('舞台版：光譜拖曳與吸附', () => {
     await page.locator('[data-stance="nor"] [role="button"]').click();
     await expect(page.locator('[data-popover]')).toBeVisible();
     expect(await value(page)).toBe(100);
-  });
-
-  test('事件 05「見下方 ↓」：光譜取得焦點並閃動；舞台版不捲動頁面', async ({ page }) => {
-    await page.locator('[data-event="5"]').click();
-    const link = page.getByRole('button', { name: '見下方 ↓' });
-    await expect(link).toBeVisible();
-    await link.click();
-    await expect(page.locator('[data-spectrum-flash]')).toBeVisible();
-    await expect(thumb(page)).toBeFocused();
-    expect(await page.evaluate(() => window.scrollY)).toBe(0);
-    await expect(page.locator('[data-spectrum-flash]')).toHaveCount(0, { timeout: 2000 });
-    await link.click();
-    await expect(page.locator('[data-spectrum-flash]')).toBeVisible(); // 再點重播
   });
 });
 
@@ -144,6 +134,7 @@ test.describe('01 光譜：版面', () => {
   for (const size of FLOW_SIZES) {
     test(`流式版 ${size.w}×${size.h}：光譜不超出視窗寬、名字不互相重疊`, async ({ page }) => {
       await openPage(page, size, AXIS1);
+      await page.locator('[data-event="5"]').click();
       await page.locator('[data-spectrum]').scrollIntoViewIfNeeded();
       const s = (await page.locator('[data-spectrum]').boundingBox())!;
       expect(s.x).toBeGreaterThanOrEqual(0);
@@ -166,16 +157,12 @@ test.describe('01 光譜：版面', () => {
 test.describe('流式版：觸控', () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
 
-  test('「見下方 ↓」先捲到光譜再閃動；點軌道選立場；軌道設定 pan-y、把手 none', async ({
-    page,
-  }) => {
+  test('軌道設定 pan-y、把手 none；光譜在畫面內；點軌道選立場', async ({ page }) => {
     await openPage(page, { w: 390, h: 844 }, AXIS1);
+    await page.locator('[data-event="5"]').tap();
     expect(await track(page).evaluate((el) => getComputedStyle(el).touchAction)).toBe('pan-y');
     expect(await thumb(page).evaluate((el) => getComputedStyle(el).touchAction)).toBe('none');
-
-    await page.locator('[data-event="5"]').tap();
-    await page.getByRole('button', { name: '見下方 ↓' }).tap();
-    await expect(page.locator('[data-spectrum-flash]')).toBeVisible();
+    await page.locator('[data-spectrum]').scrollIntoViewIfNeeded();
     const box = (await page.locator('[data-spectrum]').boundingBox())!;
     expect(box.y).toBeGreaterThanOrEqual(0);
     expect(box.y + box.height).toBeLessThanOrEqual(844);

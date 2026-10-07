@@ -36,9 +36,6 @@ export interface ContentBundle {
   pages?: Record<string, unknown>;
 }
 
-/** 交叉連結 {x:…} 目前允許的目標（只有 01 邊界之辯光譜） */
-export const CROSS_LINK_TARGETS = ['spectrum'];
-
 const formatPath = (path: PropertyKey[]) =>
   path.reduce<string>(
     (acc, p) => (typeof p === 'number' ? `${acc}[${p}]` : acc ? `${acc}.${String(p)}` : String(p)),
@@ -229,13 +226,6 @@ export function validateContent(bundle: ContentBundle): Issue[] {
             file,
             path,
             `未知名詞 id "${r.arg}"（{t:${r.arg}}）${suggest(r.arg, termIds)}`,
-          );
-        if (r.type === 'x' && !CROSS_LINK_TARGETS.includes(r.arg))
-          add(
-            'error',
-            file,
-            path,
-            `未知的交叉連結目標 "${r.arg}"（目前只有 ${CROSS_LINK_TARGETS.join('、')}）`,
           );
         if (r.type === 'h' && hintsFile && !hintIds.has(r.arg))
           add(
@@ -467,23 +457,13 @@ export function validateContent(bundle: ContentBundle): Issue[] {
           `未知人物 id "${s.personId}"${suggest(s.personId, personIds)}`,
         );
     });
-    if (ex.boundary) {
-      const ev = page.events.find((e) => e.n === ex.boundary!.crossLinkEvent);
-      if (!ev)
-        add(
-          'error',
-          file,
-          'extras.boundary.crossLinkEvent',
-          `事件 ${ex.boundary.crossLinkEvent} 不存在`,
-        );
-      else if (!ev.text.includes('{x:spectrum'))
-        add(
-          'warning',
-          file,
-          `events[${ev.n - 1}].text`,
-          '邊界之辯所在事件沒有 {x:spectrum|…} 交叉連結',
-        );
-    }
+    if (ex.boundary && ex.boundary.showFromEvent > page.events.length)
+      add(
+        'error',
+        file,
+        'extras.boundary.showFromEvent',
+        `事件 ${ex.boundary.showFromEvent} 不存在`,
+      );
     if (ex.mirror) {
       const rowKeys = new Set(ex.mirror.rows.map((r) => r.key));
       for (const side of ['sideA', 'sideB'] as const) {

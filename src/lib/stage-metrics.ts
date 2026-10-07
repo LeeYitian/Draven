@@ -27,7 +27,8 @@ export const CONTENT = { x: 112, width: 1288 } as const;
 export const AXIS_FRAME = {
   header: { y: 28, height: 72, rightColumnWidth: 460 },
   divider: { y: 116 },
-  eventLabelRow: { y: 134, height: 20 },
+  /** 小標列加高到 36（放大的方向鍵提示）；多出的 16 由分隔線／小標／事件列之間的間距吸收，事件列與下方區座標不變 */
+  eventLabelRow: { y: 120, height: 36 },
   eventRow: { y: 162, height: 56, gap: 8 },
   lower: {
     y: 238,

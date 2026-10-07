@@ -12,7 +12,15 @@ import { useAppStore, type AxisKey } from '../../store/store';
 const pad = (n: number) => String(n).padStart(2, '0');
 
 /** 事件進程小標列：舞台版右側是方向鍵提示，流式版是「n / N · 左右滑動」 */
-export function EventsLabel({ axis, heading, total }: { axis: AxisKey; heading: string; total: number }) {
+export function EventsLabel({
+  axis,
+  heading,
+  total,
+}: {
+  axis: AxisKey;
+  heading: string;
+  total: number;
+}) {
   const { mode } = useLayout();
   const eventIndex = useAppStore((s) => s.axis[axis].eventIndex);
 
@@ -29,9 +37,13 @@ export function EventsLabel({ axis, heading, total }: { axis: AxisKey; heading: 
   return (
     <>
       <Eyebrow>{heading}</Eyebrow>
-      <span className="flex items-center gap-1.5 text-aux text-neutral-600">
-        <Kbd>←</Kbd>
-        <Kbd>→</Kbd>
+      <span className="key-hint-text flex items-center gap-2.5">
+        <Kbd size="md" nudge="first">
+          ←
+        </Kbd>
+        <Kbd size="md" nudge="late">
+          →
+        </Kbd>
         {t('keys.events')}
       </span>
     </>
@@ -58,13 +70,18 @@ function EventCell({ event, state, tracked, marked, flow, onSelect }: EventCellP
       data-marked={marked || undefined}
       data-event={event.n}
       aria-current={state === 'current' ? 'step' : undefined}
-      aria-label={t('axis.eventButton', { n: String(event.n).padStart(2, '0'), title: event.title })}
+      aria-label={t('axis.eventButton', {
+        n: String(event.n).padStart(2, '0'),
+        title: event.title,
+      })}
       title={event.title}
       onClick={() => onSelect(event.n)}
     >
       <span className={cn('event-cell__num', flow && 'text-[17px]')}>{pad(event.n)}</span>
       <span className={cn('event-cell__title', flow && 'text-[14px]')}>{event.title}</span>
-      {!flow && <ChevronDown className="event-cell__chev" size={16} strokeWidth={1.5} aria-hidden="true" />}
+      {!flow && (
+        <ChevronDown className="event-cell__chev" size={16} strokeWidth={1.5} aria-hidden="true" />
+      )}
     </button>
   );
 }

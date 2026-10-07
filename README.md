@@ -44,7 +44,7 @@ npm run e2e:prod             # 同一批 e2e，改對「打包後的網站」跑
 | 伏筆的關鍵字、解開後說明、獲得與回收的主軸 | `src/content/hints.yaml` |
 | 按鈕、提示、aria 標籤等介面文案 | `src/content/ui.yaml` |
 
-文字裡的標記：`{p:id}` 人名、`{t:id}` 名詞、`{x:spectrum|見下方 ↓}` 交叉連結、`{h:hint-id|片語}` 伏筆回收處。
+文字裡的標記：`{p:id}` 人名、`{t:id}` 名詞、`{h:hint-id|片語}` 伏筆回收處。
 人名與名詞一般不用標，系統會依別名表自動辨識；規則見 `specs/001-story-guide-site/contracts/content-markup.md`。
 
 常見操作：

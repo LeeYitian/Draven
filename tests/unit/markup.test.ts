@@ -24,10 +24,10 @@ describe('parseMarkup：基本語法', () => {
     });
   });
 
-  it('{t:} 名詞、{x:} 交叉連結、{h:} 伏筆回收處', () => {
-    const nodes = parseMarkup('{t:morning-star}與{x:spectrum|見下方 ↓}與{h:gift|馬蹄鐵}');
-    expect(nodes.map((n) => n.type)).toEqual(['t', 'text', 'x', 'text', 'h']);
-    expect(plainText(nodes)).toBe('morning-star與見下方 ↓與馬蹄鐵');
+  it('{t:} 名詞、{h:} 伏筆回收處', () => {
+    const nodes = parseMarkup('{t:morning-star}與{h:gift|馬蹄鐵}');
+    expect(nodes.map((n) => n.type)).toEqual(['t', 'text', 'h']);
+    expect(plainText(nodes)).toBe('morning-star與馬蹄鐵');
   });
 });
 

@@ -6,14 +6,17 @@ import { usePopoverStore } from '../../src/store/popover';
 import { resetStoreForTests, useAppStore } from '../../src/store/store';
 import { useUiStore } from '../../src/store/ui';
 
-// 01 邊界之辯光譜：slider 語意、鍵盤、人名 Popover、交叉連結閃動。
+// 01 邊界之辯光譜：slider 語意、鍵盤、人名 Popover。
 // 拖曳與吸附的真實幾何在 e2e 驗證（jsdom 沒有版面）。
 
-function start(hash = '#/axis/1', size: [number, number] = [1440, 720]) {
+/** 光譜從事件 05 起才出現（extras.boundary.showFromEvent），所以預設先翻到事件 05 */
+function start(hash = '#/axis/1', size: [number, number] = [1440, 720], event = 5) {
   history.replaceState(null, '', `/${hash}`);
   Object.defineProperty(window, 'innerWidth', { configurable: true, value: size[0] });
   Object.defineProperty(window, 'innerHeight', { configurable: true, value: size[1] });
-  return render(<App />);
+  const view = render(<App />);
+  act(() => useAppStore.getState().selectEvent(1, event));
+  return view;
 }
 const slider = () => screen.getByRole('slider', { name: '邊界之辯光譜' });
 const detail = () => document.querySelector('[data-spectrum-detail]');
@@ -23,7 +26,7 @@ beforeEach(() => {
   sessionStorage.clear();
   resetStoreForTests();
   usePopoverStore.setState({ open: null });
-  useUiStore.setState({ hintsTrayOpen: false, pagesMenuOpen: false, spectrumFlash: 0 });
+  useUiStore.setState({ hintsTrayOpen: false, pagesMenuOpen: false });
 });
 afterEach(() => {
   vi.useRealTimers();
@@ -33,6 +36,18 @@ afterEach(() => {
 });
 
 describe('01 邊界之辯光譜', () => {
+  it('事件 01–04 沒有光譜；翻到事件 05 才出現（之後事件 06 也還在）', () => {
+    start('#/axis/1', [1440, 720], 1);
+    for (const n of [1, 2, 3, 4]) {
+      act(() => useAppStore.getState().selectEvent(1, n));
+      expect(screen.queryByRole('slider', { name: '邊界之辯光譜' })).toBeNull();
+    }
+    act(() => useAppStore.getState().selectEvent(1, 5));
+    expect(slider()).toBeInTheDocument();
+    act(() => useAppStore.getState().selectEvent(1, 6));
+    expect(slider()).toBeInTheDocument();
+  });
+
   it('role=slider，0–100，預設在 100（德雷文）', () => {
     start();
     expect(slider()).toHaveAttribute('aria-valuemin', '0');
@@ -81,12 +96,12 @@ describe('01 邊界之辯光譜', () => {
     expect(fireEvent.keyDown(slider(), { key: 'ArrowLeft' })).toBe(false); // 已 preventDefault
   });
 
-  it('焦點不在光譜時 → 照常換事件', async () => {
+  it('焦點不在光譜時 → 照常換事件（事件 05 → 06）', async () => {
     start();
     const user = userEvent.setup();
     (document.activeElement as HTMLElement | null)?.blur();
     await user.keyboard('{ArrowRight}');
-    expect(useAppStore.getState().axis[1].eventIndex).toBe(1);
+    expect(useAppStore.getState().axis[1].eventIndex).toBe(5);
   });
 
   it('軌道下的人名可開 Popover', async () => {
@@ -95,37 +110,5 @@ describe('01 邊界之辯光譜', () => {
     const name = document.querySelector('[data-stance="fane"] [role="button"]') as HTMLElement;
     await user.click(name);
     expect(usePopoverStore.getState().open?.id).toBe('fane');
-  });
-
-  it('事件 05 的「見下方 ↓」：光譜出現閃動疊層與焦點，之後消失；再點會重播', () => {
-    vi.useFakeTimers();
-    start();
-    act(() => useAppStore.getState().selectEvent(1, 5));
-    act(() => void vi.advanceTimersByTime(400)); // 敘述淡出後換成事件 05
-    const link = screen.getByRole('button', { name: '見下方 ↓' });
-    expect(document.querySelector('[data-spectrum-flash]')).toBeNull();
-    fireEvent.click(link);
-    act(() => void vi.advanceTimersByTime(10));
-    expect(document.querySelector('[data-spectrum-flash]')).toBeInTheDocument();
-    expect(document.activeElement).toBe(slider());
-    act(() => void vi.advanceTimersByTime(700));
-    expect(document.querySelector('[data-spectrum-flash]')).toBeNull();
-    fireEvent.click(link);
-    act(() => void vi.advanceTimersByTime(10));
-    expect(document.querySelector('[data-spectrum-flash]')).toBeInTheDocument();
-  });
-
-  it('流式版：先捲到光譜，等捲動結束再閃動', () => {
-    vi.useFakeTimers();
-    const scroll = vi.fn();
-    Element.prototype.scrollIntoView = scroll;
-    start('#/axis/1', [390, 844]);
-    act(() => useAppStore.getState().selectEvent(1, 5));
-    act(() => void vi.advanceTimersByTime(400));
-    fireEvent.click(screen.getByRole('button', { name: '見下方 ↓' }));
-    expect(scroll).toHaveBeenCalledOnce();
-    expect(document.querySelector('[data-spectrum-flash]')).toBeNull(); // 還在捲動
-    act(() => void vi.advanceTimersByTime(400));
-    expect(document.querySelector('[data-spectrum-flash]')).toBeInTheDocument();
   });
 });

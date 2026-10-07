@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { RichText } from '../../src/components/text/RichText';
 import { usePopoverStore } from '../../src/store/popover';
 import { resetStoreForTests, useAppStore } from '../../src/store/store';
@@ -80,13 +80,6 @@ describe('RichText', () => {
     expect(container.querySelector('[data-hint]')).toHaveAttribute('data-solved');
   });
 
-  it('交叉連結：點擊呼叫 onCrossLink(target)', async () => {
-    const onCross = vi.fn();
-    render(<RichText text="（{x:spectrum|見下方 ↓}）" onCrossLink={onCross} />);
-    await userEvent.click(screen.getByRole('button', { name: '見下方 ↓' }));
-    expect(onCross).toHaveBeenCalledWith('spectrum');
-  });
-
   it('人名連結為 aria-haspopup=dialog 的按鈕角色，可用鍵盤聚焦與啟動', async () => {
     render(<RichText text="艾利安" />);
     const button = screen.getByRole('button', { name: '艾利安' });
@@ -100,14 +93,5 @@ describe('RichText', () => {
     expect(button).toHaveAttribute('aria-expanded', 'true');
     await userEvent.keyboard(' ');
     expect(button).toHaveAttribute('aria-expanded', 'false');
-  });
-
-  it('交叉連結可用 Enter／空白鍵啟動', async () => {
-    const onCross = vi.fn();
-    render(<RichText text="{x:spectrum|見下方 ↓}" onCrossLink={onCross} />);
-    screen.getByRole('button', { name: '見下方 ↓' }).focus();
-    await userEvent.keyboard('{Enter}');
-    await userEvent.keyboard(' ');
-    expect(onCross).toHaveBeenCalledTimes(2);
   });
 });

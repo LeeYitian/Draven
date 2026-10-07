@@ -45,13 +45,13 @@ test.describe('舞台版換頁', () => {
     await expect.poll(() => hash(page)).toBe('#/axis/1');
     const running = await page.evaluate(
       () =>
-        document
-          .getAnimations()
-          .filter(
-            (a) =>
-              a.playState === 'running' &&
-              (a.effect as KeyframeEffect | null)?.target?.closest('main'),
-          ).length,
+        document.getAnimations().filter(
+          (a) =>
+            a.playState === 'running' &&
+            (a.effect as KeyframeEffect | null)?.target?.closest('main') &&
+            // 方向鍵提示（鍵帽按壓、向下箭頭）本來就是持續循環的提示，不是換頁的轉場
+            !(a.effect as KeyframeEffect).target?.closest('.key-hint, .arrow-hint'),
+        ).length,
     );
     expect(running).toBe(0);
   });

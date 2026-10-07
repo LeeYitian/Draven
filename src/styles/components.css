@@ -53,6 +53,41 @@
     border: 1px solid var(--color-neutral-400);
     border-radius: 3px;
   }
+  /* 方向鍵提示的放大版（設計稿「修改紀錄_方向鍵提示與伏筆連動」）：鍵帽輪流被按下，暗示可以操作 */
+  .kbd[data-size] {
+    padding: 0;
+    color: var(--color-neutral-800);
+    box-shadow: 0 2px 0 var(--color-neutral-400);
+  }
+  .kbd[data-size='lg'] {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    border-radius: 5px;
+  }
+  .kbd[data-size='md'] {
+    width: 36px;
+    height: 34px;
+    font-size: 18px;
+    border-radius: 5px;
+  }
+  .kbd[data-size='sm'] {
+    width: 28px;
+    min-width: 28px;
+    height: 28px;
+    font-size: 16px;
+    border-radius: 4px;
+  }
+  .key-hint-text {
+    font-size: 17px;
+    color: var(--color-neutral-700);
+  }
+  .arrow-hint {
+    display: inline-block;
+    font-size: 15px;
+    line-height: 1;
+    color: var(--color-neutral-500);
+  }
 
   /* ── 按鈕：外框，不實心填色（設計系統規則） ─────────────────── */
   .btn {
@@ -314,10 +349,9 @@
     clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 70%, 0 100%);
   }
 
-  /* ── 可點擊文字（設計稿 §6-B）：人名＝灰點線；名詞＝金字金點線；交叉連結＝金實線底線 ── */
+  /* ── 可點擊文字（設計稿 §6-B）：人名＝灰點線；名詞＝金字金點線 ── */
   .link-name,
-  .link-term,
-  .link-cross {
+  .link-term {
     display: inline;
     padding: 0;
     font: inherit;
@@ -342,18 +376,6 @@
     background: var(--color-accent-100);
     border-bottom: 1px solid var(--color-accent);
   }
-  .link-cross {
-    white-space: nowrap; /* 「見下方 ↓」不拆成兩行（前後的全形括號會跟著它一起換行） */
-    color: var(--color-accent-800);
-    text-decoration: underline;
-    text-decoration-color: var(--color-accent);
-    text-underline-offset: 4px;
-  }
-  .link-cross:hover {
-    color: var(--color-accent-600);
-    text-decoration-color: currentColor;
-  }
-
   /* ── 伏筆：全站唯一使用「雙線」的元素（回收處雙底線、框格 3px double）── */
   .hint-anchor {
     text-decoration: underline double var(--color-accent);
@@ -978,18 +1000,56 @@
 /* ══════════════════════════════════════════════════════════════════
    動態：只在使用者沒有要求「減少動態」時才播放（憲章 IV）
    ══════════════════════════════════════════════════════════════════ */
+/* 方向鍵提示：鍵帽往下 2px 再彈回；向下箭頭上下浮動（兩顆鍵用 data-delay 錯開 0.8s 輪流按） */
+@keyframes keyNudge {
+  0%,
+  55%,
+  100% {
+    transform: translateY(0);
+    box-shadow: 0 2px 0 var(--color-neutral-400);
+  }
+  25% {
+    transform: translateY(2px);
+    box-shadow: 0 0 0 var(--color-neutral-400);
+  }
+}
+@keyframes arrowHint {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(-3px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(3px);
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
+  .key-hint {
+    animation: keyNudge 1.6s ease-in-out infinite;
+  }
+  .key-hint[data-delay] {
+    animation-delay: 0.8s;
+  }
+  .arrow-hint {
+    animation: arrowHint 1.6s ease-in-out infinite;
+  }
   [data-flash] {
     animation: var(--animate-flash);
   }
   [data-shake] {
     animation: var(--animate-shake);
   }
-  .mirror-idle {
+  .mirror-idle,
+  .postcard-idle {
     animation: var(--animate-mirror-idle);
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  /* 伏筆連動：不播外光擴散，框格與側欄按鈕只保留 accent 外框 */
+  [data-fb-linked] {
+    border-color: var(--color-accent) !important;
+  }
   .drawer-anim,
   .expand-anim {
     animation-duration: 1ms !important;
@@ -1247,43 +1307,7 @@
   line-height: 1.7;
   text-align: justify;
 }
-/* 交叉連結閃動：外框 1px accent＋底色 accent-100，600ms 內亮兩次（0 → 150 亮 → 300 → 450 亮 → 600） */
-.spectrum__flash {
-  position: absolute;
-  inset: -1px;
-  z-index: -1;
-  pointer-events: none;
-  background: var(--color-accent-100);
-  border: 1px solid var(--color-accent);
-  border-radius: var(--radius-md);
-  opacity: 0;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .spectrum__flash {
-    animation: spectrum-flash 600ms steps(1, end) 1;
-  }
-  @keyframes spectrum-flash {
-    0% {
-      opacity: 0;
-    }
-    25% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-    75% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
-}
 @media (prefers-reduced-motion: reduce) {
-  .spectrum__flash {
-    opacity: 1; /* 不播放動畫：靜態外框與底色停留一下 */
-  }
   .spectrum__thumb {
     transition-duration: 1ms;
   }
@@ -1546,7 +1570,9 @@ html[data-layout='stage'] .layer-head-slot[data-first] .layer-band__head {
   justify-content: center;
   min-width: 0;
   max-width: 100%;
-  overflow-x: clip; /* 閒置傾斜與厚度陰影會讓投影超出一點點，不能撐出橫向捲軸 */
+  box-sizing: border-box;
+  padding: 0 20px; /* 傾斜時靠近鏡頭的一側會往外放大、厚度陰影也向右延伸：留邊，才不會被下面的裁切線切掉 */
+  overflow-x: clip; /* 投影超出一點點，不能撐出橫向捲軸 */
 }
 [data-layout='flow'] .mirror-stage {
   padding: 0 10px;
@@ -1555,10 +1581,23 @@ html[data-layout='stage'] .layer-head-slot[data-first] .layer-band__head {
   width: 430px;
   max-width: 100%;
   transform-style: preserve-3d;
+  /* 視覺縮小到 90%：scale 屬性和動畫的 transform 各自獨立；負邊距把縮小後多出的上下空白收掉 */
+  scale: 0.9;
+  margin-block: -13px;
+}
+[data-layout='flow'] .mirror-idle {
+  margin-block: -15px;
 }
 .mirror-stage:hover .mirror-idle,
-.mirror-stage:focus-within .mirror-idle {
+.mirror-stage:focus-within .mirror-idle,
+.postcard-lift:hover .postcard-idle,
+.postcard-lift:focus-within .postcard-idle {
   animation-play-state: paused; /* 讀字時別讓卡片一直在轉 */
+}
+/* 明信片的閒置傾斜：和鏡像卡同一組動畫（mirror-idle，±8° 緩慢來回） */
+.postcard-idle {
+  width: 100%;
+  transform-style: preserve-3d;
 }
 .mirror-card {
   cursor: pointer;

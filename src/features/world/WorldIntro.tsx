@@ -163,11 +163,17 @@ export function WorldIntro() {
       <Worlds />
       <div className="flex min-w-0 flex-col">
         <AxisList />
-        <div className="mt-auto flex flex-col gap-2.5">
+        {/* pb-1：鍵帽往下按 2px、箭頭浮動 3px 時，不要超出欄底 */}
+        <div className="mt-auto flex flex-col gap-2.5 pb-1">
           <ResetProgress />
-          <div className="flex items-center gap-1.5 text-aux text-neutral-600">
-            <Kbd>↓</Kbd>
+          <div className="key-hint-text flex items-center gap-3">
+            <Kbd size="lg" nudge="first">
+              ↓
+            </Kbd>
             {t('keys.enterFirst')}
+            <span className="arrow-hint" aria-hidden="true">
+              ⌄
+            </span>
           </div>
         </div>
       </div>

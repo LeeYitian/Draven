@@ -74,12 +74,6 @@ describe('不重複處理已標記的片段', () => {
     expect(show(link(parseMarkup('{p:dravin|陛下}')))).toBe('[p:dravin:陛下]');
   });
 
-  it('{x:} 交叉連結內不辨識', () => {
-    expect(show(link(parseMarkup('{x:spectrum|見下方，德雷文}')))).toBe(
-      '[x:spectrum:見下方，德雷文]',
-    );
-  });
-
   it('{h:} 伏筆片語內的人名仍會被辨識（片語本身保留）', () => {
     const nodes = link(parseMarkup('{h:gift|法恩用馬蹄鐵}'));
     expect(nodes).toHaveLength(1);

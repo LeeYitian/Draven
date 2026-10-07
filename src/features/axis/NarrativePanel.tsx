@@ -31,8 +31,6 @@ function useCrossfade(event: AxisEvent, reduceMotion: boolean) {
 export interface NarrativePanelProps {
   axis: AxisKey;
   events: readonly AxisEvent[];
-  /** 點擊事件文字中的 {x:target|…} 交叉連結 */
-  onCrossLink?: (target: string) => void;
 }
 
 /**
@@ -40,7 +38,7 @@ export interface NarrativePanelProps {
  * 舞台版：左欄 620＝敘述文字 470＋旁註欄 150（行高 36，伏筆框格放旁註欄，Phase 7）。
  * 流式版：單欄，敘述下方有「上一個／下一個」。
  */
-export function NarrativePanel({ axis, events, onCrossLink }: NarrativePanelProps) {
+export function NarrativePanel({ axis, events }: NarrativePanelProps) {
   const { mode } = useLayout();
   const reduceMotion = useReducedMotion();
   const eventIndex = useAppStore((s) => s.axis[axis].eventIndex);
@@ -66,7 +64,7 @@ export function NarrativePanel({ axis, events, onCrossLink }: NarrativePanelProp
         <Eyebrow>{shown.tag}</Eyebrow>
       </div>
       <p className="m-0 mt-3 text-justify text-body leading-[36px] flow:mt-2.5 flow:leading-[1.85]">
-        <RichText text={shown.text} noteRows={flow} {...(onCrossLink ? { onCrossLink } : {})} />
+        <RichText text={shown.text} noteRows={flow} />
       </p>
     </div>
   );

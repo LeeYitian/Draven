@@ -15,8 +15,6 @@ interface UiState {
   hintDragging: boolean;
   hintFeedback: HintFeedback | null;
   announcement: { text: string; token: number } | null;
-  /** 01 事件文字的「見下方 ↓」被點擊的次數；光譜依此閃動（0＝還沒有人點過） */
-  spectrumFlash: number;
   toggleHintsTray(): void;
   setHintsTray(open: boolean): void;
   setPagesMenu(open: boolean): void;
@@ -24,7 +22,6 @@ interface UiState {
   giveFeedback(slotId: string, kind: HintFeedback['kind']): void;
   clearFeedback(token: number): void;
   announce(text: string): void;
-  flashSpectrum(): void;
 }
 
 let feedbackToken = 0;
@@ -36,7 +33,6 @@ export const useUiStore = create<UiState>()((set, get) => ({
   hintDragging: false,
   hintFeedback: null,
   announcement: null,
-  spectrumFlash: 0,
   toggleHintsTray: () => set((s) => ({ hintsTrayOpen: !s.hintsTrayOpen })),
   setHintsTray: (open) => set({ hintsTrayOpen: open }),
   setPagesMenu: (open) => set({ pagesMenuOpen: open }),
@@ -46,5 +42,4 @@ export const useUiStore = create<UiState>()((set, get) => ({
     if (get().hintFeedback?.token === token) set({ hintFeedback: null });
   },
   announce: (text) => set({ announcement: { text, token: ++announceToken } }),
-  flashSpectrum: () => set((s) => ({ spectrumFlash: s.spectrumFlash + 1 })),
 }));

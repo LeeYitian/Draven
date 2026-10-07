@@ -6,38 +6,36 @@ import { NoteRow } from '../../features/hints/NoteRow';
 import { resolveNoteInsertionPoint } from '../../features/hints/note-placement';
 
 /**
- * 全站所有「含行內標記的文字」都經過這裡（憲章 I）：人名／名詞連結、交叉連結、伏筆回收處。
+ * 全站所有「含行內標記的文字」都經過這裡（憲章 I）：人名／名詞連結、伏筆回收處。
  * 人名與名詞會依別名表自動辨識；規則見 contracts/content-markup.md。
  */
 export interface RichTextProps {
   text: string;
   className?: string;
-  /** 點擊 {x:target|…} 交叉連結（例如 spectrum）時呼叫 */
-  onCrossLink?: (target: string) => void;
   /** 流式版事件敘述：在伏筆回收處之後的標點後面插入註記列（框格放在這裡）；桌機版不用 */
   noteRows?: boolean;
 }
 
-export function RichText({ text, className, onCrossLink, noteRows }: RichTextProps) {
+export function RichText({ text, className, noteRows }: RichTextProps) {
   const nodes = parseRich(text);
-  if (!noteRows) return <span className={className}>{renderNodes(nodes, onCrossLink)}</span>;
+  if (!noteRows) return <span className={className}>{renderNodes(nodes)}</span>;
   return (
     <span className={className}>
       {resolveNoteInsertionPoint(nodes).map((item, i) =>
         item.kind === 'note' ? (
           <NoteRow key={`note-${i}`} hintIds={item.hintIds} />
         ) : (
-          <Fragment key={i}>{renderNodes([item.node], onCrossLink)}</Fragment>
+          <Fragment key={i}>{renderNodes([item.node])}</Fragment>
         ),
       )}
     </span>
   );
 }
 
-function renderNodes(nodes: MarkupNode[], onCrossLink?: (target: string) => void): ReactNode {
+function renderNodes(nodes: MarkupNode[]): ReactNode {
   return nodes.map((node, i) => {
     if (node.type === 'text') return <Fragment key={i}>{node.text}</Fragment>;
-    const label = node.explicit ? renderNodes(node.children, onCrossLink) : null;
+    const label = node.explicit ? renderNodes(node.children) : null;
     switch (node.type) {
       case 'p':
         return (
@@ -50,12 +48,6 @@ function renderNodes(nodes: MarkupNode[], onCrossLink?: (target: string) => void
           <TermLink key={i} termId={node.arg}>
             {label}
           </TermLink>
-        );
-      case 'x':
-        return (
-          <CrossLink key={i} target={node.arg} onActivate={onCrossLink}>
-            {label}
-          </CrossLink>
         );
       case 'h':
         return (
@@ -143,23 +135,6 @@ export function TermLink({ termId, children }: { termId: string; children?: Reac
       onActivate={(anchor) => toggle({ kind: 'term', id: termId, anchor, anchorKey })}
     >
       {children ?? term.term}
-    </InlineButton>
-  );
-}
-
-/** 交叉連結（「見下方 ↓」）：金色實線底線 */
-export function CrossLink({
-  target,
-  onActivate,
-  children,
-}: {
-  target: string;
-  onActivate?: ((target: string) => void) | undefined;
-  children?: ReactNode;
-}) {
-  return (
-    <InlineButton className="link-cross" onActivate={() => onActivate?.(target)}>
-      {children}
     </InlineButton>
   );
 }

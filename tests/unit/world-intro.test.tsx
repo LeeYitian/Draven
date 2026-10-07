@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { App } from '../../src/app/App';
+import { worldIntro } from '../../src/content';
 import { currentHash } from '../../src/lib/hash-router';
 import { usePopoverStore } from '../../src/store/popover';
 import { resetStoreForTests } from '../../src/store/store';
@@ -54,14 +55,20 @@ describe.each(SIZES)('00 世界觀導讀（%s）', (_name, size) => {
     expect(main.textContent).toContain('養父');
   });
 
-  it('三個世界：名稱與說明（名詞可點）', () => {
+  it('三個世界：名稱與說明（標了名詞的名稱可點）', () => {
     start('#/', size);
     const main = screen.getByRole('main');
-    for (const name of ['人間', '地底交界', '異界']) {
-      expect(within(main).getByRole('button', { name })).toHaveClass('link-term');
+    // 世界名稱與說明從內容檔讀：改文案不影響測試，只驗證「每個世界都顯示、標成名詞的會變成連結」
+    const plain = (markup: string) => markup.replace(/\{[a-z]+:[^|}]*\|([^}]*)\}/g, '$1');
+    for (const item of worldIntro.worlds.items) {
+      const name = plain(item.name);
+      expect(main.textContent).toContain(name);
+      if (/^{t:/.test(item.name))
+        expect(within(main).getByRole('button', { name })).toHaveClass('link-term');
     }
-    expect(within(main).getByRole('button', { name: '魔女集會' })).toHaveClass('link-term');
-    expect(main.textContent).toContain('昏睡氣味瀰漫');
+    expect(main.querySelectorAll('.link-term').length).toBeGreaterThanOrEqual(
+      worldIntro.worlds.items.filter((item) => /^{t:/.test(item.name)).length,
+    );
   });
 
   it('四條主軸：整列可點，進入該主軸', async () => {

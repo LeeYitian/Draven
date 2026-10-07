@@ -113,18 +113,19 @@ describe('04 事件 → 專屬區塊', () => {
     resetStoreForTests();
   });
 
-  it('事件 03 鏡像卡、事件 05 明信片，其餘事件「艾莉絲的抉擇」', () => {
+  it('事件 03 鏡像卡、事件 05 明信片、事件 06 抉擇，其餘事件沒有專屬區塊', () => {
     start();
     const kinds: string[] = [];
     for (let n = 1; n <= 6; n++) {
       toEvent(n);
       kinds.push(extraKind() ?? 'none');
     }
-    expect(kinds).toEqual(['choice', 'choice', 'mirror', 'choice', 'postcard', 'choice']);
+    expect(kinds).toEqual(['none', 'none', 'mirror', 'none', 'postcard', 'choice']);
   });
 
   it('抉擇區塊：兩句抉擇＋兩則留言', () => {
     start();
+    toEvent(6); // 抉擇只在事件 06 出現
     const block = document.querySelector('[data-choice]')!;
     expect(block).toHaveTextContent('艾莉絲的抉擇');
     expect(block).toHaveTextContent('失去身分，好過失去德雷文。');
@@ -205,7 +206,7 @@ describe('04 鏡像對照卡', () => {
     start();
     toEvent(3);
     fireEvent.click(card());
-    toEvent(4); // 抉擇區塊（卡片卸載）
+    toEvent(4); // 沒有專屬區塊（卡片卸載）
     toEvent(3);
     expect(card()).not.toHaveAttribute('data-flipped');
   });
