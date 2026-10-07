@@ -48,8 +48,9 @@ export function BoundarySpectrum({ boundary }: { boundary: AxisExtrasBoundary })
 
   const onKeyDown = (e: KeyboardEvent) => {
     let next: number | null = null;
-    if (e.key === 'ArrowRight') next = stepPosition(positions, value, 1);
-    else if (e.key === 'ArrowLeft') next = stepPosition(positions, value, -1);
+    const latest = useAppStore.getState().spectrum; // 連按時渲染可能還沒跟上，取 store 最新值
+    if (e.key === 'ArrowRight') next = stepPosition(positions, latest, 1);
+    else if (e.key === 'ArrowLeft') next = stepPosition(positions, latest, -1);
     else if (e.key === 'Home') next = positions[0]!;
     else if (e.key === 'End') next = positions[positions.length - 1]!;
     if (next === null) return;

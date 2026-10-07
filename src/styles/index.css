@@ -10,7 +10,7 @@
   --color-transparent: transparent;
   --color-current: currentColor;
 
-  --color-bg: #f3f2f2; /* 紙色 */
+  --color-bg: var(--paper); /* 紙色（--paper 在下方 :root；02 的時間感會改寫 --color-bg，見 components.css） */
   --color-surface: #eae9e9; /* 舞台外／plate 襯底 */
   --color-ink: #201f1d; /* 正文（設計系統的 --color-text） */
   --color-accent: #b68235;
@@ -113,6 +113,7 @@
 @custom-variant compact (&:where([data-compact], [data-compact] *));
 
 :root {
+  --paper: #f3f2f2; /* 紙色基底：02 的時間感由它往 accent-200 混合 */
   /* 舞台字級（設計稿 §0）：輔助 13、內文 16、敘述標題 26 */
   --fs-aux: 13px;
   --fs-body: 16px;

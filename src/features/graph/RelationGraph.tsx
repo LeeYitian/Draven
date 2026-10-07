@@ -19,16 +19,19 @@ import { GraphControls } from './GraphControls';
 import { GraphEdge } from './GraphEdge';
 import { GraphLegend } from './GraphLegend';
 import { GraphNode } from './GraphNode';
+import { LayerBand } from './LayerBand';
+import { edgeSegment, nodeBox, normalizeLayout, projectNodes, type Box, type Vec } from './layout';
 import {
-  edgeSegment,
-  nodeBox,
-  normalizeLayout,
-  projectNodes,
-  type Box,
-  type Vec,
-} from './layout';
+  UNDERGROUND_LAYER,
+  collapseTargets,
+  headerAnchor,
+  isOnly,
+  layoutLayers,
+  toggleOnly,
+} from './layers';
 import { useEdgeReveal } from './useEdgeReveal';
 import { useGraphViewport } from './useGraphViewport';
+import { useLayerTween } from './useLayerTween';
 import { useNodeDrag } from './useNodeDrag';
 
 // 開發專用的座標校正器：只在 dev 模式、網址有 ?editor=1 時載入，正式建置會整段移除
@@ -62,8 +65,7 @@ function useElementSize(ref: RefObject<HTMLElement | null>, fallback: Vec, reset
   return size;
 }
 
-const displayName = (node: GraphNodeData) =>
-  node.label ?? getPerson(node.id)?.name ?? node.id;
+const displayName = (node: GraphNodeData) => node.label ?? getPerson(node.id)?.name ?? node.id;
 
 /**
  * 關係圖（不使用圖表套件，research R3）：節點座標存為 0–1 比例，執行時乘容器實際尺寸；
@@ -78,6 +80,7 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
 
   const { eventIndex, focus, view } = useAppStore((s) => s.axis[axis]);
   const focusNode = useAppStore((s) => s.focusNode);
+  const setLayerCollapsed = useAppStore((s) => s.setLayerCollapsed);
   const [legendShown, setLegendShown] = useState(true);
 
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -103,11 +106,6 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
   const base = useMemo(() => projectNodes(ratios, size.w, size.h), [ratios, size.w, size.h]);
   const width = nodeBox(mode, size.w).w;
   const nominal = nodeBox(mode, size.w);
-  const position = (id: string): Vec => {
-    const b = base[id] ?? [0, 0];
-    const o = drag.offsets[id] ?? [0, 0];
-    return [b[0] + o[0], b[1] + o[1]];
-  };
 
   // 節點實際高度（副標換行時比名義高度高）：ResizeObserver 回報，連線端點才貼齊邊框
   const wrappers = useRef(new Map<string, HTMLDivElement>());
@@ -136,6 +134,27 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
   }, []);
   const boxOf = (id: string): Box => ({ w: width, h: heights[id] ?? nominal.h });
 
+  // ── 分層（02 分區、03 三界）：帶狀區域由節點位置推出，收合時節點與連線跟著 300ms 動畫 ──
+  const layers = graph.layers;
+  const collapsedMap = view.layerCollapsed;
+  const layerTargets = useMemo(
+    () => (layers ? collapseTargets(layers, collapsedMap) : {}),
+    [layers, collapsedMap],
+  );
+  const tween = useLayerTween(layerTargets, reduceMotion);
+  const layered = layers
+    ? layoutLayers({ layers, positions: base, boxOf, height: size.h, collapse: tween })
+    : null;
+  const position = (id: string): Vec => {
+    const b = layered?.positions[id] ?? base[id] ?? [0, 0];
+    const o = drag.offsets[id] ?? [0, 0];
+    return [b[0] + o[0], b[1] + o[1]];
+  };
+  const layerCollapsedOf = (id: string) => {
+    const layerId = layered?.layerOf[id];
+    return layerId !== undefined && !!collapsedMap[layerId];
+  };
+
   // ── 亮暗與可見性 ──
   const visible = useMemo(() => visibleEdges(graph.edges, eventIndex), [graph.edges, eventIndex]);
   const participants = useMemo(
@@ -144,7 +163,8 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
   );
   const nodeById = useMemo(() => new Map(graph.nodes.map((n) => [n.id, n])), [graph.nodes]);
   const groupHidden = !view.legendOn.group;
-  const isNodeHidden = (id: string) => groupHidden && nodeById.get(id)?.kind === 'group';
+  const isNodeHidden = (id: string) =>
+    (groupHidden && nodeById.get(id)?.kind === 'group') || layerCollapsedOf(id);
 
   const summaries = visible.filter((e) => view.legendOn[e.kind]);
   const name = (id: string) => {
@@ -163,7 +183,10 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
           nodes={Object.fromEntries(
             graph.nodes.map((n) => {
               const [x, y] = position(n.id);
-              return [n.id, [(x / size.w) * layout.size[0], (y / size.h) * layout.size[1]] as const];
+              return [
+                n.id,
+                [(x / size.w) * layout.size[0], (y / size.h) * layout.size[1]] as const,
+              ];
             }),
           )}
           onReset={drag.resetOffsets}
@@ -175,11 +198,7 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
     <div
       ref={viewportRef}
       data-graph-viewport
-      className={
-        flow
-          ? 'relative overflow-hidden'
-          : 'absolute inset-0 overflow-hidden'
-      }
+      className={flow ? 'relative overflow-hidden' : 'absolute inset-0 overflow-hidden'}
       style={{
         touchAction: viewport.touchAction,
         cursor: viewport.zoom !== 1 ? 'grab' : undefined,
@@ -197,6 +216,21 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
           transform: `translate(${viewport.pan[0]}px, ${viewport.pan[1]}px) scale(${viewport.zoom})`,
         }}
       >
+        {layered &&
+          layers!.map((layer, i) => (
+            <LayerBand
+              key={layer.id}
+              band={layered.bands[i]!}
+              label={layer.label}
+              count={layer.nodes.length}
+              first={i === 0}
+              collapsible={!!layer.collapsible}
+              collapsed={!!collapsedMap[layer.id]}
+              onToggle={() =>
+                setLayerCollapsed(axis, { ...collapsedMap, [layer.id]: !collapsedMap[layer.id] })
+              }
+            />
+          ))}
         <svg
           className="pointer-events-none absolute inset-0 overflow-visible"
           width={size.w}
@@ -206,15 +240,38 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
           {graph.edges.map((edge) => {
             const from = nodeById.get(edge.from);
             const to = nodeById.get(edge.to);
+            const fromCollapsed = layerCollapsedOf(edge.from);
+            const toCollapsed = layerCollapsedOf(edge.to);
+            const groupGone = (id: string) => groupHidden && nodeById.get(id)?.kind === 'group';
             const hidden =
-              !view.legendOn[edge.kind] || isNodeHidden(edge.from) || isNodeHidden(edge.to);
-            const segment =
-              from && to
-                ? edgeSegment(
-                    { center: position(edge.from), box: boxOf(edge.from) },
-                    { center: position(edge.to), box: boxOf(edge.to) },
-                  )
-                : null;
+              !view.legendOn[edge.kind] ||
+              groupGone(edge.from) ||
+              groupGone(edge.to) ||
+              (fromCollapsed && toCollapsed);
+            let segment = null;
+            let dot: 'start' | 'end' | undefined;
+            if (from && to) {
+              if (fromCollapsed !== toCollapsed) {
+                // 跨層的線有一端在已收合的層：改連到該層層頭邊緣（終點加小圓點）
+                const hiddenId = fromCollapsed ? edge.from : edge.to;
+                const shownId = fromCollapsed ? edge.to : edge.from;
+                const band = layered!.bands.find((b) => b.id === layered!.layerOf[hiddenId])!;
+                const shown = { center: position(shownId), box: boxOf(shownId) };
+                const anchor = {
+                  center: headerAnchor(band, position(hiddenId)[0], shown.center[1]),
+                  box: { w: 0, h: 0 },
+                };
+                segment = fromCollapsed
+                  ? edgeSegment(anchor, shown, 0)
+                  : edgeSegment(shown, anchor, 0);
+                dot = fromCollapsed ? 'start' : 'end';
+              } else {
+                segment = edgeSegment(
+                  { center: position(edge.from), box: boxOf(edge.from) },
+                  { center: position(edge.to), box: boxOf(edge.to) },
+                );
+              }
+            }
             return (
               <GraphEdge
                 key={edge.id}
@@ -224,6 +281,7 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
                 state={edgeState(edge, eventIndex, focus)}
                 hidden={hidden}
                 showLabel={effectiveEdgeLabels(view.edgeLabelsOn, mode)}
+                {...(dot ? { dot } : {})}
               />
             );
           })}
@@ -277,6 +335,16 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
     </ul>
   );
 
+  // 「只看地底」開關：只有可收合的分層圖（03）才有
+  const onlyUnderground =
+    layers && layers.some((l) => l.id === UNDERGROUND_LAYER && l.collapsible)
+      ? {
+          pressed: isOnly(layers, collapsedMap, UNDERGROUND_LAYER),
+          onToggle: () =>
+            setLayerCollapsed(axis, toggleOnly(layers, collapsedMap, UNDERGROUND_LAYER)),
+        }
+      : undefined;
+
   const controls = (
     <GraphControls
       axis={axis}
@@ -287,6 +355,7 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
       onReset={viewport.reset}
       legendShown={legendShown}
       onToggleLegend={() => setLegendShown((v) => !v)}
+      {...(onlyUnderground ? { onlyUnderground } : {})}
     />
   );
 

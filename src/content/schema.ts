@@ -158,8 +158,16 @@ const LayoutSchema = z.strictObject({
 });
 
 export const GraphDefSchema = z.strictObject({
+  /** 分層／分區（02 長生者與凡人、03 三界）。collapsible：層頭可點擊收合（03）；沒有則只是標示分區 */
   layers: z
-    .array(z.strictObject({ id, label: z.string().min(1), nodes: z.array(id).min(1) }))
+    .array(
+      z.strictObject({
+        id,
+        label: z.string().min(1),
+        nodes: z.array(id).min(1),
+        collapsible: z.boolean().optional(),
+      }),
+    )
     .optional(),
   nodes: z.array(GraphNodeSchema).min(2),
   edges: z.array(GraphEdgeSchema).min(1),
@@ -289,6 +297,7 @@ export const WorldIntroSchema = z.strictObject({
 });
 
 export type AxisExtrasBoundary = z.infer<typeof BoundaryDebateSchema>;
+export type AxisExtrasCompare = NonNullable<z.infer<typeof AxisExtrasSchema>['compare']>;
 export type AxisExtras = z.infer<typeof AxisExtrasSchema>;
 export type WorldIntro = z.infer<typeof WorldIntroSchema>;
 export type Person = z.infer<typeof PersonSchema>;

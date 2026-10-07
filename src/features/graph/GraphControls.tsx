@@ -1,4 +1,4 @@
-import { Menu, Minus, Plus, RotateCcw, Tag } from 'lucide-react';
+import { Layers, Menu, Minus, Plus, RotateCcw, Tag } from 'lucide-react';
 import { useLayout } from '../../components/layout/LayoutProvider';
 import { Chip } from '../../components/ui';
 import { t } from '../../content';
@@ -15,6 +15,8 @@ export interface GraphControlsProps {
   /** 圖例列的顯示開關（舞台版才有；流式版圖例固定顯示） */
   legendShown: boolean;
   onToggleLegend: () => void;
+  /** 「只看地底」（03 才有） */
+  onlyUnderground?: { pressed: boolean; onToggle: () => void };
 }
 
 const stepButton =
@@ -30,6 +32,7 @@ export function GraphControls({
   onReset,
   legendShown,
   onToggleLegend,
+  onlyUnderground,
 }: GraphControlsProps) {
   const { mode } = useLayout();
   const labelSetting = useAppStore((s) => s.axis[axis].view.edgeLabelsOn);
@@ -77,9 +80,17 @@ export function GraphControls({
     </Chip>
   );
 
+  const undergroundChip = onlyUnderground && (
+    <Chip variant="toggle" pressed={onlyUnderground.pressed} onClick={onlyUnderground.onToggle}>
+      <Layers size={14} strokeWidth={1.5} aria-hidden="true" />
+      {t('layer.onlyUnderground')}
+    </Chip>
+  );
+
   if (mode === 'flow') {
     return (
       <div className="flex flex-wrap items-center gap-1.5">
+        {undergroundChip}
         {labelsChip}
         {zoomGroup}
         <button
@@ -97,6 +108,7 @@ export function GraphControls({
   return (
     <div data-graph-controls className="absolute top-2.5 right-2.5 z-[2] flex items-center gap-1.5">
       {zoomGroup}
+      {undergroundChip}
       {labelsChip}
       <Chip variant="toggle" pressed={legendShown} onClick={onToggleLegend}>
         <Menu size={14} strokeWidth={1.5} aria-hidden="true" />

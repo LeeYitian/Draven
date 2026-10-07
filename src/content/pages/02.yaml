@@ -1,0 +1,105 @@
+# 第二主軸：魔女集會與時間考驗
+# 敘述依「內容準備與設計稿修改」修訂（刪「二十多歲」、新增事件 06 時間瓶、進程標題改為「孩子與國王」）。
+# 伏筆回收處用 {h:id|片語} 標出（每條恰一個，build 時驗證）；人名與名詞自動辨識。
+axis: 2
+number: '02'
+category: 第二主軸 · 壽命與成長
+title: 魔女集會與時間考驗
+oneLiner: 艾利安借時間長大，德雷文拒絕時間回溯：兩種面對時間的方式。
+coreTheme: 長大不是外表的抽長，而是責任的承擔與取捨。
+eventsHeading: 事件進程 · 孩子與國王
+
+events:
+  - n: 1
+    title: 借用時間
+    tag: 起因
+    participants: [elian, elis]
+    text: >-
+      艾利安渴望快點長大幫上國王。艾莉絲把自己的時間借給他，使他變成青年；解咒條件是「第一次感冒」。
+  - n: 2
+    title: 茶水惡作劇
+    tag: 王宮
+    participants: [elian, elis, dravin]
+    text: >-
+      兩人在朝臣的茶裡施下苦味魔法，「造苦之人必得飲下自身罪果」，刁難德雷文的大臣無法發言。
+  - n: 3
+    title: 潛入魔女集會
+    tag: 魔女集會
+    participants: [elian, elis, sevia, nor]
+    text: >-
+      艾利安化名「安」偽裝成艾莉絲的男伴；以天生的魔法抗性抗住瑟薇亞與諾爾的心靈試探，引起諾爾注意。
+  - n: 4
+    title: 感冒解咒
+    tag: 王宮
+    participants: [elian]
+    text: >-
+      集會後艾利安{h:first-cold|輕咳感冒}，魔法解除，變回十歲。他自責「又搞砸了」。
+  - n: 5
+    title: 四人牽手的畫
+    tag: 領悟
+    # 利歐蘭沒有節點，只供追蹤人物使用
+    participants: [dravin, elis, elian, lioran]
+    text: >-
+      德雷文畫下自己、艾莉絲、利歐蘭與艾利安牽手：{h:not-prince|孩子能做到大人做不到的事}，例如連結兩邊的世界。
+  - n: 6
+    title: 時間瓶
+    tag: 王宮
+    participants: [rumi, dravin]
+    text: >-
+      露米想用瓶中自己的時間讓德雷文回到二十五歲、擺脫詛咒。詛咒趁他動搖時發作；他最後拒絕：死亡是人生必經的一環，他不逃避。
+
+graph:
+  layers:
+    - { id: immortal, label: 長生者 · 魔女, nodes: [rumi, elis, nor, sevia] }
+    - { id: mortal, label: 凡人, nodes: [dravin, elian] }
+  nodes:
+    - { id: rumi, kind: person, sub: 德雷文前情人, layer: immortal }
+    - { id: elis, kind: person, sub: 長生魔女, layer: immortal }
+    - { id: nor, kind: person, sub: 集會領袖, layer: immortal }
+    - { id: sevia, kind: person, sub: 魔女, layer: immortal }
+    - { id: dravin, kind: person, sub: 國王 · 身負雙頭蛇詛咒, layer: mortal }
+    - { id: elian, kind: person, sub: "化名「安」\n魔法抗性", layer: mortal }
+  edges:
+    # 背景關係：進頁就畫好，不參與逐步推進
+    - { id: elis-dravin, from: elis, to: dravin, label: 養母, kind: relation, event: bg }
+    - { id: elis-elian, from: elis, to: elian, label: 借出時間, kind: key, event: 1 }
+    - { id: nor-elian, from: nor, to: elian, label: 心靈試探, kind: conflict, event: 3 }
+    - { id: sevia-elian, from: sevia, to: elian, label: 心靈試探, kind: conflict, event: 3 }
+    - { id: dravin-elian, from: dravin, to: elian, label: 照顧・引導, kind: key, event: 5 }
+    - { id: rumi-dravin, from: rumi, to: dravin, label: 時間瓶・被拒, kind: conflict, event: 6 }
+  legend:
+    - { kind: key, label: 本篇關鍵 }
+    - { kind: relation, label: 關係 }
+    - { kind: conflict, label: 試探／誘惑 }
+  # 座標（設計時的畫布尺寸內的 px）；載入時除以 size 變成比例，只寫「展開狀態」。
+  # 桌機畫布 628×290（下方還有 147 的比較滑桿）；流式版 342×322（圖例列另加 72）。
+  layout:
+    desktop:
+      size: [628, 290]
+      nodes:
+        rumi: [80, 84]
+        elis: [240, 84]
+        nor: [400, 84]
+        sevia: [560, 84]
+        dravin: [190, 200]
+        elian: [400, 200]
+    flow:
+      size: [342, 322]
+      nodes:
+        rumi: [60, 70]
+        elis: [115, 134]
+        nor: [171, 70]
+        sevia: [282, 70]
+        dravin: [60, 280]
+        elian: [282, 280]
+
+extras:
+  compare:
+    left:
+      label: 孩子 · 想借時間長大
+      quote: 「艾利安，你不是因為是個孩子才什麼都做不到，是因為你處的環境讓你什麼都做不了。」
+      source: 德雷文，對解咒後自責的艾利安
+    right:
+      label: 國王 · 拒絕時間回溯
+      quote: 「我不是選擇死亡。」「而是死亡是人生必經的一環。」「我只是不逃避。」
+      source: 德雷文，拒絕露米以時間瓶讓他回到 25 歲

@@ -12,6 +12,8 @@ export interface PageFrameProps {
   narrative: ReactNode;
   /** 本頁專屬區塊（01 光譜、03 引言、04 對照卡…）：舞台版在敘述下方，流式版在關係圖之後 */
   extras?: ReactNode;
+  /** 02 比較滑桿：舞台版橫跨兩欄放在最底（下方區改為 敘述＋關係圖 290／滑桿 147）；流式版在關係圖之後 */
+  compare?: ReactNode;
   /** 關係圖 */
   graph: ReactNode;
 }
@@ -28,29 +30,35 @@ export function PageFrame({
   events,
   narrative,
   extras,
+  compare,
   graph,
 }: PageFrameProps) {
   const { mode } = useLayout();
 
   if (mode === 'flow') {
     return (
-      <main className="flex flex-col gap-[26px]">
+      <main data-page-main className="flex flex-col gap-[26px]">
         {header}
         {/* 事件列黏在視窗頂端；左右各延伸到螢幕邊緣（抵銷容器的 24px 邊距） */}
-        <div className="sticky top-0 z-(--z-page) -mx-6 flex flex-col gap-2 border-b border-divider bg-bg pt-2.5">
+        <div
+          data-sticky-bar
+          className="sticky top-0 z-(--z-page) -mx-6 flex flex-col gap-2 border-b border-divider bg-bg pt-2.5"
+        >
           <div className="px-6">{eventsLabel}</div>
           {events}
         </div>
         {narrative}
         {graph}
+        {compare}
         {extras}
       </main>
     );
   }
 
-  const { header: h, divider, eventLabelRow, eventRow, lower } = AXIS_FRAME;
+  const { header: h, divider, eventLabelRow, eventRow, lower, lowerWithCompare } = AXIS_FRAME;
   return (
     <main
+      data-page-main
       className="absolute inset-y-0 right-0 flex flex-col"
       style={{
         left: DOCK.width,
@@ -84,8 +92,12 @@ export function PageFrame({
       </div>
       <div className="flex-none" style={{ height: lower.y - (eventRow.y + eventRow.height) }} />
       <div
-        className="grid min-h-0 flex-1"
-        style={{ gridTemplateColumns: `${lower.leftWidth}px minmax(0, 1fr)`, columnGap: lower.gap }}
+        className={compare ? 'grid min-h-0 flex-none' : 'grid min-h-0 flex-1'}
+        style={{
+          gridTemplateColumns: `${lower.leftWidth}px minmax(0, 1fr)`,
+          columnGap: lower.gap,
+          height: compare ? lowerWithCompare.graphHeight : undefined,
+        }}
       >
         <div className="flex min-h-0 min-w-0 flex-col gap-[22px]">
           {narrative}
@@ -93,6 +105,18 @@ export function PageFrame({
         </div>
         <div className="relative min-w-0">{graph}</div>
       </div>
+      {compare && (
+        <div
+          className="flex-none"
+          style={{
+            marginTop:
+              lower.height - lowerWithCompare.graphHeight - lowerWithCompare.compareSliderHeight,
+            height: lowerWithCompare.compareSliderHeight,
+          }}
+        >
+          {compare}
+        </div>
+      )}
     </main>
   );
 }

@@ -592,6 +592,7 @@
     font-size: 15px;
   }
   .node__sub {
+    white-space: pre-line; /* 副標裡的換行字元照樣換行（想指定換行位置時用） */
     font-size: var(--fs-aux);
     color: var(--color-neutral-600);
   }
@@ -1278,4 +1279,217 @@
   .spectrum__thumb {
     transition-duration: 1ms;
   }
+}
+
+/* ── 分層關係圖（02 分區標示、03 三界收合；設計稿 D4）── */
+.layer-band {
+  position: absolute;
+  right: 0;
+  left: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-top: 1px dashed var(--color-divider);
+}
+.layer-band[data-first] {
+  border-top-color: transparent;
+}
+.layer-band__head {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: var(--fs-aux);
+  letter-spacing: 0.2em;
+  color: var(--color-neutral-700);
+  text-align: left;
+  background: none;
+  border: 0;
+}
+button.layer-band__head {
+  cursor: pointer;
+}
+button.layer-band__head:hover {
+  color: var(--color-accent-800);
+}
+button.layer-band__head[aria-expanded='false'] {
+  align-items: center;
+}
+div.layer-band__head {
+  pointer-events: none;
+}
+.edge__dot {
+  fill: var(--edge-color);
+  transition: opacity 120ms ease;
+}
+.edge__dot[data-visible='false'] {
+  opacity: 0;
+}
+
+/* ── 02 比較滑桿（設計稿 D3）：全寬左右分割、中線把手 ── */
+.compare {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border-top: 1px solid var(--color-divider);
+  border-bottom: 1px solid var(--color-divider);
+}
+[data-layout='flow'] .compare {
+  height: auto;
+}
+.compare__track {
+  position: relative;
+  display: grid;
+  height: 100%;
+  touch-action: pan-y;
+}
+.compare__col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 18px 48px 0 0;
+  overflow: hidden;
+  transition: opacity 180ms ease;
+}
+.compare__col[data-side='right'] {
+  padding: 18px 0 0 48px;
+}
+.compare__col[data-emphasis='narrow'] {
+  opacity: 0.35;
+}
+.compare__col[data-side='right'][data-emphasis='narrow'] {
+  padding-left: 32px;
+}
+.compare__label {
+  font-size: var(--fs-aux);
+  letter-spacing: 0.2em;
+  color: var(--color-accent-700);
+}
+.compare__col[data-emphasis='narrow'] .compare__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.compare__quote {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.7;
+  transition: font-size 180ms ease;
+}
+.compare__col[data-emphasis='wide'] .compare__quote {
+  font-size: 20px;
+  line-height: 1.65;
+}
+.compare__source {
+  font-size: var(--fs-aux);
+  color: var(--color-neutral-600);
+}
+.compare__line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 14px;
+  cursor: ew-resize;
+  touch-action: none;
+  transform: translateX(-50%);
+}
+.compare__line::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  content: '';
+  border-left: 1px solid var(--color-accent);
+}
+.compare__handle {
+  position: absolute;
+  top: 50%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--color-accent-800);
+  cursor: ew-resize;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-accent);
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  outline-offset: 2px;
+  touch-action: none;
+  transform: translate(-50%, -50%);
+  transition:
+    width 120ms ease,
+    height 120ms ease;
+}
+.compare__handle::before {
+  position: absolute;
+  inset: -4px;
+  content: '';
+}
+.compare__handle[data-dragging],
+.compare__handle:focus-visible {
+  width: 40px;
+  height: 40px;
+  box-shadow: var(--shadow-md);
+}
+.compare__handle:focus-visible {
+  outline: 2px solid var(--color-accent);
+}
+[data-layout='flow'] .compare__col {
+  padding: 14px 20px 16px 0;
+}
+[data-layout='flow'] .compare__col[data-side='right'] {
+  padding: 14px 0 16px 20px;
+}
+[data-layout='flow'] .compare__quote {
+  font-size: 15px;
+}
+[data-layout='flow'] .compare__col[data-emphasis='wide'] .compare__quote {
+  font-size: 17px;
+}
+
+/* ── 02 的「時間感」（設計稿 K）：--age（0–1）由比較滑桿寫在 <html>，這裡只負責呈現 ──
+   ① 紙色：--color-bg 往 accent-200 混合 age×42%（所有用紙色的元件，含側欄與 Popover，一起變舊）
+   ② 邊緣暈影：蓋在頁面與側欄之上、托盤與 Popover 之下
+   ③ 內容 sepia：只套在主軸頁的 main（側欄與 Popover 不套用）；--age 為 0 時不掛標記，完全不加濾鏡 */
+html[data-aged] {
+  --color-bg: color-mix(in oklch, var(--paper), var(--color-accent-200) calc(var(--age, 0) * 42%));
+}
+/* 流式版的事件列是黏在頂端的不透明條：它自己的底色不能再疊一層 sepia（會比頁面其他地方更黃），只對它的內容套用 */
+html[data-aged] [data-page-main] > :not([data-sticky-bar]),
+html[data-aged] [data-page-main] > [data-sticky-bar] > * {
+  filter: sepia(calc(var(--age, 0) * 0.35));
+}
+html[data-age-lite] [data-page-main] > *,
+html[data-age-lite] [data-page-main] > [data-sticky-bar] > * {
+  filter: none; /* 效能退化：低記憶體或要求節省資料時只保留紙色與暈影 */
+}
+.age-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  display: none;
+  pointer-events: none;
+  box-shadow: inset 0 0 calc(var(--age, 0) * 70px) calc(var(--age, 0) * 16px)
+    color-mix(in oklch, var(--color-accent-500) calc(var(--age, 0) * 45%), transparent);
+}
+html[data-aged] .age-vignette {
+  display: block;
+}
+[data-layout='flow'] .age-vignette {
+  position: fixed;
+}
+
+/* 舞台版：第一層的層名要讓開左上角的「人物關係」標題 */
+html[data-layout='stage'] .layer-band[data-first] .layer-band__head {
+  padding-left: 100px;
 }

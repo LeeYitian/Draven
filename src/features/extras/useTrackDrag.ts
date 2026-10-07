@@ -8,6 +8,8 @@ export interface UseTrackDragOptions {
   onMove: (fraction: number) => void;
   /** 放開（或被中斷）時呼叫：光譜在這裡做吸附 */
   onEnd?: () => void;
+  /** 只有按在把手（data-drag-handle）上才開始拖曳；軌道其他位置不反應（比較滑桿的文字區要能點人名） */
+  handleOnly?: boolean;
 }
 
 /**
@@ -16,7 +18,7 @@ export interface UseTrackDragOptions {
  * - 觸控：按在把手（`data-drag-handle`）上立刻開始拖曳；按在軌道其他位置要先水平移動超過 4px 才算拖曳，
  *   垂直移動則放給瀏覽器捲動頁面（容器 touch-action: pan-y，research R12）；只輕點則跳到該位置。
  */
-export function useTrackDrag({ trackRef, onMove, onEnd }: UseTrackDragOptions) {
+export function useTrackDrag({ trackRef, onMove, onEnd, handleOnly }: UseTrackDragOptions) {
   const [dragging, setDragging] = useState(false);
   const press = useRef<{ id: number; x: number; y: number; started: boolean } | null>(null);
 
@@ -46,8 +48,9 @@ export function useTrackDrag({ trackRef, onMove, onEnd }: UseTrackDragOptions) {
       onPointerDown(e: ReactPointerEvent<HTMLElement>) {
         if (e.pointerType === 'mouse' && e.button !== 0) return;
         if ((e.target as Element).closest('[data-no-drag]')) return; // 人名等可點元素自己處理
-        press.current = { id: e.pointerId, x: e.clientX, y: e.clientY, started: false };
         const onHandle = (e.target as Element).closest('[data-drag-handle]') !== null;
+        if (handleOnly && !onHandle) return;
+        press.current = { id: e.pointerId, x: e.clientX, y: e.clientY, started: false };
         if (onHandle || e.pointerType === 'mouse') begin(e);
       },
       onPointerMove(e: ReactPointerEvent<HTMLElement>) {

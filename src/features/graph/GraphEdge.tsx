@@ -15,6 +15,8 @@ export interface GraphEdgeProps {
   hidden: boolean;
   /** 「線段標籤」開關 */
   showLabel: boolean;
+  /** 這一端連到已收合層的層頭邊緣：不畫箭頭，改畫小圓點（03 三界分層） */
+  dot?: 'start' | 'end';
 }
 
 const points = (list: readonly (readonly [number, number])[]) =>
@@ -31,6 +33,7 @@ export const GraphEdge = memo(function GraphEdge({
   state,
   hidden,
   showLabel,
+  dot,
 }: GraphEdgeProps) {
   const [hover, setHover] = useState(false);
   if (!segment) return null;
@@ -51,21 +54,50 @@ export const GraphEdge = memo(function GraphEdge({
       onPointerEnter={() => setHover(true)}
       onPointerLeave={() => setHover(false)}
     >
-      <line className="edge__hit" x1={segment.start[0]} y1={segment.start[1]} x2={segment.end[0]} y2={segment.end[1]} />
-      <line className="edge__line" x1={segment.start[0]} y1={segment.start[1]} x2={end[0]} y2={end[1]} />
-      <polygon
-        className="edge__arrow"
-        data-visible={drawn}
-        points={points(arrowHead(segment.end, segment.start))}
+      <line
+        className="edge__hit"
+        x1={segment.start[0]}
+        y1={segment.start[1]}
+        x2={segment.end[0]}
+        y2={segment.end[1]}
       />
-      {edge.both && (
+      <line
+        className="edge__line"
+        x1={segment.start[0]}
+        y1={segment.start[1]}
+        x2={end[0]}
+        y2={end[1]}
+      />
+      {dot !== 'end' && (
+        <polygon
+          className="edge__arrow"
+          data-visible={drawn}
+          points={points(arrowHead(segment.end, segment.start))}
+        />
+      )}
+      {edge.both && dot !== 'start' && (
         <polygon
           className="edge__arrow"
           data-visible={drawn}
           points={points(arrowHead(segment.start, segment.end))}
         />
       )}
-      <text className="edge__label" data-visible={labelVisible} x={label[0]} y={label[1]} dy="0.35em">
+      {dot && (
+        <circle
+          className="edge__dot"
+          data-visible={drawn}
+          cx={(dot === 'end' ? segment.end : segment.start)[0]}
+          cy={(dot === 'end' ? segment.end : segment.start)[1]}
+          r={3}
+        />
+      )}
+      <text
+        className="edge__label"
+        data-visible={labelVisible}
+        x={label[0]}
+        y={label[1]}
+        dy="0.35em"
+      >
         {edge.label}
       </text>
     </g>

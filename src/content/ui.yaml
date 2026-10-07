@@ -70,6 +70,7 @@ spectrum:
 
 compare:
   label: 兩種面對時間的方式：左右拖曳比較
+  valueText: 左欄 {left}%、右欄 {right}%
 
 mirror:
   flipHint: 點擊翻面
