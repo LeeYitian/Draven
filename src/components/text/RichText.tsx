@@ -52,6 +52,40 @@ function renderNodes(nodes: MarkupNode[], onCrossLink?: (target: string) => void
   });
 }
 
+/**
+ * 行內可點文字。刻意用 <span role="button"> 而不是 <button>：瀏覽器把 button 當成「不可拆開的行內方塊」，
+ * 緊接在後面的全形標點（）、。）會被擠到下一行行首，違反中文排版的避頭尾；span 則可以正常斷行。
+ * 鍵盤行為與 button 相同（Tab 聚焦、Enter／空白鍵啟動）。
+ */
+function InlineButton({
+  onActivate,
+  children,
+  ...rest
+}: {
+  onActivate: (element: HTMLElement) => void;
+  children?: ReactNode;
+  className: string;
+  'data-open'?: true | undefined;
+  'aria-haspopup'?: 'dialog';
+  'aria-expanded'?: boolean;
+}) {
+  return (
+    <span
+      role="button"
+      tabIndex={0}
+      {...rest}
+      onClick={(e) => onActivate(e.currentTarget)}
+      onKeyDown={(e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        onActivate(e.currentTarget);
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
 function useIsOpen(kind: 'person' | 'term', id: string, anchorKey: string): boolean {
   return usePopoverStore(
     (s) => s.open?.kind === kind && s.open.id === id && s.open.anchorKey === anchorKey,
@@ -66,16 +100,15 @@ export function NameLink({ personId, children }: { personId: string; children?: 
   const person = getPerson(personId);
   if (!person) return <>{children}</>; // 內容驗證會在建置時擋下；執行期退化為純文字
   return (
-    <button
-      type="button"
+    <InlineButton
       className="link-name"
       data-open={open || undefined}
       aria-haspopup="dialog"
       aria-expanded={open}
-      onClick={(e) => toggle({ kind: 'person', id: personId, anchor: e.currentTarget, anchorKey })}
+      onActivate={(anchor) => toggle({ kind: 'person', id: personId, anchor, anchorKey })}
     >
       {children ?? person.name}
-    </button>
+    </InlineButton>
   );
 }
 
@@ -87,16 +120,15 @@ export function TermLink({ termId, children }: { termId: string; children?: Reac
   const term = getTerm(termId);
   if (!term) return <>{children}</>;
   return (
-    <button
-      type="button"
+    <InlineButton
       className="link-term"
       data-open={open || undefined}
       aria-haspopup="dialog"
       aria-expanded={open}
-      onClick={(e) => toggle({ kind: 'term', id: termId, anchor: e.currentTarget, anchorKey })}
+      onActivate={(anchor) => toggle({ kind: 'term', id: termId, anchor, anchorKey })}
     >
       {children ?? term.term}
-    </button>
+    </InlineButton>
   );
 }
 
@@ -111,9 +143,9 @@ export function CrossLink({
   children?: ReactNode;
 }) {
   return (
-    <button type="button" className="link-cross" onClick={() => onActivate?.(target)}>
+    <InlineButton className="link-cross" onActivate={() => onActivate?.(target)}>
       {children}
-    </button>
+    </InlineButton>
   );
 }
 

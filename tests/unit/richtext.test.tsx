@@ -69,7 +69,7 @@ describe('RichText', () => {
     const anchor = container.querySelector('[data-hint="forgotten-gift"]')!;
     expect(anchor).toHaveClass('hint-anchor');
     expect(anchor.textContent).toBe('法恩用馬蹄鐵敲出火');
-    expect(anchor.querySelector('button.link-name')?.textContent).toBe('法恩');
+    expect(anchor.querySelector('[role="button"].link-name')?.textContent).toBe('法恩');
   });
 
   it('已解開的伏筆：片語標示 data-solved', () => {
@@ -87,10 +87,27 @@ describe('RichText', () => {
     expect(onCross).toHaveBeenCalledWith('spectrum');
   });
 
-  it('人名連結為 aria-haspopup=dialog 的按鈕（可用鍵盤操作）', () => {
+  it('人名連結為 aria-haspopup=dialog 的按鈕角色，可用鍵盤聚焦與啟動', async () => {
     render(<RichText text="艾利安" />);
     const button = screen.getByRole('button', { name: '艾利安' });
     expect(button).toHaveAttribute('aria-haspopup', 'dialog');
-    expect(button.tagName).toBe('BUTTON');
+    expect(button).toHaveAttribute('tabindex', '0');
+    // 刻意不是 <button>：button 是不可拆的行內方塊，後面的全形標點會被擠到行首（避頭尾）
+    expect(button.tagName).toBe('SPAN');
+    expect(button).toHaveAttribute('aria-expanded', 'false');
+    button.focus();
+    await userEvent.keyboard('{Enter}');
+    expect(button).toHaveAttribute('aria-expanded', 'true');
+    await userEvent.keyboard(' ');
+    expect(button).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('交叉連結可用 Enter／空白鍵啟動', async () => {
+    const onCross = vi.fn();
+    render(<RichText text="{x:spectrum|見下方 ↓}" onCrossLink={onCross} />);
+    screen.getByRole('button', { name: '見下方 ↓' }).focus();
+    await userEvent.keyboard('{Enter}');
+    await userEvent.keyboard(' ');
+    expect(onCross).toHaveBeenCalledTimes(2);
   });
 });
