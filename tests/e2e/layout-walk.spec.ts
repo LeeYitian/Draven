@@ -21,7 +21,7 @@ const pick = async (page: Page, n: number, flow = false) => {
 /** 左欄（敘述＋專屬區塊）每個直接內容的下緣都不超過下方區（關係圖）的下緣 */
 async function leftColumnFits(page: Page) {
   return page.evaluate(() => {
-    const graph = document.querySelector('[data-graph-viewport]')!.getBoundingClientRect();
+    const graph = document.querySelector('[data-graph-frame]')!.getBoundingClientRect();
     const out: string[] = [];
     const parts = [
       '[data-narrative-body]',

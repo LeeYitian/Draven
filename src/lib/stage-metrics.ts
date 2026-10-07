@@ -25,15 +25,15 @@ export const CONTENT = { x: 112, width: 1288 } as const;
 
 /** 主軸頁框架網格（§1-A；01–04 統一，clarifications G-05） */
 export const AXIS_FRAME = {
-  // 頁首與事件列壓縮（頁首 72→64、事件列 56→44、各段間距收緊），把下方區從 457 加高到 509，給關係圖更多上下空間
+  // 頁首與事件列壓縮（頁首 72→64、事件列 56→44、各段間距收緊），把下方區從 457 加高到 501，給關係圖更多上下空間
   header: { y: 20, height: 64, rightColumnWidth: 460 },
   divider: { y: 92 },
   /** 小標列 36（放大的方向鍵提示） */
   eventLabelRow: { y: 96, height: 36 },
-  eventRow: { y: 134, height: 44, gap: 8 },
+  eventRow: { y: 142, height: 44, gap: 8 },
   lower: {
-    y: 186,
-    height: 509,
+    y: 194,
+    height: 501,
     /** 左欄＝敘述文字 470＋旁註欄 150 */
     leftWidth: 620,
     narrativeTextWidth: 470,
@@ -45,6 +45,9 @@ export const AXIS_FRAME = {
   /** 02 的下方區較矮（比較滑桿佔下方 147），關係圖高度 342 */
   lowerWithCompare: { graphHeight: 342, compareSliderHeight: 147 },
 } as const;
+
+/** 關係圖（舞台版）的上下兩條功能列：標題＋控制項在上、圖例在下，都在畫布之外，所以不會蓋到節點（畫布高度＝圖框高度 − 兩條列） */
+export const GRAPH_BARS = { top: 40, bottom: 44 } as const;
 
 /** 事件列等分：寬 = (內容寬 − 間距總和) ÷ 事件數 */
 export function eventCellWidth(eventCount: number): number {

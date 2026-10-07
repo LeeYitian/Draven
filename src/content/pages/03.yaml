@@ -105,19 +105,19 @@ graph:
   # 座標以搜尋程式在 342／272 兩種容器寬度下求得，Phase 9 再用 ?editor=1 校正器微調）。
   layout:
     desktop:
-      size: [628, 457]
+      size: [628, 417]
       nodes:
-        velo: [82, 76]
-        dravin: [290, 76]
-        nor: [498, 76]
-        bishop: [66, 146]
-        lioran: [282, 146]
-        bren: [562, 146]
-        elian: [266, 246]
-        fane: [546, 246]
-        earth-dragon: [74, 306]
-        shadow-man: [418, 306]
-        snake-god: [234, 386]
+        velo: [82, 62]
+        dravin: [268, 62]
+        nor: [498, 62]
+        bishop: [66, 132]
+        lioran: [262, 132]
+        bren: [562, 132]
+        elian: [266, 233]
+        fane: [546, 233]
+        earth-dragon: [74, 293]
+        shadow-man: [418, 293]
+        snake-god: [234, 373]
     flow:
       size: [342, 740]
       nodes:

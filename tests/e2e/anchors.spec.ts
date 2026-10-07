@@ -186,6 +186,7 @@ test.describe('舞台版：拖曳放置', () => {
     );
 
   async function dragKeyword(page: Page, keywordId: string, slotId: string, release = true) {
+    await page.waitForTimeout(400); // 托盤升起動畫（240ms）結束、位置穩定後才量測，否則按下的位置會落空
     const kb = (await page.locator(`[data-hint-keyword="${keywordId}"]`).boundingBox())!;
     await page.mouse.move(kb.x + 20, kb.y + 15);
     await page.mouse.down();
@@ -252,6 +253,7 @@ test.describe('舞台版：拖曳放置', () => {
     await seed(page);
     await openEvent6(page, { w: 1440, h: 720 });
     await page.locator('nav').first().getByRole('button', { name: /^伏筆/ }).click();
+    await page.waitForTimeout(400); // 等托盤升起動畫結束，位置穩定後才量測
     const kb = (await page.locator('[data-hint-keyword="cold-hand"]').boundingBox())!;
     await page.mouse.move(kb.x + 20, kb.y + 15);
     await page.mouse.down();

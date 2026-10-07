@@ -116,7 +116,7 @@ test.describe('舞台版 Popover', () => {
     await openPage(page, { w: 1440, h: 720 }, AXIS1);
     await page.locator('[data-narrative] [role="button"]', { hasText: '交流特使' }).first().click();
     const dialog = page.getByRole('dialog');
-    await expect(dialog).toContainText('派往各族領地交流的使者');
+    await expect(dialog).toContainText('交流特使'); // 說明文字是內容，不寫死
     await expect(dialog).not.toContainText('依目前進度');
     await page.keyboard.press('Escape');
     await page.locator('[data-node="dravin"]').click();

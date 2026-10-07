@@ -244,8 +244,18 @@ test.describe('舞台版人物誌：互動', () => {
     await openDrawer(page);
     await page.waitForTimeout(300);
     await page.getByRole('radio', { name: '依出場順序' }).click();
-    const fane = (await stageCards(page)).find((c) => c.id === 'fane')!;
-    expect(fane.left).toBeCloseTo(48 + 274, 0);
+    // 沒有位移過渡：卡片的 transition 縮到 1ms，位置幾乎立刻到位（等一個渲染週期，不等動畫）
+    await expect
+      .poll(async () => (await stageCards(page)).find((c) => c.id === 'fane')!.left, {
+        timeout: 1500,
+        intervals: [25],
+      })
+      .toBeCloseTo(48 + 274, 0);
+    const duration = await page
+      .locator('[data-person="fane"]')
+      .first()
+      .evaluate((el) => parseFloat(getComputedStyle(el).transitionDuration));
+    expect(duration).toBeLessThan(0.05);
     await context.close();
   });
 

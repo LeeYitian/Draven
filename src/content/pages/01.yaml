@@ -103,16 +103,16 @@ graph:
   # 桌機畫布 628×457（G-05 統一右欄寬）；流式版 342×300（圖例列另加 72）。
   layout:
     desktop:
-      size: [628, 457]
+      size: [628, 417]
       nodes:
-        old-nobles: [70, 80]
-        dravin: [314, 80]
-        fane: [558, 80]
-        minor-nobles: [70, 228]
-        elis: [432, 228]
-        beastmen: [70, 376]
-        elian: [314, 376]
-        bren: [558, 376]
+        old-nobles: [70, 42]
+        dravin: [314, 42]
+        fane: [558, 42]
+        minor-nobles: [70, 208]
+        elis: [432, 208]
+        beastmen: [70, 373]
+        elian: [314, 373]
+        bren: [558, 373]
     flow:
       size: [342, 300]
       nodes:

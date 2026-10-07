@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { Eyebrow, Segmented } from '../../components/ui';
 import { people, t } from '../../content';
 import type { Person } from '../../content/schema';
@@ -12,6 +12,7 @@ import type { SortMode } from './model';
 import { PersonBio } from './PersonBio';
 import { TrackButton } from './PersonCard';
 import { usePeopleView } from './usePeopleView';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 const SORTS: readonly SortMode[] = ['group', 'order', 'world'];
@@ -210,7 +211,8 @@ function FlowCenterView({
   const down = tree.cells.filter((c) => c.group === 'down');
 
   return (
-    <div className="px-6 pt-4" data-flow-center-view>
+    // key＝中心人物：換人時整塊重新掛載並播進場動畫（flow-center-in），和桌面版換中心時卡片移位的感覺一致
+    <div key={centerPerson.id} className="flow-center-in px-6 pt-4" data-flow-center-view>
       {/* 量測用的內層：寬度＝內容寬（不含左右邊距），線與卡片的座標都以它為準 */}
       <div ref={ref} className="flex flex-col">
         <div className="mb-4 flex items-center gap-2.5">
@@ -258,7 +260,10 @@ function FlowCenterView({
               type="button"
               className="card-hit"
               aria-expanded={expanded}
-              aria-label={t('people.cardLabel', { name: centerPerson.name, role: centerPerson.role })}
+              aria-label={t('people.cardLabel', {
+                name: centerPerson.name,
+                role: centerPerson.role,
+              })}
             />
             <div className="flex items-center justify-between gap-2">
               <span className="text-[18px] font-semibold" aria-hidden="true">
@@ -335,6 +340,14 @@ function FlowCenterView({
  */
 export function PeopleFlow() {
   const v = usePeopleView();
+  const reduceMotion = useReducedMotion();
+
+  // 換中心人物（或從網格進入中心視角）：頁面捲回頂端，新的中心人物與關係在最上面
+  const centerId = v.centerPerson?.id ?? null;
+  useEffect(() => {
+    if (centerId === null) return;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }, [centerId, reduceMotion]);
 
   const base = (person: Person) => ({
     onStage: v.progress > 0 && person.firstAppearance.axis <= v.progress,
@@ -373,20 +386,21 @@ export function PeopleFlow() {
   return (
     <div className="mx-auto max-w-[640px] pb-8">
       <header className="sticky top-0 z-[2] flex flex-col gap-3 border-b border-divider bg-bg px-6 pt-5 pb-3">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+        {/* 標題、進度、關閉鈕同一列；進度的說明文字太長，手機版只留螢幕閱讀器讀 */}
+        <div className="flex items-center gap-3">
           <h2 className="m-0 font-heading text-[30px] leading-none font-medium whitespace-nowrap">
             {t('people.title')}
           </h2>
           <span
             data-progress-badge
-            className="rounded-md border border-divider px-2 py-0.5 text-aux text-neutral-700"
+            className="rounded-md border border-divider px-2 py-0.5 text-aux whitespace-nowrap text-neutral-700"
           >
-            {t('people.progress', { page: pad(v.progress) })} · {t('people.instruction')}
+            {t('people.progress', { page: pad(v.progress) })}
+            <span className="sr-only"> · {t('people.instruction')}</span>
           </span>
-          <span className="ml-auto" />
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-md border border-divider text-neutral-800 active:bg-accent-100"
+            className="ml-auto flex h-10 w-10 flex-none items-center justify-center rounded-md border border-divider text-neutral-800 active:bg-accent-100"
             aria-label={t('people.close')}
             onClick={closePeople}
           >

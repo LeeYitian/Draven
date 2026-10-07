@@ -12,6 +12,7 @@ import { useLayout } from '../../components/layout/LayoutProvider';
 import { Eyebrow } from '../../components/ui';
 import { getPerson, t } from '../../content';
 import type { AxisPage, GraphNode as GraphNodeData } from '../../content/schema';
+import { GRAPH_BARS } from '../../lib/stage-metrics';
 import { useReducedMotion } from '../../lib/useReducedMotion';
 import { edgeState, effectiveEdgeLabels, nodeState, visibleEdges } from '../../store/selectors';
 import { useAppStore, type AxisKey } from '../../store/store';
@@ -402,22 +403,28 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
     );
   }
 
+  // 舞台版：上（標題＋控制項）、中（畫布）、下（圖例）三段；功能列都在畫布之外，節點不會被蓋住。
+  // 畫布高度＝圖框高度 − 上下兩條列（圖例收起時下條消失、畫布變高），節點座標是畫布的比例。
   return (
     <section
-      className="relative h-full overflow-hidden rounded-md"
+      data-graph-frame
+      className="relative flex h-full flex-col overflow-hidden rounded-md"
       aria-label={t('axis.graphTitle')}
     >
-      {canvas}
-      {/* 邊框畫在最上層：畫布因此是完整的 628×457，節點座標與設計座標一一對應 */}
+      <div
+        className="flex flex-none items-center justify-between border-b border-divider px-4 pr-2.5"
+        style={{ height: GRAPH_BARS.top }}
+      >
+        <Eyebrow>{t('axis.graphTitle')}</Eyebrow>
+        {controls}
+      </div>
+      <div className="relative min-h-0 flex-1">{canvas}</div>
+      {legendShown && <GraphLegend axis={axis} graph={graph} />}
+      {/* 外框畫在最上層，不佔版面 */}
       <div
         className="pointer-events-none absolute inset-0 rounded-md border border-divider"
         aria-hidden="true"
       />
-      <Eyebrow className="pointer-events-none absolute top-3.5 left-4">
-        {t('axis.graphTitle')}
-      </Eyebrow>
-      {controls}
-      {legendShown && <GraphLegend axis={axis} graph={graph} />}
       {readerList}
       {editorPanel}
     </section>

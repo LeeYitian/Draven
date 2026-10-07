@@ -118,7 +118,7 @@ export function HintTray() {
           aria-label={t('hints.title')}
           data-hint-tray
           data-closing={closing}
-          className="tray-anim fixed inset-x-0 bottom-[76px] z-(--z-tray) mx-auto flex max-w-[640px] flex-col gap-3 rounded-t-lg border-t border-accent bg-bg px-6 pt-3 pb-4 shadow-lg"
+          className="tray-anim fixed inset-x-0 bottom-[76px] z-(--z-tray) mx-auto flex max-w-[640px] flex-col gap-3 rounded-t-lg border-t border-accent bg-bg px-6 pt-3 pb-4 [box-shadow:var(--shadow-up)]"
         >
           <div className="mx-auto h-1 w-9 rounded-sm bg-neutral-300" aria-hidden="true" />
           <div className="flex items-baseline gap-2.5">
