@@ -66,7 +66,7 @@ export function NarrativePanel({ axis, events, onCrossLink }: NarrativePanelProp
         <Eyebrow>{shown.tag}</Eyebrow>
       </div>
       <p className="m-0 mt-3 text-justify text-body leading-[36px] flow:mt-2.5 flow:leading-[1.85]">
-        <RichText text={shown.text} {...(onCrossLink ? { onCrossLink } : {})} />
+        <RichText text={shown.text} noteRows={flow} {...(onCrossLink ? { onCrossLink } : {})} />
       </p>
     </div>
   );

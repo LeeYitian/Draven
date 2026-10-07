@@ -396,6 +396,9 @@
   html[data-layout='flow'] .hint-slot[data-state='solved'] {
     min-height: 34px;
   }
+  html[data-layout='flow'] .hint-slot[data-state='ready'] {
+    width: 130px;
+  }
   .hint-slot[data-state='ready'] {
     width: 144px;
     color: var(--color-accent-800);
@@ -414,6 +417,7 @@
   }
   /* 答對後淡入的「解開後說明」 */
   .hint-explain {
+    display: block;
     margin: 6px 0 0;
     font-size: var(--fs-aux);
     line-height: 1.5;

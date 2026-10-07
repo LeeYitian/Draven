@@ -86,7 +86,7 @@ export function HintSlotLayer({
   const [heights, setHeights] = useState<Record<string, number>>({});
 
   // 框格（含解開後說明）的實際高度：ResizeObserver 回報
-  const cells = useMemo(() => new Map<string, HTMLDivElement>(), []);
+  const cells = useMemo(() => new Map<string, HTMLSpanElement>(), []);
   const [observer] = useState(() =>
     typeof ResizeObserver === 'undefined'
       ? null

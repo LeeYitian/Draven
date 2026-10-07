@@ -44,7 +44,7 @@ export interface HintSlotProps {
   /** 本頁第幾處（無障礙標籤） */
   index: number;
   /** 容器（定位用）；舞台版由 HintSlotLayer 量測高度 */
-  cellRef?: Ref<HTMLDivElement>;
+  cellRef?: Ref<HTMLSpanElement>;
   className?: string;
   style?: CSSProperties;
 }
@@ -76,8 +76,8 @@ export function HintSlot({ hintId, index, cellRef, className, style }: HintSlotP
   else label = t('hints.slotEmpty');
 
   return (
-    <div ref={cellRef} className={className} style={style} data-hint-cell={hintId}>
-      <div
+    <span ref={cellRef} className={className} style={style} data-hint-cell={hintId}>
+      <span
         role="button"
         tabIndex={0}
         className="hint-slot"
@@ -95,12 +95,12 @@ export function HintSlot({ hintId, index, cellRef, className, style }: HintSlotP
       >
         {state === 'solved' && <Check size={13} strokeWidth={2} aria-hidden="true" />}
         {label}
-      </div>
+      </span>
       {state === 'solved' && (
-        <p className="hint-explain" data-hint-explain={hintId}>
+        <span className="hint-explain" data-hint-explain={hintId}>
           {hint.explain}
-        </p>
+        </span>
       )}
-    </div>
+    </span>
   );
 }

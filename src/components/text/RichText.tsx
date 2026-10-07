@@ -2,6 +2,8 @@ import { Fragment, useId, type ReactNode } from 'react';
 import { getPerson, getTerm, parseRich, type MarkupNode } from '../../content';
 import { useAppStore } from '../../store/store';
 import { usePopoverStore } from '../../store/popover';
+import { NoteRow } from '../../features/hints/NoteRow';
+import { resolveNoteInsertionPoint } from '../../features/hints/note-placement';
 
 /**
  * 全站所有「含行內標記的文字」都經過這裡（憲章 I）：人名／名詞連結、交叉連結、伏筆回收處。
@@ -12,11 +14,24 @@ export interface RichTextProps {
   className?: string;
   /** 點擊 {x:target|…} 交叉連結（例如 spectrum）時呼叫 */
   onCrossLink?: (target: string) => void;
+  /** 流式版事件敘述：在伏筆回收處之後的標點後面插入註記列（框格放在這裡）；桌機版不用 */
+  noteRows?: boolean;
 }
 
-export function RichText({ text, className, onCrossLink }: RichTextProps) {
+export function RichText({ text, className, onCrossLink, noteRows }: RichTextProps) {
   const nodes = parseRich(text);
-  return <span className={className}>{renderNodes(nodes, onCrossLink)}</span>;
+  if (!noteRows) return <span className={className}>{renderNodes(nodes, onCrossLink)}</span>;
+  return (
+    <span className={className}>
+      {resolveNoteInsertionPoint(nodes).map((item, i) =>
+        item.kind === 'note' ? (
+          <NoteRow key={`note-${i}`} hintIds={item.hintIds} />
+        ) : (
+          <Fragment key={i}>{renderNodes([item.node], onCrossLink)}</Fragment>
+        ),
+      )}
+    </span>
+  );
 }
 
 function renderNodes(nodes: MarkupNode[], onCrossLink?: (target: string) => void): ReactNode {
