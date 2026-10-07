@@ -4,11 +4,12 @@ import { FlowShell } from '../components/layout/FlowShell';
 import { LayoutProvider, useLayout } from '../components/layout/LayoutProvider';
 import { Stage } from '../components/layout/Stage';
 import { DisplayNum } from '../components/ui';
-import { t } from '../content';
+import { getAxisPage, t } from '../content';
+import { AxisPage } from '../features/axis/AxisPage';
 import { useGlobalKeys } from '../features/axis/useGlobalKeys';
 import { WorldIntro } from '../features/world/WorldIntro';
 import { getReturnTo, pageOfRoute, parseHash, useHash } from '../lib/hash-router';
-import { useAppStore } from '../store/store';
+import { useAppStore, type AxisKey } from '../store/store';
 
 // 開發專用元件圖鑑：只在 dev 模式載入，正式建置會把整段移除
 const Kit = import.meta.env.DEV ? lazy(() => import('../dev/Kit')) : null;
@@ -36,7 +37,9 @@ function AxisPlaceholder({ page }: { page: number }) {
 }
 
 function PageView({ page }: { page: number }) {
-  return page === 0 ? <WorldIntro /> : <AxisPlaceholder page={page} />;
+  if (page === 0) return <WorldIntro />;
+  // 內容檔已建立的主軸用正式頁面；其餘暫用占位（Phase 5 起陸續補上 02–04）
+  return getAxisPage(page) ? <AxisPage axis={page as AxisKey} /> : <AxisPlaceholder page={page} />;
 }
 
 function Shell() {

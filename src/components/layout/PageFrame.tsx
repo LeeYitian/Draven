@@ -34,7 +34,7 @@ export function PageFrame({
 
   if (mode === 'flow') {
     return (
-      <div className="flex flex-col gap-[26px]">
+      <main className="flex flex-col gap-[26px]">
         {header}
         {/* 事件列黏在視窗頂端；左右各延伸到螢幕邊緣（抵銷容器的 24px 邊距） */}
         <div className="sticky top-0 z-(--z-page) -mx-6 flex flex-col gap-2 border-b border-divider bg-bg pt-2.5">
@@ -44,13 +44,13 @@ export function PageFrame({
         {narrative}
         {graph}
         {extras}
-      </div>
+      </main>
     );
   }
 
   const { header: h, divider, eventLabelRow, eventRow, lower } = AXIS_FRAME;
   return (
-    <div
+    <main
       className="absolute inset-y-0 right-0 flex flex-col"
       style={{
         left: DOCK.width,
@@ -93,6 +93,6 @@ export function PageFrame({
         </div>
         <div className="relative min-w-0">{graph}</div>
       </div>
-    </div>
+    </main>
   );
 }

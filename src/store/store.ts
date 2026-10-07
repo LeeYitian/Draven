@@ -18,7 +18,8 @@ export interface GraphView {
   zoom: number;
   pan: [number, number];
   legendOn: Record<LegendKey, boolean>;
-  edgeLabelsOn: boolean;
+  /** 線上文字：null＝依版型預設（舞台開、流式關，見 effectiveEdgeLabels）；讀者點過之後記住選擇 */
+  edgeLabelsOn: boolean | null;
   layerCollapsed: Record<string, boolean>;
 }
 
@@ -76,7 +77,8 @@ export interface AppState {
   setPan(axis: AxisKey, pan: [number, number]): void;
   resetView(axis: AxisKey): void;
   toggleLegend(axis: AxisKey, key: LegendKey): void;
-  toggleEdgeLabels(axis: AxisKey): void;
+  /** current 是畫面目前實際的開關狀態（含版型預設），切換成相反 */
+  toggleEdgeLabels(axis: AxisKey, current: boolean): void;
   setLayerCollapsed(axis: AxisKey, collapsed: Record<string, boolean>): void;
   trackPerson(id: string): void;
   untrack(): void;
@@ -105,7 +107,7 @@ const initialView = (): GraphView => ({
   zoom: 1,
   pan: [0, 0],
   legendOn: { key: true, relation: true, conflict: true, group: true },
-  edgeLabelsOn: true,
+  edgeLabelsOn: null,
   layerCollapsed: {},
 });
 const initialAxis = (): AxisState => ({
@@ -243,8 +245,7 @@ export const useAppStore = create<AppState>()((set, get) => {
           [key]: !get().axis[axis].view.legendOn[key],
         },
       }),
-    toggleEdgeLabels: (axis) =>
-      patchView(axis, { edgeLabelsOn: !get().axis[axis].view.edgeLabelsOn }),
+    toggleEdgeLabels: (axis, current) => patchView(axis, { edgeLabelsOn: !current }),
     setLayerCollapsed: (axis, collapsed) => patchView(axis, { layerCollapsed: collapsed }),
 
     // ── tracking ──────────────────────────────────────────────

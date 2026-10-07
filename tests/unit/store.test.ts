@@ -234,8 +234,11 @@ describe('關係圖顯示控制', () => {
   it('圖例開關、線上文字開關、縮放範圍 50–200%，重設', () => {
     s().toggleLegend(1, 'conflict');
     expect(s().axis[1].view.legendOn.conflict).toBe(false);
-    s().toggleEdgeLabels(1);
+    expect(s().axis[1].view.edgeLabelsOn).toBeNull(); // 預設：依版型
+    s().toggleEdgeLabels(1, true); // 舞台預設開 → 關
     expect(s().axis[1].view.edgeLabelsOn).toBe(false);
+    s().toggleEdgeLabels(1, false);
+    expect(s().axis[1].view.edgeLabelsOn).toBe(true);
     s().setZoom(1, 5);
     expect(s().axis[1].view.zoom).toBe(2);
     s().setZoom(1, 0.1);

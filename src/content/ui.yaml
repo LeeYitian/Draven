@@ -52,6 +52,9 @@ graph:
   hint: 點圖例開關線種 · 雙指縮放 · 拖曳平移
   node: '{name}，{sub}'
   nodeFocus: 聚焦 {name}
+  edge: '{from} → {to}：{label}'
+  edgeBoth: '{from} ⇄ {to}：{label}'
+  edgeList: 目前已畫出的人物關係
 
 layer:
   count: '{name} · {n}'

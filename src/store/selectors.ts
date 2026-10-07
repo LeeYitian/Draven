@@ -92,6 +92,11 @@ export function nodeState(
   return neighbor ? 'focus' : 'dim';
 }
 
+/** 線上文字是否顯示：讀者選過就照選擇；沒選過依版型（舞台開、流式關——窄圖上文字會蓋住節點） */
+export function effectiveEdgeLabels(setting: boolean | null, mode: 'stage' | 'flow'): boolean {
+  return setting ?? mode === 'stage';
+}
+
 // ── 事件列標記 ───────────────────────────────────────────────────
 /** 追蹤：該人物出場的事件（事件格右上掛書籤）；不影響關係圖 */
 export function eventTracked(

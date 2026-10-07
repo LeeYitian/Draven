@@ -558,6 +558,21 @@
     transform: scale(1.04);
     cursor: grabbing;
   }
+  /* 圖例關閉的群體：隱藏且不可操作 */
+  .node[data-hidden] {
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* 流式版容器窄於 340：節點 88 寬、字級 14／11（layout 合約 §3） */
+  .node[data-narrow] {
+    min-width: 88px;
+  }
+  .node[data-narrow] .node__name {
+    font-size: 14px;
+  }
+  .node[data-narrow] .node__sub {
+    font-size: 11px;
+  }
 
   /* ── 關係線（SVG）：種類決定顏色與線型，狀態決定亮暗 ── */
   .edge {
@@ -604,6 +619,36 @@
   }
   .edge[data-state='lit'] .edge__label {
     font-weight: 600;
+  }
+  /* 尚未畫出的線：整組淡出（回退時 120ms 淡出後視覺上移除）；圖例關閉的線種同樣隱藏 */
+  .edge[data-state='unrevealed'] {
+    opacity: 0;
+    transition-duration: 120ms;
+  }
+  .edge[data-hidden] {
+    opacity: 0;
+  }
+  /* 箭頭在線畫完後才淡入；線上文字同理，且可由「線段標籤」開關或 hover 暫顯 */
+  .edge__arrow {
+    transition: opacity 120ms ease;
+  }
+  .edge__label {
+    transition: opacity 180ms ease;
+  }
+  .edge__label[data-visible='false'],
+  .edge__arrow[data-visible='false'] {
+    opacity: 0;
+  }
+  /* hover 命中區：比線粗的透明線；未畫出或被隱藏的線不可 hover */
+  .edge__hit {
+    stroke: transparent;
+    stroke-width: 14px;
+    fill: none;
+    pointer-events: stroke;
+  }
+  .edge[data-state='unrevealed'] .edge__hit,
+  .edge[data-hidden] .edge__hit {
+    pointer-events: none;
   }
 
   /* ── 人物卡（人物誌）：登場（彩色/灰階）與選中（浮起）是兩個獨立通道 ──

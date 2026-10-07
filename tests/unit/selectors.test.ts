@@ -4,6 +4,7 @@ import type { GraphEdge } from '../../src/content/schema.ts';
 import {
   acquirableHints,
   edgeState,
+  effectiveEdgeLabels,
   eventMarkedByNodeFocus,
   eventTracked,
   isOnStage,
@@ -246,5 +247,14 @@ describe('伏筆', () => {
     expect(acquirableHints(list, 2, ['b']).map((h) => h.id)).toEqual(['c']);
     expect(acquirableHints(list, 3, []).map((h) => h.id)).toEqual(['d']);
     expect(acquirableHints(list, 0, [])).toEqual([]);
+  });
+});
+
+describe('effectiveEdgeLabels（線上文字預設）', () => {
+  it('沒選過：舞台開、流式關；選過就照選擇（不論版型）', () => {
+    expect(effectiveEdgeLabels(null, 'stage')).toBe(true);
+    expect(effectiveEdgeLabels(null, 'flow')).toBe(false);
+    expect(effectiveEdgeLabels(true, 'flow')).toBe(true);
+    expect(effectiveEdgeLabels(false, 'stage')).toBe(false);
   });
 });

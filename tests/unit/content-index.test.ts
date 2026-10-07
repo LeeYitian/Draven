@@ -31,8 +31,9 @@ describe('content loader', () => {
     expect([1, 2, 3, 4].map(count)).toEqual([1, 8, 2, 1]);
   });
 
-  it('主軸頁尚未建立時回傳 undefined', () => {
-    expect(getAxisPage(1)).toBeUndefined();
+  it('已建立的主軸頁可取得；尚未建立的回傳 undefined（Phase 5 起陸續補上 02–04）', () => {
+    expect(getAxisPage(1)?.title).toBe('統一之杖：荊棘之王德雷文');
+    expect(getAxisPage(2)).toBeUndefined();
   });
 });
 
