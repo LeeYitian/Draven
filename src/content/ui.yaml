@@ -114,6 +114,7 @@ tracking:
   button: 追蹤
   cancel: 取消追蹤
   buttonLabel: 追蹤 {name}
+  pressedLabel: '追蹤中：{name}'
 
 # 人物誌
 people:
@@ -134,6 +135,7 @@ people:
   centerOf: 以 {name} 為中心
   centerClear: 取消中心視角
   expandHint: 再點一次，展開完整介紹
+  collapseHint: 再點一次，收合完整介紹
   noRelation: 沒有直接關係
   close: 關閉人物誌
   collapseCard: 收合完整介紹

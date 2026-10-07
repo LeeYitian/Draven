@@ -661,7 +661,14 @@
     transition:
       transform 360ms var(--ease-out-soft),
       width 360ms var(--ease-out-soft),
-      height 360ms var(--ease-out-soft);
+      height 360ms var(--ease-out-soft),
+      opacity 360ms var(--ease-out-soft);
+  }
+  /* 放在 .person-slot 裡時，卡片尺寸跟著 slot（標準卡↔精簡卡的尺寸過渡由 slot 負責） */
+  .person-card[data-fill],
+  .person-card[data-fill][data-compact] {
+    width: 100%;
+    height: 100%;
   }
   .person-card {
     display: flex;
@@ -735,6 +742,83 @@
   .person-card[data-compact] .person-card__intro {
     display: none;
   }
+  /* 人物中心視角的關係線（直角折線＋端點小圓點＋線上文字）；樣式沿用關係圖的線種 */
+  .rel {
+    --rel-color: var(--color-neutral-500);
+    --rel-width: 1px;
+    transition: opacity 180ms ease 300ms; /* 卡片位移（360ms）接近完成時才淡入 */
+  }
+  .rel[data-kind='key'] {
+    --rel-color: var(--color-accent);
+    --rel-width: 1.5px;
+  }
+  .rel[data-kind='conflict'] {
+    --rel-color: var(--color-neutral-600);
+  }
+  .rel__line {
+    fill: none;
+    stroke: var(--rel-color);
+    stroke-width: var(--rel-width);
+    stroke-linejoin: round;
+  }
+  .rel[data-kind='conflict'] .rel__line {
+    stroke-dasharray: 4 4;
+  }
+  .rel__dot {
+    fill: var(--rel-color);
+  }
+  .rel__label {
+    font-size: var(--fs-aux);
+    fill: var(--color-neutral-800);
+    stroke: var(--color-bg);
+    stroke-width: 6px;
+    paint-order: stroke;
+  }
+  .rel[data-hidden] {
+    opacity: 0;
+    transition-delay: 0ms;
+    transition-duration: 120ms;
+  }
+  /* 手機版中心視角：關係標籤膠囊（外框＝線種）掛在卡片上 */
+  .rel-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 22px;
+    padding: 0 10px;
+    font-size: var(--fs-aux);
+    color: var(--color-neutral-800);
+    white-space: nowrap;
+    background: var(--color-bg);
+    border: 1px solid var(--color-neutral-500);
+    border-radius: 11px;
+  }
+  .rel-pill[data-kind='key'] {
+    color: var(--color-accent-800);
+    border: 1.5px solid var(--color-accent);
+  }
+  .rel-pill[data-kind='conflict'] {
+    border: 1px dashed var(--color-neutral-600);
+  }
+
+  /* 人物誌抽屜升降與展開浮層放大（動畫時間見 MOTION；reduced-motion 時縮到 1ms） */
+  .drawer-anim[data-closing='false'] {
+    animation: drawer-in 300ms var(--ease-out-soft) both;
+  }
+  .drawer-anim[data-closing='true'] {
+    animation: drawer-out 300ms ease-in both;
+  }
+  .expand-anim {
+    transform-origin: top left;
+  }
+  .expand-anim[data-closing='false'] {
+    animation: expand-in 320ms var(--ease-out-soft) both;
+  }
+  .expand-anim[data-closing='true'] {
+    animation: expand-out 320ms var(--ease-out-soft) both;
+  }
+
   /* 「追蹤」：卡片內獨立的點擊區（不觸發人物中心視角） */
   .track-btn {
     display: inline-flex;
@@ -846,6 +930,10 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .drawer-anim,
+  .expand-anim {
+    animation-duration: 1ms !important;
+  }
   .person-slot,
   .person-card,
   .node,
@@ -854,4 +942,65 @@
     transition-duration: 1ms;
   }
   /* 鏡像卡在此模式的「翻面改為淡入淡出」由元件處理（T115），不能只清掉 transform，否則背面看不到 */
+}
+
+/* ══ 手機版人物卡（96 高、2 欄、不顯示簡介；追蹤改為右上角圖示按鈕）══ */
+.person-card[data-flow] {
+  padding: 9px 10px;
+  gap: 2px;
+}
+.person-card[data-flow] .person-card__name {
+  padding-right: 30px;
+  font-size: 16px;
+}
+.person-card[data-flow] .person-card__role {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* ══ 人物誌：抽屜升降與展開浮層的 keyframes（頂層宣告，確保一定會輸出）══ */
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes drawer-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+}
+/* 展開浮層：從中心卡片原位（--fx/--fy 位移、--fsx/--fsy 縮放）放大到 600×508 */
+@keyframes expand-in {
+  from {
+    opacity: 0.4;
+    transform: translate(var(--fx), var(--fy)) scale(var(--fsx), var(--fsy));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes expand-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0.4;
+    transform: translate(var(--fx), var(--fy)) scale(var(--fsx), var(--fsy));
+  }
 }

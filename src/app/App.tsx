@@ -8,9 +8,12 @@ import { PopoverLayer } from '../components/text/PopoverLayer';
 import { DisplayNum } from '../components/ui';
 import { getAxisPage, t } from '../content';
 import { AxisPage } from '../features/axis/AxisPage';
+import { PeopleDrawer } from '../features/people/PeopleDrawer';
 import { useGlobalKeys } from '../features/axis/useGlobalKeys';
 import { WorldIntro } from '../features/world/WorldIntro';
 import { getReturnTo, pageOfRoute, parseHash, useHash } from '../lib/hash-router';
+import { MOTION } from '../lib/stage-metrics';
+import { usePresence } from '../lib/usePresence';
 import { useAppStore, type AxisKey } from '../store/store';
 
 // 開發專用元件圖鑑：只在 dev 模式載入，正式建置會把整段移除
@@ -48,23 +51,36 @@ function Shell() {
   const { mode } = useLayout();
   const { page } = useRoutedPage();
   useGlobalKeys();
+  const peopleOpen = useAppStore((s) => s.peopleOpen);
+  const drawer = usePresence(peopleOpen, MOTION.drawerPeople);
+
+  // 人物誌開啟時，底下的頁面與側欄一律 inert：不可點、不可聚焦、不被螢幕閱讀器讀到
+  const base = (
+    <div className="contents" inert={peopleOpen}>
+      <PageView page={page} />
+      <Dock />
+    </div>
+  );
+  const overlays = (
+    <>
+      <TrackToast />
+      <PopoverLayer />
+      {drawer.present && <PeopleDrawer closing={drawer.closing} />}
+    </>
+  );
 
   if (mode === 'flow') {
     return (
       <FlowShell>
-        <PageView page={page} />
-        <Dock />
-        <TrackToast />
-        <PopoverLayer />
+        {base}
+        {overlays}
       </FlowShell>
     );
   }
   return (
     <Stage>
-      <PageView page={page} />
-      <Dock />
-      <TrackToast />
-      <PopoverLayer />
+      {base}
+      {overlays}
     </Stage>
   );
 }

@@ -188,9 +188,12 @@ export function PopoverLayer() {
 
   if (!open || !open.anchor.isConnected) return null;
 
+  // 「在人物誌查看 →」（G-10）：開啟人物誌並以這個人為中心（等同點了那張卡，不直接展開完整介紹）
   const viewInPeople = () => {
+    const personId = open.id;
     close();
     openPeople();
+    useAppStore.getState().centerOn(personId);
   };
   const Card = mode === 'stage' ? StagePopover : SheetPopover;
   return <Card key={open.anchorKey} target={open} onClose={close} onViewPeople={viewInPeople} />;
