@@ -16,15 +16,15 @@ function KeysHint() {
     persistentStorage.get('keysHintSeen', false) ? 'gone' : 'in',
   );
 
+  // 每個階段各自排下一個階段的計時（phase 一變，上一個階段的計時就被清掉）
   useEffect(() => {
-    if (phase !== 'in') return;
-    persistentStorage.set('keysHintSeen', true);
-    const fade = window.setTimeout(() => setPhase('out'), 2700);
-    const gone = window.setTimeout(() => setPhase('gone'), 3000);
-    return () => {
-      window.clearTimeout(fade);
-      window.clearTimeout(gone);
-    };
+    if (phase === 'gone') return;
+    if (phase === 'in') persistentStorage.set('keysHintSeen', true);
+    const timer = window.setTimeout(
+      () => setPhase(phase === 'in' ? 'out' : 'gone'),
+      phase === 'in' ? 2700 : 300,
+    );
+    return () => window.clearTimeout(timer);
   }, [phase]);
 
   if (phase === 'gone') return null;

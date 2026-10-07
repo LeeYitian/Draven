@@ -79,3 +79,35 @@ export function stageOverflow(page: Page) {
     return out;
   });
 }
+
+export interface Rect {
+  id: string;
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+/** 關係圖所有節點的螢幕矩形（縮放後；兩兩比較是否重疊與縮放倍率無關） */
+export function nodeRects(page: Page): Promise<Rect[]> {
+  return page.evaluate(() =>
+    [...document.querySelectorAll<HTMLElement>('[data-node]')].map((el) => {
+      const r = el.getBoundingClientRect();
+      return { id: el.dataset.node!, left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+    }),
+  );
+}
+
+export const intersects = (a: Omit<Rect, 'id'>, b: Omit<Rect, 'id'>, gap = 0) =>
+  a.left < b.right + gap && b.left < a.right + gap && a.top < b.bottom + gap && b.top < a.bottom + gap;
+
+/** 以舞台座標回報元素中心（舞台版）：(client − 舞台左上) ÷ 舞台倍率 */
+export function stageCenter(page: Page, selector: string) {
+  return page.evaluate((sel) => {
+    const stage = document.querySelector<HTMLElement>('[data-stage]')!;
+    const sr = stage.getBoundingClientRect();
+    const k = sr.width / stage.offsetWidth;
+    const r = document.querySelector<HTMLElement>(sel)!.getBoundingClientRect();
+    return { x: (r.left + r.width / 2 - sr.left) / k, y: (r.top + r.height / 2 - sr.top) / k };
+  }, selector);
+}

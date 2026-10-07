@@ -98,25 +98,25 @@
 **Independent Test**：只用 01 資料，不含 Popover／人物誌／伏筆。
 
 ### 資料與純邏輯
-- [ ] T053 [US2] `src/content/pages/01.yaml`：頁首資料、6 個事件（敘述含標記、participants）、節點與 9 條連線（含 `event`／`bg`）、圖例、桌機座標（**628×457**，由設計稿 778×457 重排）與流式座標、邊界之辯資料（`extras`；光譜區塊寬度＝左欄 620）
-- [ ] T054 [P] [US2] `tests/unit/graph-visibility.test.ts`：累積可見、背景恆顯、事件焦點／節點焦點互斥、點節點不改 eventIndex、回退與跳點規則（state-and-events §3）
-- [ ] T055 [P] [US2] `tests/unit/graph-layout.test.ts` → `src/features/graph/layout.ts`：座標正規化、比例還原、節點碰撞檢查（任何容器寬 ≥ 300 不重疊）、直線端點與自繪箭頭幾何
+- [x] T053 [US2] `src/content/pages/01.yaml`：頁首資料、6 個事件（敘述含標記、participants）、節點與 9 條連線（含 `event`／`bg`）、圖例、桌機座標（**628×457**，由設計稿 778×457 重排）與流式座標、邊界之辯資料（`extras`；光譜區塊寬度＝左欄 620）
+- [x] T054 [P] [US2] `tests/unit/graph-visibility.test.ts`：累積可見、背景恆顯、事件焦點／節點焦點互斥、點節點不改 eventIndex、回退與跳點規則（state-and-events §3）
+- [x] T055 [P] [US2] `tests/unit/graph-layout.test.ts` → `src/features/graph/layout.ts`：座標正規化、比例還原、節點碰撞檢查（任何容器寬 ≥ 300 不重疊）、直線端點與自繪箭頭幾何
 
 ### 元件
-- [ ] T056 [US2] `src/features/axis/EventCell.tsx`＋`EventBar.tsx`：N 等分、編號＋標題＋箭頭、三狀態、hover、標題截斷加 title、節點焦點時編號金色底線
-- [ ] T057 [US2] `src/features/axis/NarrativePanel.tsx`：事件編號／標題／標籤／敘述（`RichText`），切換淡出 120＋淡入 180ms
-- [ ] T058 [US2] `src/features/graph/GraphEdge.tsx`：直線、終點插值畫線（rAF、400ms／120ms 間隔）、自繪箭頭淡入、四狀態、線上文字（白邊 6px、paint-order）
-- [ ] T059 [US2] `src/features/graph/GraphNode.tsx`：三狀態、群體虛框、鍵盤焦點、`role=button`
-- [ ] T060 [US2] `src/features/graph/RelationGraph.tsx`：容器 `ResizeObserver`、比例座標還原、SVG 層＋HTML 層、焦點與可見性接線
-- [ ] T061 [US2] `src/features/axis/AxisPage.tsx`：組裝 01 頁（舞台版）；`useAxisKeys`（←→）
-- [ ] T062 [US2] `src/features/graph/useNodeDrag.ts`：Pointer Events＋`localPoint`＋彈簧回彈，連線全程跟隨（流式版停用）
-- [ ] T063 [US2] `src/features/graph/useGraphViewport.ts`：縮放 50–200%（按鈕 ±25%、滾輪＋Ctrl、雙指）、平移、重設；`touch-action` 規則（research R12）
-- [ ] T064 [US2] `src/features/graph/GraphLegend.tsx`、`GraphControls.tsx`：圖例開關（含群體）、線上文字開關（hover 暫顯）、縮放顯示、重設
-- [ ] T065 [US2] 流式版主軸頁：sticky 事件列橫向滑動、目前事件自動置中、敘述下方「上一個／下一個」、直式座標關係圖（342 寬比例）、圖例列
-- [ ] T066 [US2] reduced-motion：畫線、回彈、淡入縮短
-- [ ] T067 [P] [US2] `src/dev/LayoutEditor.tsx`（僅開發）：拖曳節點→複製座標 JSON（桌機／流式各一）
-- [ ] T068 [P] [US2] `tests/e2e/keyboard.spec.ts`：←→ 推進、↑↓ 換頁、光譜聚焦時不換事件（先用占位 slider 元件）
-- [ ] T069 [US2] e2e：01 事件推進、焦點互斥、圖例開關、流式版無水平捲軸、點節點不多畫線
+- [x] T056 [US2] `src/features/axis/EventCell.tsx`＋`EventBar.tsx`：N 等分、編號＋標題＋箭頭、三狀態、hover、標題截斷加 title、節點焦點時編號金色底線
+- [x] T057 [US2] `src/features/axis/NarrativePanel.tsx`：事件編號／標題／標籤／敘述（`RichText`），切換淡出 120＋淡入 180ms
+- [x] T058 [US2] `src/features/graph/GraphEdge.tsx`：直線、終點插值畫線（rAF、400ms／120ms 間隔）、自繪箭頭淡入、四狀態、線上文字（白邊 6px、paint-order）
+- [x] T059 [US2] `src/features/graph/GraphNode.tsx`：三狀態、群體虛框、鍵盤焦點、`role=button`
+- [x] T060 [US2] `src/features/graph/RelationGraph.tsx`：容器 `ResizeObserver`、比例座標還原、SVG 層＋HTML 層、焦點與可見性接線
+- [x] T061 [US2] `src/features/axis/AxisPage.tsx`：組裝 01 頁（舞台版）；`useAxisKeys`（←→）
+- [x] T062 [US2] `src/features/graph/useNodeDrag.ts`：Pointer Events＋`localPoint`＋彈簧回彈，連線全程跟隨（流式版停用）
+- [x] T063 [US2] `src/features/graph/useGraphViewport.ts`：縮放 50–200%（按鈕 ±25%、滾輪＋Ctrl、雙指）、平移、重設；`touch-action` 規則（research R12）
+- [x] T064 [US2] `src/features/graph/GraphLegend.tsx`、`GraphControls.tsx`：圖例開關（含群體）、線上文字開關（hover 暫顯）、縮放顯示、重設
+- [x] T065 [US2] 流式版主軸頁：sticky 事件列橫向滑動、目前事件自動置中、敘述下方「上一個／下一個」、直式座標關係圖（342 寬比例）、圖例列
+- [x] T066 [US2] reduced-motion：畫線、回彈、淡入縮短
+- [x] T067 [P] [US2] `src/dev/LayoutEditor.tsx`（僅開發）：拖曳節點→複製座標 JSON（桌機／流式各一）
+- [x] T068 [P] [US2] `tests/e2e/keyboard.spec.ts`：←→ 推進、↑↓ 換頁、光譜聚焦時不換事件（先用占位 slider 元件）
+- [x] T069 [US2] e2e：01 事件推進、焦點互斥、圖例開關、流式版無水平捲軸、點節點不多畫線
 
 **Checkpoint 4**：01 完整可玩（桌機＋手機）；部署。
 

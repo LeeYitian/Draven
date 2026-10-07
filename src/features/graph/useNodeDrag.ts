@@ -14,6 +14,8 @@ export interface NodeDragOptions {
   /** 流式版停用（與平移衝突） */
   enabled: boolean;
   reduceMotion: boolean;
+  /** 開發用校正器：放開後不回彈，保留位移（量出新座標） */
+  persist?: boolean;
 }
 
 interface Active {
@@ -32,7 +34,13 @@ interface Active {
  * 節點拖曳（任務 T062，research R11）：Pointer Events＋setPointerCapture。
  * 位移存在狀態裡，連線讀同一份位移，所以全程跟著節點；放開後以彈簧（≈400ms、過衝 ≈6%）推回 0。
  */
-export function useNodeDrag({ viewportRef, getView, enabled, reduceMotion }: NodeDragOptions) {
+export function useNodeDrag({
+  viewportRef,
+  getView,
+  enabled,
+  reduceMotion,
+  persist = false,
+}: NodeDragOptions) {
   const [offsets, setOffsets] = useState<Record<string, Vec>>({});
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const active = useRef<Active | null>(null);
@@ -132,7 +140,8 @@ export function useNodeDrag({ viewportRef, getView, enabled, reduceMotion }: Nod
     const from: Vec = cancelled && current
       ? current
       : [a.origin[0] + p[0] - a.start[0], a.origin[1] + p[1] - a.start[1]];
-    springBack(a.id, from);
+    if (persist) setOffsets((prev) => ({ ...prev, [a.id]: from }));
+    else springBack(a.id, from);
   };
 
   /** 節點的 onClick 呼叫：回傳 true 表示這次 click 是拖曳的尾巴，應忽略 */
@@ -144,6 +153,7 @@ export function useNodeDrag({ viewportRef, getView, enabled, reduceMotion }: Nod
 
   return {
     offsets,
+    resetOffsets: () => setOffsets({}),
     draggingId,
     consumeClick,
     handlersFor: (id: string) => ({

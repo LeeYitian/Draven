@@ -79,7 +79,7 @@ export function GraphControls({
 
   if (mode === 'flow') {
     return (
-      <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         {labelsChip}
         {zoomGroup}
         <button
@@ -95,7 +95,7 @@ export function GraphControls({
   }
 
   return (
-    <div className="absolute top-2.5 right-2.5 z-[2] flex items-center gap-1.5">
+    <div data-graph-controls className="absolute top-2.5 right-2.5 z-[2] flex items-center gap-1.5">
       {zoomGroup}
       {labelsChip}
       <Chip variant="toggle" pressed={legendShown} onClick={onToggleLegend}>

@@ -86,7 +86,8 @@ export const GraphNode = memo(function GraphNode({
         data-dragging={dragging || undefined}
         data-hidden={hidden || undefined}
         data-narrow={narrow || undefined}
-        style={{ touchAction: draggable ? 'none' : undefined }}
+        // 寬度由外層 wrapper 決定；minWidth 歸零，免得 .node 的預設最小寬（120／96）把窄版節點撐出 wrapper
+        style={{ minWidth: 0, touchAction: draggable ? 'none' : undefined }}
         onClick={() => {
           if (consumeClick()) return;
           onActivate(id);

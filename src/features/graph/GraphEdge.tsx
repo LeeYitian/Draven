@@ -35,7 +35,8 @@ export const GraphEdge = memo(function GraphEdge({
   const [hover, setHover] = useState(false);
   if (!segment) return null;
 
-  const drawn = progress >= 1;
+  // 尚未畫出（unrevealed）的線：箭頭與文字一律先隱藏，這樣新線開始畫時它們才會從零開始淡入
+  const drawn = progress >= 1 && state !== 'unrevealed';
   const end = lerpPoint(segment.start, segment.end, easeDraw(progress));
   const label = labelPosition(segment.start, segment.end, edge.labelOffset);
   const labelVisible = drawn && (showLabel || hover);

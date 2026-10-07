@@ -183,7 +183,9 @@ describe('01 主軸頁（舞台版）', () => {
     vi.useFakeTimers();
     const first = start();
     expect(document.querySelector('[data-keys-hint]')).not.toBeNull();
-    act(() => vi.advanceTimersByTime(3100));
+    act(() => vi.advanceTimersByTime(2750)); // 淡出中（仍在 DOM、透明）
+    expect(document.querySelector<HTMLElement>('[data-keys-hint]')!.style.opacity).toBe('0');
+    act(() => vi.advanceTimersByTime(300));
     expect(document.querySelector('[data-keys-hint]')).toBeNull();
     first.unmount();
     start();

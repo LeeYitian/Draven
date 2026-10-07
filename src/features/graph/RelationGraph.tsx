@@ -1,4 +1,13 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react';
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from 'react';
 import { useLayout } from '../../components/layout/LayoutProvider';
 import { Eyebrow } from '../../components/ui';
 import { getPerson, t } from '../../content';
@@ -21,6 +30,11 @@ import {
 import { useEdgeReveal } from './useEdgeReveal';
 import { useGraphViewport } from './useGraphViewport';
 import { useNodeDrag } from './useNodeDrag';
+
+// 開發專用的座標校正器：只在 dev 模式、網址有 ?editor=1 時載入，正式建置會整段移除
+const LayoutEditor = import.meta.env.DEV ? lazy(() => import('../../dev/LayoutEditor')) : null;
+const editorRequested = () =>
+  import.meta.env.DEV && new URLSearchParams(window.location.search).get('editor') === '1';
 
 export interface RelationGraphProps {
   axis: AxisKey;
@@ -72,14 +86,16 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
   const viewport = useGraphViewport(axis, viewportRef);
   const progress = useEdgeReveal(axis, graph.edges, reduceMotion);
 
+  const editor = editorRequested();
   const drag = useNodeDrag({
     viewportRef,
     getView: () => {
       const v = useAppStore.getState().axis[axis].view;
       return { zoom: v.zoom, pan: v.pan };
     },
-    enabled: !flow,
+    enabled: !flow || editor,
     reduceMotion,
+    persist: editor,
   });
 
   // ── 位置：比例 × 容器尺寸，再加拖曳位移 ──
@@ -137,6 +153,23 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
   };
 
   const onNodeActivate = (id: string) => focusNode(axis, id);
+
+  const editorPanel =
+    editor && LayoutEditor ? (
+      <Suspense fallback={null}>
+        <LayoutEditor
+          mode={mode}
+          size={layout.size}
+          nodes={Object.fromEntries(
+            graph.nodes.map((n) => {
+              const [x, y] = position(n.id);
+              return [n.id, [(x / size.w) * layout.size[0], (y / size.h) * layout.size[1]] as const];
+            }),
+          )}
+          onReset={drag.resetOffsets}
+        />
+      </Suspense>
+    ) : null;
 
   const canvas = (
     <div
@@ -212,7 +245,7 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
               selected={focus?.type === 'node' && focus.id === node.id}
               dragging={drag.draggingId === node.id}
               hidden={isNodeHidden(node.id)}
-              draggable={!flow}
+              draggable={!flow || editor}
               wrapperRef={(el) => {
                 if (el) {
                   wrappers.current.set(node.id, el);
@@ -260,8 +293,9 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
   if (flow) {
     return (
       <section className="flex flex-col gap-2" aria-label={t('axis.graphTitle')}>
-        <div className="flex items-center justify-between gap-2">
-          <Eyebrow>{t('axis.graphTitle')}</Eyebrow>
+        {/* 窄螢幕（寬 320）放不下標題＋四個控制項：控制項整組換到下一行，標題不折字 */}
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <Eyebrow className="whitespace-nowrap">{t('axis.graphTitle')}</Eyebrow>
           {controls}
         </div>
         <div className="overflow-hidden rounded-md border border-divider">
@@ -269,22 +303,29 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
           <GraphLegend axis={axis} graph={graph} />
         </div>
         {readerList}
+        {editorPanel}
       </section>
     );
   }
 
   return (
     <section
-      className="relative h-full overflow-hidden rounded-md border border-divider"
+      className="relative h-full overflow-hidden rounded-md"
       aria-label={t('axis.graphTitle')}
     >
       {canvas}
+      {/* 邊框畫在最上層：畫布因此是完整的 628×457，節點座標與設計座標一一對應 */}
+      <div
+        className="pointer-events-none absolute inset-0 rounded-md border border-divider"
+        aria-hidden="true"
+      />
       <Eyebrow className="pointer-events-none absolute top-3.5 left-4">
         {t('axis.graphTitle')}
       </Eyebrow>
       {controls}
       {legendShown && <GraphLegend axis={axis} graph={graph} />}
       {readerList}
+      {editorPanel}
     </section>
   );
 }
