@@ -1101,3 +1101,181 @@
     transform: translate(var(--fx), var(--fy)) scale(var(--fsx), var(--fsy));
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   各主軸專屬區塊（Phase 8）
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── 01 邊界之辯光譜（設計稿 D2）：寬 470，放在左欄下方 ── */
+.spectrum {
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 470px;
+  max-width: 100%;
+  padding: 16px 18px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+}
+[data-layout='flow'] .spectrum {
+  width: 100%;
+  gap: 10px;
+  padding: 14px 16px;
+}
+.spectrum__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.spectrum__hint {
+  font-size: var(--fs-aux);
+  color: var(--color-neutral-600);
+}
+.spectrum__track {
+  position: relative;
+  height: 48px;
+  margin: 0 22px;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+.spectrum__rail {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  left: 0;
+  border-top: 1px solid var(--color-neutral-500);
+}
+.spectrum__guide {
+  position: absolute;
+  top: 11px;
+  height: 2px;
+  background: var(--color-accent);
+}
+.spectrum__tick {
+  position: absolute;
+  top: 7px;
+  height: 10px;
+  border-left: 1px solid var(--color-neutral-600);
+}
+.spectrum__name {
+  position: absolute;
+  top: 24px;
+  font-size: var(--fs-aux);
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.spectrum__name[data-current] {
+  font-weight: 600;
+  color: var(--color-accent-800);
+}
+.spectrum__thumb {
+  position: absolute;
+  top: 12px;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-accent);
+  border-radius: 50%;
+  outline-offset: 2px;
+  cursor: grab;
+  touch-action: none;
+  transform: translate(-50%, -50%);
+  transition:
+    left 200ms ease,
+    width 120ms ease,
+    height 120ms ease;
+}
+/* 觸控命中範圍放大到 44px，視覺仍是 20px */
+.spectrum__thumb::before {
+  position: absolute;
+  inset: -12px;
+  content: '';
+}
+.spectrum__thumb[data-dragging],
+.spectrum__thumb:focus-visible {
+  width: 24px;
+  height: 24px;
+  box-shadow: var(--shadow-md);
+}
+.spectrum__thumb:focus-visible {
+  outline: 2px solid var(--color-accent);
+}
+.spectrum__thumb[data-dragging] {
+  cursor: grabbing;
+  transition: none; /* 拖曳中即時跟手，放開才吸附 */
+}
+.spectrum__ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-aux);
+  color: var(--color-neutral-600);
+}
+.spectrum__detail {
+  padding-top: 10px;
+  border-top: 1px solid var(--color-divider);
+}
+.spectrum__who {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.spectrum__who-name {
+  font-size: 17px;
+  font-weight: 600;
+}
+.spectrum__who-role {
+  font-size: var(--fs-aux);
+  color: var(--color-neutral-600);
+}
+.spectrum__quote {
+  margin: 4px 0 0;
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  text-align: justify;
+}
+/* 交叉連結閃動：外框 1px accent＋底色 accent-100，600ms 內亮兩次（0 → 150 亮 → 300 → 450 亮 → 600） */
+.spectrum__flash {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--color-accent-100);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .spectrum__flash {
+    animation: spectrum-flash 600ms steps(1, end) 1;
+  }
+  @keyframes spectrum-flash {
+    0% {
+      opacity: 0;
+    }
+    25% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    75% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spectrum__flash {
+    opacity: 1; /* 不播放動畫：靜態外框與底色停留一下 */
+  }
+  .spectrum__thumb {
+    transition-duration: 1ms;
+  }
+}

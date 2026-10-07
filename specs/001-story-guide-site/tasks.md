@@ -181,9 +181,9 @@
 ## Phase 8：User Story 6 — 各主軸專屬互動與 02–04 內容（P3）
 
 ### 6a　01 邊界之辯
-- [ ] T103 [P] [US6] `tests/unit/spectrum.test.ts`：位置→最近立場、吸附、方向鍵跳立場
-- [ ] T104 [US6] `BoundarySpectrum.tsx`：`role=slider`、拖曳、吸附 200ms、立場名可開 Popover、方向鍵 `preventDefault`
-- [ ] T105 [US6] 交叉連結 `{x:spectrum|…}`：舞台版光譜閃動、流式版捲動後閃動
+- [x] T103 [P] [US6] `tests/unit/spectrum.test.ts`：位置→最近立場、吸附、方向鍵跳立場
+- [x] T104 [US6] `BoundarySpectrum.tsx`：`role=slider`、拖曳、吸附 200ms、立場名可開 Popover、方向鍵 `preventDefault`
+- [x] T105 [US6] 交叉連結 `{x:spectrum|…}`：舞台版光譜閃動、流式版捲動後閃動
 
 ### 6b　02 比較滑桿與時間感
 - [ ] T106 [US6] `pages/02.yaml`：6 個事件（含新增「時間瓶」）、節點（長生者／凡人分區）、6＋連線、桌機座標（628×290）與流式座標、比較滑桿兩欄

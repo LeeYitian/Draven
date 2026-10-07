@@ -288,6 +288,8 @@ export const WorldIntroSchema = z.strictObject({
   }),
 });
 
+export type AxisExtrasBoundary = z.infer<typeof BoundaryDebateSchema>;
+export type AxisExtras = z.infer<typeof AxisExtrasSchema>;
 export type WorldIntro = z.infer<typeof WorldIntroSchema>;
 export type Person = z.infer<typeof PersonSchema>;
 export type PersonRelation = z.infer<typeof PersonRelationSchema>;

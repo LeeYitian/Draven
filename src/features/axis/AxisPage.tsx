@@ -6,6 +6,8 @@ import { Kbd } from '../../components/ui';
 import { getAxisPage, t } from '../../content';
 import { persistentStorage } from '../../lib/storage';
 import { type AxisKey } from '../../store/store';
+import { useUiStore } from '../../store/ui';
+import { AxisExtras } from '../extras/AxisExtras';
 import { RelationGraph } from '../graph/RelationGraph';
 import { EventBar, EventsLabel } from './EventBar';
 import { NarrativePanel } from './NarrativePanel';
@@ -44,12 +46,17 @@ function KeysHint() {
 
 /**
  * 主軸頁（01–04）：頁首、事件列、敘述面板、關係圖，排進統一的 PageFrame。
- * 各頁專屬區塊（01 光譜、02 比較滑桿…）之後以 extras 加入。
+ * 各頁專屬區塊（01 光譜、02 比較滑桿…）由 AxisExtras 依內容檔的 extras 決定。
  */
 export function AxisPage({ axis }: { axis: AxisKey }) {
   const { mode } = useLayout();
   const page = getAxisPage(axis);
   if (!page) return null;
+
+  /** 事件文字裡的 {x:target|…}：目前只有 spectrum（01 邊界之辯） */
+  const onCrossLink = (target: string) => {
+    if (target === 'spectrum') useUiStore.getState().flashSpectrum();
+  };
 
   return (
     <>
@@ -67,7 +74,10 @@ export function AxisPage({ axis }: { axis: AxisKey }) {
           <EventsLabel axis={axis} heading={page.eventsHeading} total={page.events.length} />
         }
         events={<EventBar axis={axis} events={page.events} />}
-        narrative={<NarrativePanel axis={axis} events={page.events} />}
+        narrative={
+          <NarrativePanel axis={axis} events={page.events} onCrossLink={onCrossLink} />
+        }
+        extras={<AxisExtras page={page} />}
         graph={<RelationGraph axis={axis} page={page} />}
       />
       {mode === 'stage' && <KeysHint />}

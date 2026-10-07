@@ -66,6 +66,7 @@ layer:
 spectrum:
   label: 邊界之辯光譜
   valueText: 最接近的立場：{name}
+  stances: 光譜上的立場
 
 compare:
   label: 兩種面對時間的方式：左右拖曳比較
