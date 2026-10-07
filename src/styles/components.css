@@ -962,6 +962,18 @@
   -webkit-line-clamp: 2;
 }
 
+/* 手機版中心視角的關係人物小卡（46 高；寬度由所在欄決定） */
+.person-card[data-flow-compact] {
+  padding: 4px 10px;
+}
+.person-card[data-flow-compact] .person-card__name {
+  font-size: 15px;
+  line-height: 1.3;
+}
+.person-card[data-flow-compact] .person-card__role {
+  font-size: 12px;
+}
+
 /* ══ 人物誌：抽屜升降與展開浮層的 keyframes（頂層宣告，確保一定會輸出）══ */
 @keyframes drawer-in {
   from {

@@ -339,7 +339,7 @@ describe('人物誌（流式版）', () => {
     expect(track).not.toBeNull();
   });
 
-  it('點卡進入中心視角：關係膠囊掛在卡上（外框＝線種），沒有連線；沒有關係者在「沒有直接關係」', async () => {
+  it('點卡進入中心視角：關係膠囊掛在卡上（外框＝線種）、線從中心卡連到膠囊；沒有關係者在「沒有直接關係」', async () => {
     start('#/axis/1', [390, 844]);
     act(() => openPeople());
     await userEvent.click(card('elian'));
@@ -347,7 +347,8 @@ describe('人物誌（流式版）', () => {
     expect(document.querySelectorAll('[data-pill]')).toHaveLength(3);
     expect(document.querySelector('[data-pill="dravin"]')).toHaveTextContent('養父子');
     expect(document.querySelector('[data-pill="dravin"]')).toHaveAttribute('data-kind', 'relation');
-    expect(document.querySelector('[data-rel], .rel')).toBeNull(); // 沒有連線
+    expect(document.querySelectorAll('[data-flow-half] [data-rel]')).toHaveLength(3); // 線從中心卡連到每個膠囊
+    expect(document.querySelector('[data-flow-half="down"]')).not.toBeNull();
     expect(drawer()).toHaveTextContent('沒有直接關係');
   });
 

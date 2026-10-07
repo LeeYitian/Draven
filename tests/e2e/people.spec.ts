@@ -357,17 +357,101 @@ test.describe('流式版人物誌', () => {
     });
   }
 
-  test('點卡→膠囊版中心視角；再點中心卡就地展開；追蹤後關閉回原頁', async ({ page }) => {
+  test('點卡→中心視角（膠囊＋連線）；再點中心卡就地展開；追蹤後關閉回原頁', async ({ page }) => {
     await openPage(page, { w: 390, h: 844 }, '#/axis/1');
     await page.locator('nav').getByRole('button', { name: '人物誌' }).click();
     await page.locator('[data-flow-person="elian"] [role="button"][data-person]').click();
     await expect(page.locator('[data-pill]')).toHaveCount(3);
     await page.locator('[data-flow-person="elian"] [role="button"][data-person]').click();
     await expect(page.locator('[data-flow-expanded]')).toBeVisible();
-    await page.locator('[data-flow-person="dravin"] [data-track="dravin"]').click();
+    await page.locator('[data-track="elian"]').click(); // 中心卡上的「追蹤」
     await expect.poll(() => hash(page)).toBe('#/axis/1');
-    await expect(page.locator('nav')).toContainText('德雷文');
+    await expect(page.locator('nav')).toContainText('艾利安');
   });
+
+  for (const size of [
+    { w: 390, h: 844 },
+    { w: 360, h: 740 },
+    { w: 320, h: 640 },
+    { w: 768, h: 1024 },
+  ]) {
+    test(`${size.w}×${size.h}：中心視角——中心卡在上下兩半之間，膠囊掛在卡上，線從中心卡邊緣連到膠囊，沒有東西超出視窗`, async ({
+      page,
+    }) => {
+      await openPage(page, size, '#/axis/3');
+      await page.locator('nav').getByRole('button', { name: '人物誌' }).click();
+      await page.locator('[data-flow-person="dravin"] [role="button"][data-person]').click();
+      await page.waitForTimeout(700);
+      const m = await page.evaluate(() => {
+        const box = (el: Element) => {
+          const r = el.getBoundingClientRect();
+          return { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+        };
+        // 外框（含邊框）：線從這個框的邊緣出發
+        const center = box(document.querySelector('[data-flow-person="dravin"]')!);
+        const cards = (half: string) =>
+          [...document.querySelectorAll(`[data-flow-half="${half}"] [data-person]`)].map(box);
+        const pills = (half: string) =>
+          [...document.querySelectorAll(`[data-flow-half="${half}"] [data-pill]`)].map(box);
+        // 每條線的起點（螢幕座標）
+        const starts = [...document.querySelectorAll<SVGPathElement>('[data-flow-half] .rel__line')].map((p) => {
+          const half = p.closest('[data-flow-half]')!.getAttribute('data-flow-half');
+          const pt = p.getPointAtLength(0);
+          const ctm = p.getScreenCTM()!;
+          return { half, x: ctm.a * pt.x + ctm.e, y: ctm.d * pt.y + ctm.f };
+        });
+        const ends = [...document.querySelectorAll<SVGPathElement>('[data-flow-half] .rel__line')].map((p) => {
+          const pt = p.getPointAtLength(p.getTotalLength());
+          const ctm = p.getScreenCTM()!;
+          return { x: ctm.a * pt.x + ctm.e, y: ctm.d * pt.y + ctm.f, id: p.closest('[data-rel]')!.getAttribute('data-rel')! };
+        });
+        const pillById = Object.fromEntries(
+          [...document.querySelectorAll('[data-pill]')].map((p) => [p.getAttribute('data-pill')!, box(p)]),
+        );
+        return {
+          center,
+          upCards: cards('up'),
+          downCards: cards('down'),
+          upPills: pills('up'),
+          downPills: pills('down'),
+          starts,
+          ends,
+          pillById,
+          vw: window.innerWidth,
+          scrollW: document.querySelector('[data-people-drawer]')!.scrollWidth,
+          clientW: document.querySelector('[data-people-drawer]')!.clientWidth,
+        };
+      });
+      expect(m.upCards.length).toBeGreaterThan(0);
+      expect(m.downCards.length).toBeGreaterThan(0);
+      // 中心卡在上半區與下半區之間（不是擺在最上面）
+      for (const c of m.upCards) expect(c.bottom).toBeLessThan(m.center.top);
+      for (const c of m.downCards) expect(c.top).toBeGreaterThan(m.center.bottom);
+      // 膠囊朝向中心：上半區膠囊在卡片下方、下半區膠囊在卡片上方
+      m.upPills.forEach((p, i) => expect(p.top).toBeGreaterThan(m.upCards[i]!.top));
+      m.downPills.forEach((p, i) => expect(p.bottom).toBeLessThan(m.downCards[i]!.bottom));
+      // 線：起點在中心卡邊緣（上半區＝上緣、下半區＝下緣），終點落在自己的膠囊邊緣
+      expect(m.starts.length).toBe(m.upCards.length + m.downCards.length);
+      for (const s of m.starts) {
+        expect(s.x).toBeGreaterThanOrEqual(m.center.left - 1);
+        expect(s.x).toBeLessThanOrEqual(m.center.right + 1);
+        expect(Math.abs(s.y - (s.half === 'up' ? m.center.top : m.center.bottom))).toBeLessThan(2);
+      }
+      for (const e of m.ends) {
+        const p = m.pillById[e.id]!;
+        expect(e.x).toBeGreaterThanOrEqual(p.left - 1.5);
+        expect(e.x).toBeLessThanOrEqual(p.right + 1.5);
+        expect(e.y).toBeGreaterThanOrEqual(p.top - 1.5);
+        expect(e.y).toBeLessThanOrEqual(p.bottom + 1.5);
+      }
+      // 所有小卡與膠囊都在視窗寬內、沒有水平捲軸
+      for (const r of [...m.upCards, ...m.downCards, ...m.upPills, ...m.downPills]) {
+        expect(r.left).toBeGreaterThanOrEqual(0);
+        expect(r.right).toBeLessThanOrEqual(m.vw + 0.5);
+      }
+      expect(m.scrollW).toBeLessThanOrEqual(m.clientW);
+    });
+  }
 
   test('標籤列單列橫向滑動；選標籤後卡片浮起', async ({ page }) => {
     await openPage(page, { w: 390, h: 844 }, '#/axis/1');

@@ -1,12 +1,13 @@
 import { X } from 'lucide-react';
-import type { KeyboardEvent } from 'react';
-import { Segmented } from '../../components/ui';
+import { useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { Eyebrow, Segmented } from '../../components/ui';
 import { people, t } from '../../content';
 import type { Person } from '../../content/schema';
-import { closePeople } from '../../lib/hash-router';
 import { cn } from '../../lib/cn';
-import type { RingPlacement } from './center';
+import { closePeople } from '../../lib/hash-router';
+import type { CenterLayout, RingPlacement } from './center';
 import { FilterBar } from './FilterBar';
+import { layoutFlowTree, TREE, type TreeCell } from './flowTree';
 import type { SortMode } from './model';
 import { PersonBio } from './PersonBio';
 import { TrackButton } from './PersonCard';
@@ -15,42 +16,31 @@ import { usePeopleView } from './usePeopleView';
 const pad = (n: number) => String(n).padStart(2, '0');
 const SORTS: readonly SortMode[] = ['group', 'order', 'world'];
 
-interface FlowCardProps {
+const activateOnKey = (onActivate: () => void) => (event: KeyboardEvent<HTMLElement>) => {
+  if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) return;
+  event.preventDefault();
+  onActivate();
+};
+
+interface CardCommon {
   person: Person;
   onStage: boolean;
   selected: boolean;
-  tracked: boolean;
-  center?: boolean;
-  /** 中心卡是否已展開完整介紹（決定提示文字） */
-  expanded?: boolean;
-  dim?: boolean;
   onActivate: (id: string) => void;
-  onTrack: (id: string) => void;
-  /** 掛在卡片下緣的關係膠囊（人物中心視角） */
-  pill?: { label: string; kind: string };
 }
 
-/** 手機版人物卡：96 高、不顯示簡介；追蹤是右上角的圖示按鈕；中心視角時關係膠囊掛在卡上 */
+/** 手機版人物卡（網格排列）：96 高、不顯示簡介；追蹤是右上角的圖示按鈕 */
 function FlowCard({
   person,
   onStage,
   selected,
   tracked,
-  center,
-  expanded,
-  dim,
   onActivate,
   onTrack,
-  pill,
-}: FlowCardProps) {
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) return;
-    event.preventDefault();
-    onActivate(person.id);
-  };
+}: CardCommon & { tracked: boolean; onTrack: (id: string) => void }) {
   return (
-    <div className={cn('flex flex-col items-center', dim && 'opacity-70')} data-flow-person={person.id}>
-      <div className={cn('relative w-full', center ? 'h-[104px]' : 'h-24')}>
+    <div className="flex flex-col items-center" data-flow-person={person.id}>
+      <div className="relative h-24 w-full">
         <div
           role="button"
           tabIndex={0}
@@ -60,18 +50,12 @@ function FlowCard({
           data-person={person.id}
           data-on={onStage || undefined}
           data-selected={selected || undefined}
-          data-center={center || undefined}
           aria-label={t('people.cardLabel', { name: person.name, role: person.role })}
           onClick={() => onActivate(person.id)}
-          onKeyDown={onKeyDown}
+          onKeyDown={activateOnKey(() => onActivate(person.id))}
         >
           <span className="person-card__name">{person.name}</span>
           <span className="person-card__role">{person.role}</span>
-          {center && (
-            <span className="mt-0.5 text-aux text-accent-800">
-              {t(expanded ? 'people.collapseHint' : 'people.expandHint')} {expanded ? '↑' : '↓'}
-            </span>
-          )}
         </div>
         <TrackButton
           person={person}
@@ -81,37 +65,289 @@ function FlowCard({
           className="absolute top-1 right-1"
         />
       </div>
-      {pill && (
-        <span className="rel-pill relative z-[1] -mt-[11px] max-w-full" data-kind={pill.kind} data-pill={person.id}>
-          <span className="truncate">{pill.label}</span>
-        </span>
-      )}
+    </div>
+  );
+}
+
+/** 中心視角裡的關係人物小卡（只有姓名與身分，不放追蹤）；點它就換成以他為中心 */
+function CompactCard({ person, onStage, selected, onActivate }: CardCommon) {
+  return (
+    <div role="presentation" className="h-full w-full" data-flow-person={person.id}>
+      <div
+        role="button"
+        tabIndex={0}
+        className="person-card"
+        data-fill
+        data-compact
+        data-flow-compact
+        data-person={person.id}
+        data-on={onStage || undefined}
+        data-selected={selected || undefined}
+        aria-label={t('people.cardLabel', { name: person.name, role: person.role })}
+        onClick={() => onActivate(person.id)}
+        onKeyDown={activateOnKey(() => onActivate(person.id))}
+      >
+        <span className="person-card__name">{person.name}</span>
+        <span className="person-card__role truncate">{person.role}</span>
+      </div>
+    </div>
+  );
+}
+
+/** 容器內容寬（ResizeObserver）；量不到時沿用 fallback（jsdom） */
+function useContentWidth(fallback: number) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(fallback);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const read = () => {
+      const w = el.clientWidth;
+      if (w > 0) setWidth((prev) => (prev === w ? prev : w));
+    };
+    read();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(read);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return { ref, width };
+}
+
+/** 一個半區（上或下）：每個人＝小卡＋掛在卡上的關係膠囊，線從中心卡邊緣連到膠囊 */
+function TreeHalf({
+  group,
+  height,
+  width,
+  cardW,
+  cells,
+  ring,
+  cardProps,
+}: {
+  group: 'up' | 'down';
+  height: number;
+  width: number;
+  cardW: number;
+  cells: TreeCell[];
+  ring: readonly RingPlacement[];
+  cardProps: (person: Person) => Omit<CardCommon, 'person'>;
+}) {
+  if (height === 0) return null;
+  return (
+    <div className="relative" style={{ height }} data-flow-half={group}>
+      <svg
+        className="pointer-events-none absolute inset-0"
+        width={width}
+        height={height}
+        aria-hidden="true"
+      >
+        {cells.map((cell) => {
+          const r = ring[cell.index]!;
+          return (
+            <g key={r.id} className="rel" data-kind={r.relation.kind} data-rel={r.id}>
+              <path className="rel__line" d={cell.path} style={{ strokeLinecap: 'round' }} />
+            </g>
+          );
+        })}
+      </svg>
+      {cells.map((cell) => {
+        const r = ring[cell.index]!;
+        const person = people.find((p) => p.id === r.id)!;
+        return (
+          <div key={r.id}>
+            <div
+              className="absolute"
+              style={{ left: cell.x, top: cell.cardTop, width: cardW, height: TREE.cardH }}
+            >
+              <CompactCard person={person} {...cardProps(person)} />
+            </div>
+            <span
+              className="rel-pill absolute"
+              data-kind={r.relation.kind}
+              data-pill={r.id}
+              style={{ left: cell.x, top: cell.pillTop, width: cardW }}
+            >
+              <span className="truncate">{r.relation.label}</span>
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * 手機版人物中心視角：中心卡在畫面中間，關係人物分在上下兩半，每人＝小卡＋掛在卡上的關係膠囊
+ * （外框＝線種），線從中心卡邊緣直接連到膠囊；沒有直接關係的放最下面。
+ * 再點中心卡：完整介紹在中心卡下方就地展開（與中心卡同一個框，線仍從這個框的邊緣出發）。
+ */
+function FlowCenterView({
+  layout,
+  centerPerson,
+  expanded,
+  progress,
+  trackedId,
+  onTrack,
+  onClear,
+  onCenter,
+  onExpand,
+  cardProps,
+}: {
+  layout: CenterLayout;
+  centerPerson: Person;
+  expanded: boolean;
+  progress: number;
+  trackedId: string | null;
+  onTrack: (id: string) => void;
+  onClear: () => void;
+  onCenter: (id: string) => void;
+  onExpand: (expanded: boolean) => void;
+  cardProps: (person: Person) => Omit<CardCommon, 'person'>;
+}) {
+  const { ref, width } = useContentWidth(342);
+  const tree = layoutFlowTree(layout.ring.length, width);
+  const up = tree.cells.filter((c) => c.group === 'up');
+  const down = tree.cells.filter((c) => c.group === 'down');
+
+  return (
+    <div className="px-6 pt-4" data-flow-center-view>
+      {/* 量測用的內層：寬度＝內容寬（不含左右邊距），線與卡片的座標都以它為準 */}
+      <div ref={ref} className="flex flex-col">
+        <div className="mb-4 flex items-center gap-2.5">
+          <span
+            data-center-chip
+            className="flex h-9 items-center gap-1.5 rounded-md border border-accent pr-1.5 pl-3 text-[14px] text-accent-800"
+          >
+            {t('people.centerOf', { name: centerPerson.name })}
+            <button
+              type="button"
+              aria-label={t('people.centerClear')}
+              className="flex h-7 w-7 items-center justify-center"
+              onClick={onClear}
+            >
+              <X size={14} strokeWidth={1.75} aria-hidden="true" />
+            </button>
+          </span>
+        </div>
+
+        <TreeHalf
+          group="up"
+          height={tree.upHeight}
+          width={width}
+          cardW={tree.cardW}
+          cells={up}
+          ring={layout.ring}
+          cardProps={cardProps}
+        />
+
+        <div
+          data-flow-person={centerPerson.id}
+          className={cn(
+            'mx-auto rounded-md border border-t-2 border-accent bg-bg shadow-sm',
+            expanded ? 'w-full' : 'w-[200px]',
+          )}
+        >
+          <div
+            role="button"
+            tabIndex={0}
+            data-person={centerPerson.id}
+            data-center
+            aria-label={t('people.cardLabel', { name: centerPerson.name, role: centerPerson.role })}
+            className="flex cursor-pointer flex-col gap-0.5 px-3 py-2"
+            onClick={() => onExpand(!expanded)}
+            onKeyDown={activateOnKey(() => onExpand(!expanded))}
+          >
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[18px] font-semibold">{centerPerson.name}</span>
+              <TrackButton
+                person={centerPerson}
+                tracked={trackedId === centerPerson.id}
+                onTrack={onTrack}
+                className="h-7 px-2 text-[12px]"
+              />
+            </div>
+            <span className="text-aux text-accent-700">{centerPerson.role}</span>
+            <span className="text-aux text-accent-800">
+              {t(expanded ? 'people.collapseHint' : 'people.expandHint')} {expanded ? '↑' : '↓'}
+            </span>
+          </div>
+          {expanded && (
+            <section data-flow-expanded className="flex flex-col gap-3 border-t border-divider p-4">
+              <div className="flex items-baseline gap-2.5">
+                <span className="font-heading text-[26px] leading-[1.1] font-medium">
+                  {centerPerson.name}
+                </span>
+                <span className="rounded-[3px] border border-divider px-2 text-aux text-neutral-700">
+                  {t(`people.groups.${centerPerson.group}`)}
+                </span>
+                <button
+                  type="button"
+                  className="ml-auto text-aux text-accent-800"
+                  onClick={() => onExpand(false)}
+                >
+                  {t('people.collapseCard')}
+                </button>
+              </div>
+              <PersonBio person={centerPerson} progress={progress} />
+            </section>
+          )}
+        </div>
+
+        <TreeHalf
+          group="down"
+          height={tree.downHeight}
+          width={width}
+          cardW={tree.cardW}
+          cells={down}
+          ring={layout.ring}
+          cardProps={cardProps}
+        />
+
+        {layout.others.length > 0 && (
+          <div className="mt-7 flex flex-col gap-2" data-flow-others>
+            <Eyebrow>{t('people.noRelation')}</Eyebrow>
+            <div className="grid grid-cols-2 gap-x-[22px] gap-y-3">
+              {layout.others.map((o) => {
+                const person = people.find((p) => p.id === o.id)!;
+                return (
+                  <div key={o.id} className="h-12 opacity-70">
+                    <CompactCard person={person} {...cardProps(person)} onActivate={onCenter} />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 /**
  * 手機版人物誌（全螢幕頁；任務 T086）：
- * - 卡片 2 欄、不顯示簡介；標籤單列橫向滑動。
- * - 人物中心視角用「關係標籤膠囊掛在卡上」的版型（外框＝線種），沒有連線；直式樹狀為廢棄方案，不實作。
- * - 完整介紹改為中心卡下方就地展開。
+ * - 網格排列：卡片 2 欄、不顯示簡介；標籤單列橫向滑動。
+ * - 人物中心視角：見 FlowCenterView（中心卡在中間、關係膠囊掛在卡上、線連到膠囊）。
  */
 export function PeopleFlow() {
   const v = usePeopleView();
 
-  const cardProps = (person: Person) => ({
-    person,
+  const base = (person: Person) => ({
     onStage: v.progress > 0 && person.firstAppearance.axis <= v.progress,
     selected: v.selected.has(person.id),
-    tracked: v.trackedId === person.id,
-    onTrack: v.track,
+    onActivate: v.centerOn,
   });
 
   // 依排列分段：群體／世界各一段（有標題）；出場順序是單一清單
   const sections = (() => {
     const { arrangement, sort } = v;
     if (arrangement.headings.length === 0)
-      return [{ key: 'all', title: null as string | null, members: [...people].sort((a, b) => a.order - b.order) }];
+      return [
+        {
+          key: 'all',
+          title: null as string | null,
+          members: [...people].sort((a, b) => a.order - b.order),
+        },
+      ];
     const heads = [...arrangement.headings].sort((a, b) => a.column - b.column);
     return heads.map((h, i) => {
       const next = heads[i + 1]?.column ?? Infinity;
@@ -129,21 +365,20 @@ export function PeopleFlow() {
     });
   })();
 
-  const ringById = new Map<string, RingPlacement>(v.layout?.ring.map((r) => [r.id, r]));
-  const centerPerson = v.centerPerson;
-
   return (
     <div className="mx-auto max-w-[640px] pb-8">
       <header className="sticky top-0 z-[2] flex flex-col gap-3 border-b border-divider bg-bg px-6 pt-5 pb-3">
-        <div className="flex items-center gap-3">
-          <h2 className="m-0 font-heading text-[30px] leading-none font-medium">{t('people.title')}</h2>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+          <h2 className="m-0 font-heading text-[30px] leading-none font-medium whitespace-nowrap">
+            {t('people.title')}
+          </h2>
           <span
             data-progress-badge
             className="rounded-md border border-divider px-2 py-0.5 text-aux text-neutral-700"
           >
             {t('people.progress', { page: pad(v.progress) })} · {t('people.progressLegend')}
           </span>
-          <span className="flex-1" />
+          <span className="ml-auto" />
           <button
             type="button"
             className="flex h-11 w-11 items-center justify-center rounded-md border border-divider text-neutral-800 active:bg-accent-100"
@@ -159,97 +394,32 @@ export function PeopleFlow() {
           onChange={v.setSort}
           ariaLabel={t('people.sortLabel')}
           disabled={!!v.center}
-          className="!flex w-full [&>button]:flex-1 [&>button]:py-[9px] [&>button]:text-[13px]"
+          className="!flex w-full [&>button]:flex-1 [&>button]:px-1 [&>button]:py-[9px] [&>button]:text-[13px] [&>button]:whitespace-nowrap"
         />
         <FilterBar value={v.tag} onToggle={v.setTag} className="-mr-6 gap-2 pr-6" />
       </header>
 
-      {centerPerson && v.layout ? (
-        <div className="flex flex-col gap-4 px-6 pt-4" data-flow-center-view>
-          <div className="flex items-center gap-2.5">
-            <span
-              data-center-chip
-              className="flex h-9 items-center gap-1.5 rounded-md border border-accent pr-1.5 pl-3 text-[14px] text-accent-800"
-            >
-              {t('people.centerOf', { name: centerPerson.name })}
-              <button
-                type="button"
-                aria-label={t('people.centerClear')}
-                className="flex h-7 w-7 items-center justify-center"
-                onClick={v.clearCenter}
-              >
-                <X size={14} strokeWidth={1.75} aria-hidden="true" />
-              </button>
-            </span>
-          </div>
-
-          <div className="mx-auto w-[220px]">
-            <FlowCard
-              {...cardProps(centerPerson)}
-              center
-              expanded={v.expanded}
-              onActivate={() => (v.expanded ? v.setExpanded(false) : v.centerOn(centerPerson.id))}
-            />
-          </div>
-
-          {v.expanded && (
-            <section
-              data-flow-expanded
-              className="flex flex-col gap-3 rounded-md border border-accent border-t-2 p-4"
-            >
-              <div className="flex items-baseline gap-2.5">
-                <span className="font-heading text-[26px] leading-[1.1] font-medium">{centerPerson.name}</span>
-                <span className="rounded-[3px] border border-divider px-2 text-aux text-neutral-700">
-                  {t(`people.groups.${centerPerson.group}`)}
-                </span>
-                <button
-                  type="button"
-                  className="ml-auto text-aux text-accent-800"
-                  onClick={() => v.setExpanded(false)}
-                >
-                  {t('people.collapseCard')}
-                </button>
-              </div>
-              <PersonBio person={centerPerson} progress={v.progress} />
-            </section>
-          )}
-
-          {v.layout.ring.length > 0 && (
-            <div className="grid grid-cols-2 gap-x-3 gap-y-4">
-              {v.layout.ring.map((r) => {
-                const person = people.find((p) => p.id === r.id)!;
-                return (
-                  <FlowCard
-                    key={r.id}
-                    {...cardProps(person)}
-                    onActivate={v.centerOn}
-                    pill={{ label: ringById.get(r.id)!.relation.label, kind: r.relation.kind }}
-                  />
-                );
-              })}
-            </div>
-          )}
-
-          {v.layout.others.length > 0 && (
-            <>
-              <div className="eyebrow">{t('people.noRelation')}</div>
-              <div className="-mt-2 grid grid-cols-2 gap-x-3 gap-y-2">
-                {v.layout.others.map((o) => (
-                  <FlowCard
-                    key={o.id}
-                    {...cardProps(people.find((p) => p.id === o.id)!)}
-                    dim
-                    onActivate={v.centerOn}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+      {v.centerPerson && v.layout ? (
+        <FlowCenterView
+          layout={v.layout}
+          centerPerson={v.centerPerson}
+          expanded={v.expanded}
+          progress={v.progress}
+          trackedId={v.trackedId}
+          onTrack={v.track}
+          onClear={v.clearCenter}
+          onCenter={v.centerOn}
+          onExpand={v.setExpanded}
+          cardProps={base}
+        />
       ) : (
         <div className="flex flex-col gap-[18px] px-6 pt-4">
           {sections.map((section) => (
-            <section key={section.key} className="flex flex-col gap-2" data-flow-section={section.key}>
+            <section
+              key={section.key}
+              className="flex flex-col gap-2"
+              data-flow-section={section.key}
+            >
               {section.title && (
                 <div className="flex items-baseline gap-2 border-b border-divider pb-1.5">
                   <span className="font-heading text-[18px] font-semibold">{section.title}</span>
@@ -258,7 +428,13 @@ export function PeopleFlow() {
               )}
               <div className="grid grid-cols-2 gap-2">
                 {section.members.map((person) => (
-                  <FlowCard key={person.id} {...cardProps(person)} onActivate={v.centerOn} />
+                  <FlowCard
+                    key={person.id}
+                    person={person}
+                    {...base(person)}
+                    tracked={v.trackedId === person.id}
+                    onTrack={v.track}
+                  />
                 ))}
               </div>
             </section>
