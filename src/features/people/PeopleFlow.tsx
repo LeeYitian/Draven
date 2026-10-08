@@ -14,7 +14,7 @@ import { TrackButton } from './PersonCard';
 import { usePeopleView } from './usePeopleView';
 import { useReducedMotion } from '../../lib/useReducedMotion';
 
-const pad = (n: number) => String(n).padStart(2, '0');
+// const pad = (n: number) => String(n).padStart(2, '0');
 const SORTS: readonly SortMode[] = ['group', 'order', 'world'];
 
 const activateOnKey = (onActivate: () => void) => (event: KeyboardEvent<HTMLElement>) => {
@@ -390,15 +390,15 @@ export function PeopleFlow() {
     <div ref={rootRef} className="mx-auto max-w-[640px] pb-8">
       <header className="sticky top-0 z-[2] flex flex-col gap-3 border-b border-divider bg-bg px-6 pt-5 pb-3">
         {/* 標題、進度、關閉鈕同一列；進度的說明文字太長，手機版只留螢幕閱讀器讀 */}
-        <div className="flex items-center gap-3">
-          <h2 className="m-0 font-heading text-[30px] leading-none font-medium whitespace-nowrap">
+        <div className="flex min-w-0 items-center gap-3">
+          <h2 className="m-0 flex-none font-heading text-[30px] leading-none font-medium whitespace-nowrap">
             {t('people.title')}
           </h2>
           <span
             data-progress-badge
-            className="rounded-md border border-divider px-2 py-0.5 text-aux whitespace-nowrap text-neutral-700"
+            className="min-w-0 truncate rounded-md border border-divider px-2 py-0.5 text-aux text-neutral-700"
           >
-            {t('people.progress', { page: pad(v.progress) })}
+            {/* {t('people.progress', { page: pad(v.progress) })} */}
             <span> · {t('people.instruction')}</span>
           </span>
           <button
