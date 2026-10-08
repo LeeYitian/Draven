@@ -109,7 +109,7 @@ test.describe('axe：02 最舊的紙色與其他狀態', () => {
     await scan(page, '02 age=1');
   });
 
-  test('01 光譜拖到中間、03 收合三層', async ({ page }) => {
+  test('01 光譜拖到中間、03 收合一層', async ({ page }) => {
     await openPage(page, STAGE, '#/axis/1');
     await page.locator('[data-event="5"]').click(); // 光譜從事件 05 起才出現
     await page.waitForTimeout(400); // 等敘述淡入完成，axe 才不會量到半透明的文字
@@ -117,9 +117,9 @@ test.describe('axe：02 最舊的紙色與其他狀態', () => {
     await page.keyboard.press('ArrowLeft');
     await scan(page, '01 光譜');
     await openPage(page, STAGE, '#/axis/3');
-    await page.getByRole('button', { name: '只看地底' }).click();
+    await page.locator('[data-layer-head="human"]').click(); // 收合「人間」層
     await page.waitForTimeout(500);
-    await scan(page, '03 只看地底');
+    await scan(page, '03 收合人間層');
   });
 });
 

@@ -30,14 +30,7 @@ import {
   type Box,
   type Vec,
 } from './layout';
-import {
-  UNDERGROUND_LAYER,
-  collapseTargets,
-  headerAnchor,
-  isOnly,
-  layoutLayers,
-  toggleOnly,
-} from './layers';
+import { collapseTargets, headerAnchor, layoutLayers } from './layers';
 import { useEdgeReveal } from './useEdgeReveal';
 import { useGraphViewport } from './useGraphViewport';
 import { useLayerTween } from './useLayerTween';
@@ -105,7 +98,7 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
       const v = useAppStore.getState().axis[axis].view;
       return { zoom: v.zoom, pan: v.pan };
     },
-    enabled: !flow || editor,
+    enabled: true,
     reduceMotion,
     persist: editor,
   });
@@ -291,7 +284,7 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
                 progress={progress[edge.id] ?? 1}
                 state={edgeState(edge, eventIndex, focus)}
                 hidden={hidden}
-                showLabel={effectiveEdgeLabels(view.edgeLabelsOn, mode)}
+                showLabel={effectiveEdgeLabels(view.edgeLabelsOn)}
                 {...(dot ? { dot } : {})}
               />
             );
@@ -329,7 +322,7 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
               selected={focus?.type === 'node' && focus.id === node.id}
               dragging={drag.draggingId === node.id}
               hidden={isNodeHidden(node.id)}
-              draggable={!flow || editor}
+              draggable
               wrapperRef={(el) => {
                 if (el) {
                   wrappers.current.set(node.id, el);
@@ -361,16 +354,6 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
     </ul>
   );
 
-  // 「只看地底」開關：只有可收合的分層圖（03）才有
-  const onlyUnderground =
-    layers && layers.some((l) => l.id === UNDERGROUND_LAYER && l.collapsible)
-      ? {
-          pressed: isOnly(layers, collapsedMap, UNDERGROUND_LAYER),
-          onToggle: () =>
-            setLayerCollapsed(axis, toggleOnly(layers, collapsedMap, UNDERGROUND_LAYER)),
-        }
-      : undefined;
-
   const controls = (
     <GraphControls
       axis={axis}
@@ -381,7 +364,6 @@ export function RelationGraph({ axis, page }: RelationGraphProps) {
       onReset={viewport.reset}
       legendShown={legendShown}
       onToggleLegend={() => setLegendShown((v) => !v)}
-      {...(onlyUnderground ? { onlyUnderground } : {})}
     />
   );
 

@@ -251,10 +251,9 @@ describe('伏筆', () => {
 });
 
 describe('effectiveEdgeLabels（線上文字預設）', () => {
-  it('沒選過：舞台開、流式關；選過就照選擇（不論版型）', () => {
-    expect(effectiveEdgeLabels(null, 'stage')).toBe(true);
-    expect(effectiveEdgeLabels(null, 'flow')).toBe(false);
-    expect(effectiveEdgeLabels(true, 'flow')).toBe(true);
-    expect(effectiveEdgeLabels(false, 'stage')).toBe(false);
+  it('沒選過：預設顯示；選過就照選擇', () => {
+    expect(effectiveEdgeLabels(null)).toBe(true); // 沒選過：預設顯示（舞台、手機都一樣）
+    expect(effectiveEdgeLabels(true)).toBe(true);
+    expect(effectiveEdgeLabels(false)).toBe(false);
   });
 });

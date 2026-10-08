@@ -88,7 +88,7 @@ test.describe('互動流暢度（無頭 Chromium 的粗略下限）', () => {
     await page.waitForTimeout(2500);
     const fps = await measureFps(page, async () => {
       for (let i = 0; i < 4; i++) {
-        await page.getByRole('button', { name: '只看地底' }).click();
+        await page.locator('[data-layer-head="human"]').click();
         await page.waitForTimeout(450);
       }
     });

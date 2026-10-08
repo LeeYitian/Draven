@@ -11,8 +11,6 @@
 import type { Box, Vec } from './layout';
 
 export const COLLAPSED_HEIGHT = 46;
-/** 「只看地底」要留下的那一層（03 的「地底交界」） */
-export const UNDERGROUND_LAYER = 'border';
 
 export interface LayerInput {
   id: string;
@@ -130,30 +128,6 @@ export const collapseTargets = (
   layers: readonly LayerInput[],
   collapsed: Readonly<Record<string, boolean>>,
 ): Record<string, number> => Object.fromEntries(layers.map((l) => [l.id, collapsed[l.id] ? 1 : 0]));
-
-/**
- * 「只看地底」：把其他層全部收合，只留 keep 那一層；再按一次（已經是這個狀態）就全部展開。
- */
-/** 目前是不是「只看 keep 這一層」：只有 keep 展開、其餘全部收合 */
-export function isOnly(
-  layers: readonly LayerInput[],
-  collapsed: Readonly<Record<string, boolean>>,
-  keep: string,
-): boolean {
-  return layers.every((l) => (l.id === keep ? !collapsed[l.id] : !!collapsed[l.id]));
-}
-
-/**
- * 「只看地底」：把其他層全部收合，只留 keep 那一層；再按一次（已經是這個狀態）就全部展開。
- */
-export function toggleOnly(
-  layers: readonly LayerInput[],
-  collapsed: Readonly<Record<string, boolean>>,
-  keep: string,
-): Record<string, boolean> {
-  const only = isOnly(layers, collapsed, keep);
-  return Object.fromEntries(layers.map((l) => [l.id, only ? false : l.id !== keep]));
-}
 
 /**
  * 一條連到「已收合層」的線，改連到層頭邊緣：
