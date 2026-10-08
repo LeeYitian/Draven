@@ -31,28 +31,28 @@ describe('compareRange：把手可拖範圍', () => {
 
 describe('ageOf：陳舊度', () => {
   for (const width of [320, 342, 640, 1288]) {
-    it(`寬 ${width}：最右（可拖上限）得 1；50% 與左側得 0`, () => {
+    it(`寬 ${width}：最左（可拖下限）得 1；50% 與右側得 0`, () => {
       const [min, max] = compareRange(width);
-      expect(ageOf(max, width)).toBe(1);
+      expect(ageOf(min, width)).toBe(1);
       expect(ageOf(50, width)).toBe(0);
-      expect(ageOf(min, width)).toBe(0);
-      expect(ageOf(0, width)).toBe(0);
+      expect(ageOf(max, width)).toBe(0);
+      expect(ageOf(100, width)).toBe(0);
     });
   }
-  it('舞台版：65% → 0.5、80% → 1（age = clamp((位置−50)/30)）', () => {
-    expect(ageOf(65, 1288)).toBeCloseTo(0.5, 9);
-    expect(ageOf(80, 1288)).toBe(1);
-    expect(ageOf(100, 1288)).toBe(1);
+  it('舞台版：35% → 0.5、20% → 1（age = clamp((50−位置)/30)）', () => {
+    expect(ageOf(35, 1288)).toBeCloseTo(0.5, 9);
+    expect(ageOf(20, 1288)).toBe(1);
+    expect(ageOf(0, 1288)).toBe(1);
   });
-  it('中間值線性、單調', () => {
+  it('中間值線性、單調（越往左越舊）', () => {
     let previous = -1;
-    for (let p = 50; p <= 70; p += 2) {
+    for (let p = 50; p >= 30; p -= 2) {
       const a = ageOf(p, 342);
       expect(a).toBeGreaterThanOrEqual(previous);
       previous = a;
     }
   });
-  it('範圍退化（max ≤ 50）時不除以零', () => {
+  it('範圍退化（min ≥ 50）時不除以零', () => {
     expect(ageOf(50, 150)).toBe(0);
   });
 });

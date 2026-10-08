@@ -130,7 +130,7 @@ people:
   title: 人物誌
   total: 出場人物 {n}
   progress: 目前進度 {page}
-  instruction: 內容會隨閱讀進度改變
+  instruction: 內容隨進度改變
   selected: 已選中 {n} 人
   sortLabel: 排列
   sort:

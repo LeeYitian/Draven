@@ -30,13 +30,13 @@ export function stepCompare(position: number, dir: 1 | -1, width: number): numbe
 }
 
 /**
- * 陳舊度 age（0–1）：50% 以左（含預設）為 0；往右到「可拖上限」為 1，中間線性。
- * 以實際上限正規化，所以任何寬度下拉到最右都是 1。
+ * 陳舊度 age（0–1）：50% 以右（含預設）為 0；往左到「可拖下限」為 1，中間線性。
+ * 以實際下限正規化，所以任何寬度下拉到最左都是 1。
  */
 export function ageOf(position: number, width: number): number {
-  const [, max] = compareRange(width);
-  if (max <= 50) return 0;
-  return Math.min(1, Math.max(0, (position - 50) / (max - 50)));
+  const [min] = compareRange(width);
+  if (min >= 50) return 0;
+  return Math.min(1, Math.max(0, (50 - position) / (50 - min)));
 }
 
 /** 哪一側是寬側（字放大）；接近中線時兩側一樣 */

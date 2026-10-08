@@ -178,9 +178,9 @@ test.describe('舞台版 02：時間感', () => {
     await openPage(page, { w: 1440, h: 795 }, AXIS2);
   });
 
-  test('往左與預設：沒有任何變化；往右：紙色變黃、出現暈影、內容 sepia', async ({ page }) => {
+  test('往右與預設：沒有任何變化；往左：紙色變黃、出現暈影、內容 sepia', async ({ page }) => {
     const clean = await bg(page);
-    await dragHandleTo(page, 30);
+    await dragHandleTo(page, 70);
     expect(await bg(page)).toBe(clean);
     expect(await page.locator('.age-vignette').evaluate((e) => getComputedStyle(e).display)).toBe(
       'none',
@@ -192,7 +192,7 @@ test.describe('舞台版 02：時間感', () => {
         .evaluate((e) => getComputedStyle(e).filter),
     ).toBe('none');
 
-    await dragHandleTo(page, 65);
+    await dragHandleTo(page, 35);
     expect(Number(await rootAge(page))).toBeCloseTo(0.5, 1);
     const mid = await bg(page);
     expect(mid).not.toBe(clean);
@@ -200,7 +200,7 @@ test.describe('舞台版 02：時間感', () => {
       'block',
     );
 
-    await dragHandleTo(page, 80);
+    await dragHandleTo(page, 20);
     expect(await rootAge(page)).toBe('1');
     expect(
       await page
@@ -208,11 +208,11 @@ test.describe('舞台版 02：時間感', () => {
         .first()
         .evaluate((e) => getComputedStyle(e).filter),
     ).toBe('sepia(0.35)');
-    expect(await bg(page)).not.toBe(mid); // 比 65% 更黃
+    expect(await bg(page)).not.toBe(mid); // 比 35% 更黃
   });
 
   test('側欄不套用 sepia（只受紙色與暈影影響）；Popover 也不套用', async ({ page }) => {
-    await dragHandleTo(page, 80);
+    await dragHandleTo(page, 20);
     expect(
       await page
         .locator('nav')
@@ -232,7 +232,7 @@ test.describe('舞台版 02：時間感', () => {
   });
 
   test('在 80% 的陳舊紙色上，內文仍夠讀（對比 ≥ 4.5:1，含 sepia 濾鏡後）', async ({ page }) => {
-    await dragHandleTo(page, 80);
+    await dragHandleTo(page, 20);
     const ratios = await page.evaluate(() => {
       // color-mix() 的計算值是 oklch(…) 之類的字串；借 canvas 轉成 sRGB 的 0–255
       const ctx = document.createElement('canvas').getContext('2d', { willReadFrequently: true })!;
@@ -276,7 +276,7 @@ test.describe('舞台版 02：時間感', () => {
 
   test('離開 02（換到 03 或 01）：--age、標記、暈影全部清除，紙色恢復', async ({ page }) => {
     const clean = await bg(page);
-    await dragHandleTo(page, 80);
+    await dragHandleTo(page, 20);
     expect(await bg(page)).not.toBe(clean);
     await page.keyboard.press('ArrowDown'); // 換到 03（焦點在把手上時 ↑↓ 不換頁，先讓它失焦）
     await handle(page).blur();
@@ -312,11 +312,11 @@ test.describe('流式版 02', () => {
       expect(left.x).toBeLessThan(right.x);
 
       await handle(page).focus();
-      for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowRight');
+      for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowLeft');
       expect(await rootAge(page)).toBe('1');
       const r2 = (await page.locator('[data-side="right"]').boundingBox())!;
       expect(r2.width).toBeGreaterThanOrEqual(95.5); // 窄側 ≥ 96
-      for (let i = 0; i < 6; i++) await page.keyboard.press('ArrowLeft');
+      for (let i = 0; i < 6; i++) await page.keyboard.press('ArrowRight');
       const l2 = (await page.locator('[data-side="left"]').boundingBox())!;
       expect(l2.width).toBeGreaterThanOrEqual(95.5);
       expect(Number(await rootAge(page))).toBe(0);
@@ -351,7 +351,7 @@ test.describe('流式版 02', () => {
     const t = (await track(page).boundingBox())!;
     await page.mouse.move(h.x + h.width / 2, h.y + h.height / 2);
     await page.mouse.down();
-    await page.mouse.move(t.x + t.width * 0.95, h.y + h.height / 2, { steps: 8 });
+    await page.mouse.move(t.x + t.width * 0.05, h.y + h.height / 2, { steps: 8 });
     await page.mouse.up();
     expect(await rootAge(page)).toBe('1');
     expect(await flowBg()).not.toBe(clean);

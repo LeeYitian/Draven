@@ -101,10 +101,10 @@ for (const [mode, size] of [
 }
 
 test.describe('axe：02 最舊的紙色與其他狀態', () => {
-  test('02 把手拉到最右（age=1）：對比仍達標', async ({ page }) => {
+  test('02 把手拉到最左（age=1）：對比仍達標', async ({ page }) => {
     await openPage(page, STAGE, '#/axis/2');
     await page.locator('[data-compare-handle]').focus();
-    for (let i = 0; i < 4; i++) await page.keyboard.press('ArrowRight');
+    for (let i = 0; i < 4; i++) await page.keyboard.press('ArrowLeft');
     await page.waitForTimeout(300);
     await scan(page, '02 age=1');
   });
