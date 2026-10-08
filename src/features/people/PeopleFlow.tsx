@@ -349,7 +349,11 @@ export function PeopleFlow() {
     if (centerId === null) return;
     // 手機版人物誌是全螢幕抽屜（自己捲動的 fixed 容器），不是整個頁面在捲，所以要捲抽屜
     const scroller = rootRef.current?.closest<HTMLElement>('[data-people-drawer]');
-    scroller?.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+    if (!scroller) return;
+    // 測試環境（jsdom）沒有 Element.scrollTo，退回直接設 scrollTop
+    if (typeof scroller.scrollTo === 'function')
+      scroller.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+    else scroller.scrollTop = 0;
   }, [centerId, reduceMotion]);
 
   const base = (person: Person) => ({
