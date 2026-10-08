@@ -1027,7 +1027,7 @@
 @keyframes flowCenterIn {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(28px);
   }
   to {
     opacity: 1;
@@ -1036,7 +1036,7 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   .flow-center-in {
-    animation: flowCenterIn 320ms var(--ease-out-soft) both;
+    animation: flowCenterIn 450ms var(--ease-out-soft) both;
   }
   .key-hint {
     animation: keyNudge 1.6s ease-in-out infinite;

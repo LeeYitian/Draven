@@ -14,7 +14,7 @@ import { TrackButton } from './PersonCard';
 import { usePeopleView } from './usePeopleView';
 import { useReducedMotion } from '../../lib/useReducedMotion';
 
-const pad = (n: number) => String(n).padStart(2, '0');
+// const pad = (n: number) => String(n).padStart(2, '0');
 const SORTS: readonly SortMode[] = ['group', 'order', 'world'];
 
 const activateOnKey = (onActivate: () => void) => (event: KeyboardEvent<HTMLElement>) => {
@@ -341,12 +341,15 @@ function FlowCenterView({
 export function PeopleFlow() {
   const v = usePeopleView();
   const reduceMotion = useReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
 
   // 換中心人物（或從網格進入中心視角）：頁面捲回頂端，新的中心人物與關係在最上面
   const centerId = v.centerPerson?.id ?? null;
   useEffect(() => {
     if (centerId === null) return;
-    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+    // 手機版人物誌是全螢幕抽屜（自己捲動的 fixed 容器），不是整個頁面在捲，所以要捲抽屜
+    const scroller = rootRef.current?.closest<HTMLElement>('[data-people-drawer]');
+    scroller?.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
   }, [centerId, reduceMotion]);
 
   const base = (person: Person) => ({
@@ -384,19 +387,19 @@ export function PeopleFlow() {
   })();
 
   return (
-    <div className="mx-auto max-w-[640px] pb-8">
+    <div ref={rootRef} className="mx-auto max-w-[640px] pb-8">
       <header className="sticky top-0 z-[2] flex flex-col gap-3 border-b border-divider bg-bg px-6 pt-5 pb-3">
         {/* 標題、進度、關閉鈕同一列；進度的說明文字太長，手機版只留螢幕閱讀器讀 */}
-        <div className="flex items-center gap-3">
-          <h2 className="m-0 font-heading text-[30px] leading-none font-medium whitespace-nowrap">
+        <div className="flex min-w-0 items-center gap-3">
+          <h2 className="m-0 flex-none font-heading text-[30px] leading-none font-medium whitespace-nowrap">
             {t('people.title')}
           </h2>
           <span
             data-progress-badge
-            className="rounded-md border border-divider px-2 py-0.5 text-aux whitespace-nowrap text-neutral-700"
+            className="min-w-0 truncate rounded-md border border-divider px-2 py-0.5 text-aux text-neutral-700"
           >
-            {t('people.progress', { page: pad(v.progress) })}
-            <span className="sr-only"> · {t('people.instruction')}</span>
+            {/* {t('people.progress', { page: pad(v.progress) })} */}
+            <span> · {t('people.instruction')}</span>
           </span>
           <button
             type="button"

@@ -133,23 +133,23 @@ describe('02 比較滑桿', () => {
 });
 
 describe('02 時間感（--age）', () => {
-  it('預設與往左：沒有 --age 標記、沒有暈影（乾淨紙色）', () => {
+  it('預設與往右：沒有 --age 標記、沒有暈影（乾淨紙色）', () => {
     start();
     expect(root()).not.toHaveAttribute('data-aged');
-    act(() => useAppStore.getState().setCompare(30));
+    act(() => useAppStore.getState().setCompare(70));
     expect(root()).not.toHaveAttribute('data-aged');
     expect(root().style.getPropertyValue('--age')).toBe('0');
   });
 
-  it('往右：age = (位置−50)/30，量化成 1/50 階梯；80% 為 1', () => {
+  it('往左：age = (50−位置)/30，量化成 1/50 階梯；20% 為 1', () => {
     start();
-    act(() => useAppStore.getState().setCompare(65));
+    act(() => useAppStore.getState().setCompare(35));
     expect(root().style.getPropertyValue('--age')).toBe('0.5');
     expect(root()).toHaveAttribute('data-aged');
-    act(() => useAppStore.getState().setCompare(80));
+    act(() => useAppStore.getState().setCompare(20));
     expect(root().style.getPropertyValue('--age')).toBe('1');
     // 階梯內的小幅移動不會改變 --age（拖曳時不必每個像素都更新整頁樣式）
-    act(() => useAppStore.getState().setCompare(65.1));
+    act(() => useAppStore.getState().setCompare(34.9));
     expect(root().style.getPropertyValue('--age')).toBe('0.5');
   });
 
@@ -163,7 +163,7 @@ describe('02 時間感（--age）', () => {
 
   it('離開 02：--age 與標記清除、把手回到 50%', () => {
     start();
-    act(() => useAppStore.getState().setCompare(80));
+    act(() => useAppStore.getState().setCompare(20));
     expect(root()).toHaveAttribute('data-aged');
     act(() => useAppStore.getState().setPage(1));
     expect(useAppStore.getState().compareSlider).toBe(50);
