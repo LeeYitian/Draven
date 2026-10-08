@@ -2,12 +2,11 @@ import { expect, test, type Page } from '@playwright/test';
 import { FLOW_SIZES, STAGE_SIZES, intersects, nodeRects, openPage, stageOverflow } from './helpers';
 import { AXIS_FRAME, GRAPH_BARS } from '../../src/lib/stage-metrics';
 
-// US6c：03 三界分層（收合、只看地底、跨層線改連層頭）與兩則引言。
+// US6c：03 三界分層（收合、跨層線改連層頭）與兩則引言。
 
 const AXIS3 = '#/axis/3';
 const head = (page: Page, id: string) => page.locator('[data-layer-head="' + id + '"]');
 const band = (page: Page, id: string) => page.locator('[data-layer="' + id + '"]');
-const onlyUnderground = (page: Page) => page.getByRole('button', { name: '只看地底' });
 
 /** 畫布本地座標下的帶狀區域高度（扣掉舞台縮放與關係圖縮放） */
 async function bandHeight(page: Page, id: string) {
@@ -104,44 +103,6 @@ test.describe('舞台版 03：三界分層', () => {
     await head(page, 'border').click();
     await settle(page);
     await expect(page.locator('[data-edge="shadow-snake"]')).toHaveAttribute('data-hidden');
-  });
-
-  test('「只看地底」：人間與異界收合、地底交界的節點移到中央；再按一次全部展開', async ({
-    page,
-  }) => {
-    await onlyUnderground(page).click();
-    await settle(page);
-    await expect(onlyUnderground(page)).toHaveAttribute('aria-pressed', 'true');
-    const heights = await bandHeights(page);
-    expect(heights[0]).toBe(46);
-    expect(heights[2]).toBe(46);
-    expectNear(heights[1]!, CANVAS_HEIGHT - 92);
-    expect((await hiddenNodes(page)).sort()).toEqual([
-      'bishop',
-      'bren',
-      'dravin',
-      'lioran',
-      'nor',
-      'snake-god',
-      'velo',
-    ]);
-    // 地底交界的節點整組在該層的帶狀區域內
-    const inside = await page.evaluate(() => {
-      const b = document.querySelector('[data-layer="border"]') as HTMLElement;
-      return ['fane', 'elian', 'shadow-man', 'earth-dragon'].map((id) => {
-        const w = document.querySelector('[data-node-wrapper="' + id + '"]') as HTMLElement;
-        return (
-          w.offsetTop >= b.offsetTop && w.offsetTop + w.offsetHeight <= b.offsetTop + b.offsetHeight
-        );
-      });
-    });
-    expect(inside).toEqual([true, true, true, true]);
-
-    await onlyUnderground(page).click();
-    await settle(page);
-    await expect(onlyUnderground(page)).toHaveAttribute('aria-pressed', 'false');
-    expect(await hiddenNodes(page)).toEqual([]);
-    expect((await bandHeights(page)).every((h) => h > 46)).toBe(true);
   });
 
   test('收合中的層：節點不可聚焦（aria-hidden／tabindex=-1）', async ({ page }) => {
@@ -290,15 +251,6 @@ test.describe('流式版 03', () => {
     );
   }
 
-  test('流式版「只看地底」鈕有文字；點下去兩層收合', async ({ page }) => {
-    await openPage(page, { w: 390, h: 844 }, AXIS3);
-    await expect(onlyUnderground(page)).toContainText('只看地底');
-    await onlyUnderground(page).scrollIntoViewIfNeeded();
-    await onlyUnderground(page).click();
-    await settle(page);
-    expect(await bandHeight(page, 'human')).toBe(46);
-    expect(await bandHeight(page, 'otherworld')).toBe(46);
-  });
 });
 
 test.describe('減少動態', () => {

@@ -92,9 +92,9 @@ export function nodeState(
   return neighbor ? 'focus' : 'dim';
 }
 
-/** 線上文字是否顯示：讀者選過就照選擇；沒選過依版型（舞台開、流式關——窄圖上文字會蓋住節點） */
-export function effectiveEdgeLabels(setting: boolean | null, mode: 'stage' | 'flow'): boolean {
-  return setting ?? mode === 'stage';
+/** 線上文字是否顯示：讀者選過就照選擇；沒選過預設顯示（手機版文字若蓋住節點，可以拖曳節點讓開） */
+export function effectiveEdgeLabels(setting: boolean | null): boolean {
+  return setting ?? true;
 }
 
 // ── 事件列標記 ───────────────────────────────────────────────────

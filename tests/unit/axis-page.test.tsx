@@ -205,13 +205,13 @@ describe('01 主軸頁（流式版）', () => {
     expect(document.querySelector('[data-keys-hint]')).toBeNull();
   });
 
-  it('流式版線上文字預設關閉；點「線段標籤」才開', async () => {
+  it('流式版線上文字預設顯示（和舞台版一樣）；點「線段標籤」才關', async () => {
     start('#/axis/1', [390, 844]);
     act(() => useAppStore.getState().selectEvent(1, 3));
     const toggle = screen.getByRole('button', { name: '線段標籤' });
-    expect(toggle).toHaveAttribute('aria-pressed', 'false');
-    await userEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('點節點即聚焦；圖例列與操作提示存在', () => {

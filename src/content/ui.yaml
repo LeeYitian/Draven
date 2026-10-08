@@ -61,7 +61,6 @@ graph:
 layer:
   count: '{name} · {n}'
   collapsed: 已收合
-  onlyUnderground: 只看地底
 
 spectrum:
   label: 邊界之辯光譜

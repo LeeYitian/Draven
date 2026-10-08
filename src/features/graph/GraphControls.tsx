@@ -1,4 +1,4 @@
-import { Layers, Menu, Minus, Plus, RotateCcw, Tag } from 'lucide-react';
+import { Menu, Minus, Plus, RotateCcw, Tag } from 'lucide-react';
 import { useLayout } from '../../components/layout/LayoutProvider';
 import { Chip } from '../../components/ui';
 import { t } from '../../content';
@@ -15,8 +15,6 @@ export interface GraphControlsProps {
   /** 圖例列的顯示開關（舞台版才有；流式版圖例固定顯示） */
   legendShown: boolean;
   onToggleLegend: () => void;
-  /** 「只看地底」（03 才有） */
-  onlyUnderground?: { pressed: boolean; onToggle: () => void };
 }
 
 const stepButton =
@@ -32,11 +30,10 @@ export function GraphControls({
   onReset,
   legendShown,
   onToggleLegend,
-  onlyUnderground,
 }: GraphControlsProps) {
   const { mode } = useLayout();
   const labelSetting = useAppStore((s) => s.axis[axis].view.edgeLabelsOn);
-  const edgeLabelsOn = effectiveEdgeLabels(labelSetting, mode);
+  const edgeLabelsOn = effectiveEdgeLabels(labelSetting);
   const toggleLabels = useAppStore((s) => s.toggleEdgeLabels);
   const percent = Math.round(zoom * 100);
 
@@ -80,24 +77,9 @@ export function GraphControls({
     </Chip>
   );
 
-  // 舞台版的控制列已經很擠（要讓出第一層的層名），「只看地底」只留圖示；流式版有字
-  const undergroundChip = onlyUnderground && (
-    <Chip
-      variant="toggle"
-      pressed={onlyUnderground.pressed}
-      title={t('layer.onlyUnderground')}
-      aria-label={t('layer.onlyUnderground')}
-      onClick={onlyUnderground.onToggle}
-    >
-      <Layers size={14} strokeWidth={1.5} aria-hidden="true" />
-      {mode === 'flow' && t('layer.onlyUnderground')}
-    </Chip>
-  );
-
   if (mode === 'flow') {
     return (
       <div className="flex flex-wrap items-center gap-1.5">
-        {undergroundChip}
         {labelsChip}
         {zoomGroup}
         <button
@@ -115,7 +97,6 @@ export function GraphControls({
   return (
     <div data-graph-controls className="flex items-center gap-1.5">
       {zoomGroup}
-      {undergroundChip}
       {labelsChip}
       <Chip variant="toggle" pressed={legendShown} onClick={onToggleLegend}>
         <Menu size={14} strokeWidth={1.5} aria-hidden="true" />

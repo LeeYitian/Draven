@@ -5,7 +5,6 @@ import {
   headerAnchor,
   layoutLayers,
   naturalBands,
-  toggleOnly,
 } from '../../src/features/graph/layers';
 import type { Vec } from '../../src/features/graph/layout';
 
@@ -71,7 +70,7 @@ describe('layoutLayers', () => {
     expect(l.positions.a![0]).toBe(100);
   });
 
-  it('「只看地底」：人間與異界收合，地底交界的節點被推到畫布中央', () => {
+  it('兩層收合：人間與異界收合，地底交界的節點被推到畫布中央', () => {
     const l = layout({ human: 1, other: 1 });
     expect(l.bands[0]!.height).toBe(COLLAPSED_HEIGHT);
     expect(l.bands[2]!.height).toBe(COLLAPSED_HEIGHT);
@@ -102,30 +101,9 @@ describe('layoutLayers', () => {
   });
 });
 
-describe('collapseTargets／toggleOnly', () => {
+describe('collapseTargets', () => {
   it('布林 → t 目標值', () => {
     expect(collapseTargets(LAYERS, { other: true })).toEqual({ human: 0, border: 0, other: 1 });
-  });
-  it('只看某層：其他層收合；再切一次全部展開', () => {
-    const once = toggleOnly(LAYERS, {}, 'border');
-    expect(once).toEqual({ human: true, border: false, other: true });
-    expect(toggleOnly(LAYERS, once, 'border')).toEqual({
-      human: false,
-      border: false,
-      other: false,
-    });
-  });
-  it('已有部分收合時，「只看某層」先成為只看該層', () => {
-    expect(toggleOnly(LAYERS, { other: true }, 'border')).toEqual({
-      human: true,
-      border: false,
-      other: true,
-    });
-    expect(toggleOnly(LAYERS, { border: true }, 'border')).toEqual({
-      human: true,
-      border: false,
-      other: true,
-    });
   });
 });
 

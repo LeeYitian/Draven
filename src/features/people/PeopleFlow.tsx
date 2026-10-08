@@ -403,7 +403,7 @@ export function PeopleFlow() {
             className="min-w-0 truncate rounded-md border border-divider px-2 py-0.5 text-aux text-neutral-700"
           >
             {/* {t('people.progress', { page: pad(v.progress) })} */}
-            <span> · {t('people.instruction')}</span>
+            <span>{t('people.instruction')}</span>
           </span>
           <button
             type="button"

@@ -430,9 +430,9 @@ test.describe('流式版 01', () => {
     expect(await currentEvent(page)).toBe('3');
   });
 
-  test('線段標籤預設關閉；縮放按鈕可用；點圖例可開關線種', async ({ page }) => {
+  test('線段標籤預設開啟；縮放按鈕可用；點圖例可開關線種', async ({ page }) => {
     await openPage(page, { w: 390, h: 844 }, AXIS1);
-    await expect(page.getByRole('button', { name: '線段標籤' })).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.getByRole('button', { name: '線段標籤' })).toHaveAttribute('aria-pressed', 'true');
     await page.getByRole('button', { name: '放大' }).click();
     await expect(page.locator('[data-zoom-level]')).toHaveText('125%');
     await page.getByRole('button', { name: '衝突', exact: true }).click();
