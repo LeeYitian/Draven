@@ -21,6 +21,8 @@ import { useAppStore, type AxisKey } from '../store/store';
 
 // 開發專用元件圖鑑：只在 dev 模式載入，正式建置會把整段移除
 const Kit = import.meta.env.DEV ? lazy(() => import('../dev/Kit')) : null;
+// 好讀版：獨立全頁，另外切成一個 chunk（第一次打開才下載）
+const ReaderPage = lazy(() => import('../features/reader/ReaderPage'));
 const FrameDemo = import.meta.env.DEV ? lazy(() => import('../dev/FrameDemo')) : null;
 
 /** 路由 → 底層頁碼。人物誌是疊在「開啟前的頁面」上的抽屜，所以底層頁碼取 returnTo。 */
@@ -98,6 +100,13 @@ export function App() {
     return (
       <Suspense fallback={null}>
         <Page />
+      </Suspense>
+    );
+  }
+  if (parseHash(hash).name === 'read') {
+    return (
+      <Suspense fallback={null}>
+        <ReaderPage />
       </Suspense>
     );
   }

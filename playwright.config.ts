@@ -5,6 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
 // E2E_PREVIEW=1（npm run e2e:prod）：改對打包後的網站（vite preview）跑，其餘與開發模式相同
 const PREVIEW = !!process.env.E2E_PREVIEW;
 const PORT = PREVIEW ? 4180 : 5180;
+// 好讀版的 e2e 不依賴本機原文：網址由測試用 page.route 攔截並回傳假資料（tests/e2e/reader.spec.ts）
+const NOVEL_ENV = { VITE_NOVEL_URL: 'http://novel.e2e.test' };
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -25,7 +27,7 @@ export default defineConfig({
       : `npm run dev -- --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
     // preview 要用和建置時一樣的 base（e2e-prod 建置時設 VITE_BASE=/），否則會去 /Draven/ 找檔案
-    env: PREVIEW ? { VITE_BASE: '/' } : {},
+    env: PREVIEW ? { VITE_BASE: '/', ...NOVEL_ENV } : NOVEL_ENV,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
   },

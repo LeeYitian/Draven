@@ -1,0 +1,13 @@
+# Cloudflare Worker 設定（好讀版原文）。步驟見 specs/002-reader-mode/quickstart.md
+name = "draven-novel"
+main = "index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# 允許讀取原文的網站（Origin，不含結尾斜線），逗號分隔。
+ALLOWED_ORIGINS = "https://leeyitian.github.io,http://localhost:5173"
+
+[[kv_namespaces]]
+binding = "STORY"
+# 執行 `npx wrangler kv namespace create NOVEL` 後，把印出來的 id 貼在這裡
+id = "21715a69702c4314a47b46198e9a9031"

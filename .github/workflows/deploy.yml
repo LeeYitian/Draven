@@ -27,7 +27,11 @@ jobs:
       - run: npm ci
       # lint + 型別 + 內容驗證 + 單元測試；任何一項失敗就不會部署
       - run: npm run check
+      # 好讀版的小說原文不在 repo：網站執行時向 Cloudflare Worker 取得。
+      # 網址放在 Repository variable NOVEL_URL（Settings → Secrets and variables → Actions → Variables）。
       - run: npm run build
+        env:
+          VITE_NOVEL_URL: ${{ vars.NOVEL_URL }}
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist

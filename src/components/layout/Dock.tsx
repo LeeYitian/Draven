@@ -3,10 +3,10 @@ import { useState, type ReactNode, type Ref } from 'react';
 import { getAxisPage, getPerson, t } from '../../content';
 import { ResetProgress } from '../../features/world/ResetProgress';
 import { useFbLinked, useFbPulseScheduler, useFbPulseTarget } from '../../features/hints/fbPulse';
-import { navigate, openPeople, routeForPage } from '../../lib/hash-router';
+import { navigate, openPeople, openReader, routeForPage } from '../../lib/hash-router';
 import { useAppStore } from '../../store/store';
 import { useUiStore } from '../../store/ui';
-import { Bookmark, DisplayNum, Kbd, Sheet } from '../ui';
+import { Bookmark, BookOpenIcon, DisplayNum, Kbd, Sheet } from '../ui';
 import { useLayout } from './LayoutProvider';
 
 /**
@@ -126,6 +126,11 @@ function SideDock() {
       >
         <HintsBadge count={d.owned} token={d.toastToken} />
       </DockItem>
+      <DockItem
+        icon={<BookOpenIcon size={20} strokeWidth={1.5} />}
+        label={t('dock.reader')}
+        onClick={openReader}
+      />
 
       {d.tracked && (
         <>
@@ -201,7 +206,7 @@ function BottomDock() {
   return (
     <>
       <nav aria-label={t('dock.nav')} className="fixed inset-x-0 bottom-0 z-(--z-dock) bg-bg">
-        <div className="mx-auto grid h-[76px] max-w-[640px] grid-cols-5 border-t border-divider pb-3">
+        <div className="mx-auto grid h-[76px] max-w-[640px] grid-cols-6 border-t border-divider pb-3">
           <button
             type="button"
             className={cellClass}
@@ -249,6 +254,10 @@ function BottomDock() {
           >
             <DisplayNum className="text-[21px] text-accent-700">{pad(d.page)}</DisplayNum>
             <span className="text-aux">{t('dock.pages')}</span>
+          </button>
+          <button type="button" className={cellClass} onClick={openReader}>
+            <BookOpenIcon size={20} strokeWidth={1.5} />
+            <span className="text-aux">{t('dock.reader')}</span>
           </button>
           <ResetProgress placement="cell" />
         </div>

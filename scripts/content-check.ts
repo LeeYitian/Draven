@@ -6,6 +6,8 @@ import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
 import { validateContent, type ContentBundle, type Issue } from '../src/content/validate.ts';
+import { parseSource } from '../src/features/reader/source.ts';
+import { readTocItems, resolveToc } from '../src/features/reader/toc.ts';
 
 // 注意：不可用 URL.pathname（Windows 與中文路徑會被百分比編碼），一律用 fileURLToPath。
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
@@ -85,7 +87,8 @@ if (bundle.ui) {
         });
     }
     // 三元運算等寫法（t(x ? 'a.b' : 'a.c')）：程式裡出現的字串常值剛好等於某個 key，也算使用
-    for (const key of defined) if (code.includes(`'${key}'`) || code.includes(`"${key}"`)) used.add(key);
+    for (const key of defined)
+      if (code.includes(`'${key}'`) || code.includes(`"${key}"`)) used.add(key);
     // 動態 key：t(`people.tags.${id}`) → 視為使用了 people.tags. 底下的所有 key
     for (const m of code.matchAll(/\bt\(\s*`([A-Za-z0-9_.]*)\$\{/g)) usedPrefixes.add(m[1]!);
   }
@@ -97,6 +100,52 @@ if (bundle.ui) {
       path: key,
       message: '這個 ui key 目前沒有被程式碼使用（功能尚未實作，或已不需要）',
     });
+  }
+}
+
+// ── 好讀版目錄（toc.yaml）：結構一定檢查；有本機原文時再檢查每一項的錨句 ─────────────
+{
+  const tocFile = join(CONTENT_DIR, 'toc.yaml');
+  const tocRaw = existsSync(tocFile) ? loadYaml(tocFile) : undefined;
+  if (tocRaw !== undefined) {
+    const rawItems = (tocRaw as { items?: unknown } | null)?.items;
+    if (!Array.isArray(rawItems)) {
+      issues.push({
+        severity: 'error',
+        file: 'toc.yaml',
+        path: 'items',
+        message: '必須是項目清單（items:）',
+      });
+    } else {
+      const items = readTocItems(tocRaw);
+      rawItems.forEach((item: unknown, i) => {
+        const v = item as Record<string, unknown> | null;
+        const bad = (message: string) =>
+          issues.push({ severity: 'error', file: 'toc.yaml', path: `items[${i}]`, message });
+        if (!v || typeof v.title !== 'string' || v.title.trim() === '') bad('缺少 title');
+        else if (typeof v.match !== 'string' || v.match.trim() === '')
+          bad(`「${v.title}」缺少 match（錨句）`);
+        const extra = Object.keys(v ?? {}).filter(
+          (k) => !['title', 'match', 'nth', 'level'].includes(k),
+        );
+        if (extra.length)
+          bad(`不認得的欄位：${extra.join('、')}（可用：title、match、nth、level）`);
+        if (v?.nth !== undefined && !(Number.isInteger(v.nth) && (v.nth as number) >= 1))
+          bad('nth 必須是 1 以上的整數');
+        if (v?.level !== undefined && v.level !== 1 && v.level !== 2) bad('level 只能是 1 或 2');
+      });
+      const source = ['full.html', 'full.md', 'full.txt']
+        .map((n) => join(CONTENT_DIR, n))
+        .find(existsSync);
+      if (!source) {
+        console.log('提示：沒有本機原文（src/content/full.*），略過 toc.yaml 的錨句檢查。');
+      } else {
+        const { problems } = resolveToc(parseSource(readFileSync(source, 'utf8')), items);
+        for (const p of problems) {
+          issues.push({ severity: p.severity, file: 'toc.yaml', path: '', message: p.message });
+        }
+      }
+    }
   }
 }
 
