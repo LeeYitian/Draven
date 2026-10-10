@@ -12,3 +12,4 @@ export {
 } from './Overlays';
 export { Spoiler, type SpoilerProps } from './Spoiler';
 export { Flash } from './Flash';
+export { BookOpenIcon, type IconProps } from './icons';

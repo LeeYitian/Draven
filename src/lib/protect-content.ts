@@ -15,23 +15,37 @@ export function installContentProtection(options: ProtectOptions = {}): () => vo
   const doc = options.target ?? document;
 
   const stop = (event: Event) => event.preventDefault();
+  // 好讀版的文章區允許反白（為了「記錄閱讀進度」）；反白的文字仍不能複製、剪下或拖出去
+  const inReaderArticle = (event: Event) => {
+    const node = event.target as Node | null;
+    const el = node instanceof Element ? node : (node?.parentElement ?? null);
+    return !!el?.closest('[data-reader-article]');
+  };
+  const onSelectStart = (event: Event) => {
+    if (!inReaderArticle(event)) event.preventDefault();
+  };
+  const onContextMenu = (event: Event) => {
+    if (inReaderArticle(event)) event.preventDefault();
+  };
   const onCopy = (event: ClipboardEvent) => {
     event.preventDefault();
     // 就算有東西被選到，剪貼簿也只會得到空字串
     event.clipboardData?.setData('text/plain', '');
   };
 
-  doc.addEventListener('selectstart', stop);
+  doc.addEventListener('selectstart', onSelectStart);
+  doc.addEventListener('contextmenu', onContextMenu);
   doc.addEventListener('dragstart', stop);
   doc.addEventListener('cut', stop);
   doc.addEventListener('copy', onCopy);
   if (options.contextMenu) doc.addEventListener('contextmenu', stop);
 
   return () => {
-    doc.removeEventListener('selectstart', stop);
+    doc.removeEventListener('selectstart', onSelectStart);
     doc.removeEventListener('dragstart', stop);
     doc.removeEventListener('cut', stop);
     doc.removeEventListener('copy', onCopy);
+    doc.removeEventListener('contextmenu', onContextMenu);
     doc.removeEventListener('contextmenu', stop);
   };
 }

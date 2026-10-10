@@ -6,6 +6,7 @@ import { useSyncExternalStore } from 'react';
  *
  *   #/            00 世界觀導讀（未知路徑一律回這裡）
  *   #/axis/1…4    主軸 01–04
+ *   #/read        好讀版（小說全文閱讀，獨立全頁；返回時回到進入前的頁面）
  *   #/people      人物誌抽屜：疊在 returnTo 頁面上；直接進入時 returnTo = '#/'
  *   #/__kit       開發專用元件圖鑑（正式版不渲染）
  *
@@ -13,12 +14,17 @@ import { useSyncExternalStore } from 'react';
  */
 export type AxisNumber = 1 | 2 | 3 | 4;
 export type Route =
-  { name: 'home' } | { name: 'axis'; axis: AxisNumber } | { name: 'people' } | { name: 'kit' };
+  | { name: 'home' }
+  | { name: 'axis'; axis: AxisNumber }
+  | { name: 'people' }
+  | { name: 'read' }
+  | { name: 'kit' };
 
 export function parseHash(hash: string): Route {
   const path = hash.replace(/^#/, '').split('?')[0]!.replace(/\/+$/, '');
   if (path === '' || path === '/') return { name: 'home' };
   if (path === '/people') return { name: 'people' };
+  if (path === '/read') return { name: 'read' };
   if (path === '/__kit' || path.startsWith('/__kit/')) return { name: 'kit' };
   const axis = /^\/axis\/([1-4])$/.exec(path);
   if (axis) return { name: 'axis', axis: Number(axis[1]) as AxisNumber };
@@ -33,6 +39,8 @@ export function formatRoute(route: Route): string {
       return `#/axis/${route.axis}`;
     case 'people':
       return '#/people';
+    case 'read':
+      return '#/read';
     case 'kit':
       return '#/__kit';
   }
@@ -111,6 +119,19 @@ export function closePeople(): void {
   }
   history.replaceState(null, '', getReturnTo());
   notify();
+}
+
+/** 開啟好讀版：和人物誌一樣記住來源頁，讓「返回導覽」回到進入前的頁面 */
+export function openReader(): void {
+  if (parseHash(location.hash).name === 'read') return;
+  const state: AppHistoryState = { fromApp: true, returnTo: currentHash() };
+  history.pushState(state, '', '#/read');
+  notify();
+}
+
+/** 離開好讀版：有上一頁就返回；直接開網址進來時改導向 returnTo（00） */
+export function closeReader(): void {
+  closePeople();
 }
 
 /** React：目前的 hash 字串（穩定的原始值，避免 useSyncExternalStore 無限重繪） */

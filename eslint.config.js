@@ -65,7 +65,7 @@ export default tseslint.config(
   // 開發專用頁面（元件圖鑑 /__kit）與內容工具（解析／驗證的錯誤訊息是給作者看的診斷，不是畫面文字）：
   // 允許寫中文字串，但仍禁止 #hex 色碼
   {
-    files: ['src/dev/**/*.{ts,tsx}', 'src/content/**/*.ts'],
+    files: ['src/dev/**/*.{ts,tsx}', 'src/content/**/*.ts', 'src/features/reader/toc.ts'],
     rules: { 'no-restricted-syntax': ['error', noHardCodedContent[3]] },
   },
   // 測試與腳本：允許中文字串（測試資料、錯誤訊息），Node 環境

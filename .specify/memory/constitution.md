@@ -1,7 +1,7 @@
 # 《德雷文》故事導覽網站 · 專案憲章（Constitution）
 
 > 依 github/spec-kit 方法論建立。本憲章是 `/plan`、`/tasks`、`/implement` 每一步的檢查依據（見 plan.md「Constitution Check」）。
-> 版本 1.1.0 · 制定日 2026-10-07 · 最後修訂 2026-10-07（新增 IV-b 文字保護）
+> 版本 1.2.0 · 制定日 2026-10-07 · 最後修訂 2026-10-10（IV-b 新增「好讀版文章區」例外；技術約束新增 Cloudflare Worker 原文來源）
 > 注意：本檔由人工依 spec-kit 的目錄與模板慣例手寫，**並非由 spec-kit CLI 產生**（見 plan.md「關於 spec-kit」）。
 
 ## 核心原則
@@ -33,6 +33,8 @@
 - 全站文字不可被選取、不可複製（CSS `user-select:none`＋`selectstart`／`copy`／`cut`／`dragstart` 攔截）。
 - 保護只做在「選取與複製」這一層，**不得**以移除 DOM 文字或 `aria-hidden` 達成，以免傷害無障礙與搜尋。
 - 對外溝通必須誠實：這只能阻擋一般操作，不是加密（見 research R25）。
+- **例外（v1.2.0，specs/002-reader-mode）**：好讀版（`#/read`）的文章區 `[data-reader-article]` 允許反白，作用只是讓讀者指定「記錄閱讀進度」的位置。該區仍禁止複製、剪下、拖曳、右鍵選單與列印；其他所有區域維持不可選取。
+- 小說原文不進 repo、不打包進網站；正式環境在執行時由 Cloudflare Worker（Workers KV）依 Origin 白名單提供。
 
 ### V. 劇透安全（Spoiler Safety）
 - 劇透規則（人物誌預設遮蔽、Popover 只顯示目前主軸之前、04 先蓋遮罩、追蹤與劇透無關）以**純函式 selector** 實作並有單元測試，不散落在元件裡。
@@ -52,6 +54,7 @@
 - 前端：React + TypeScript + Vite + Tailwind CSS（v4，CSS-first 設定）。純前端、無後端。
 - 目標瀏覽器：近兩年的 Chrome／Edge／Safari／Firefox 與 iOS Safari、Android Chrome。
 - 部署：GitHub Pages（GitHub Actions 官方 Pages 流程）。路由使用 hash（`#/…`），免除 SPA 404 問題。
+- 唯一的後端元件：`worker/`（Cloudflare Worker + KV，免費方案），只負責回傳好讀版原文；網站其餘部分仍是純前端。
 
 ## 開發流程（spec-kit）
 1. constitution → 2. specify（spec.md）→ 3. clarify（clarifications.md，答案回寫 spec）→ 4. plan（plan.md、research.md、data-model.md、contracts/）→ 5. tasks（tasks.md）→ 6. analyze（一致性檢查）→ 7. implement（依 tasks 逐階段實作，每階段結束驗收並可部署）。

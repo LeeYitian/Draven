@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './components.css';
+@import './reader.css';
 
 /* ══════════════════════════════════════════════════════════════════
    1) 設計代幣：Classical 設計系統（唯一來源，見 specs/…/design-system.md）

@@ -13,6 +13,7 @@ dock:
   nav: 主要導覽
   people: 人物誌
   hints: 伏筆
+  reader: 好讀版
   untracked: 未追蹤
   pages: 頁面
   pagesMenu: 選擇頁面
@@ -173,3 +174,37 @@ people:
     human: 人間
     underground: 地底交界
     otherworld: 異界
+
+# 好讀版（小說閱讀模式，#/read）
+reader:
+  title: 好讀版
+  back: 返回導覽
+  article: 小說全文
+  toc: 目錄
+  tocTitle: 目錄
+  tocClose: 關閉目錄
+  tocEmpty: 這份內容還沒有目錄
+  tocMissing: 找不到這一項的位置
+  fontSmaller: 縮小字級
+  fontLarger: 放大字級
+  themeToLight: 切換為淺色模式
+  themeToDark: 切換為深色模式
+  loading: 載入中…
+  error: 無法載入內容
+  errorHint: 請檢查網路連線後再試一次。
+  retry: 重試
+  noSource: 找不到小說內容。開發模式請確認 src/content/full.html 存在，正式環境請確認 VITE_NOVEL_URL。
+  progress: 閱讀進度 {n}%
+  mark: 記錄閱讀進度
+  markHere: 記錄目前閱讀位置
+  marked: 已記錄閱讀進度
+  toolbar: 閱讀進度選項
+  bookmark: 閱讀進度
+  resumed: 已回到上次閱讀的位置
+  fromStart: 從頭開始
+  notFound: 找不到上次的閱讀位置（內容可能已更新），已從頭開始
+  printBlocked: 本頁內容不提供列印。
+  footer:
+    source: 本文原載於噗浪（Plurk）：
+    url: https://www.plurk.com/p/3ivkr0zpza
+    notice: 著作權屬原作者所有。本頁僅供個人線上閱讀，請勿轉載、複製、散布或作商業用途。

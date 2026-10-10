@@ -19,7 +19,9 @@
     "check": "npm run lint && npm run typecheck && npm run content:check && npm test",
     "format": "prettier --write .",
     "e2e": "playwright test",
-    "e2e:prod": "node scripts/e2e-prod.ts"
+    "e2e:prod": "node scripts/e2e-prod.ts",
+    "scan:dist": "node scripts/scan-dist.ts",
+    "novel:upload": "node scripts/upload-novel.ts"
   },
   "dependencies": {
     "lucide-react": "^1.52.0",
