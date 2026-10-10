@@ -35,7 +35,7 @@ export default {
     if (!key) return new Response('Not Found', { status: 404 });
     if (!cors) return new Response('Forbidden', { status: 403 });
 
-    const body = await env.NOVEL.get(key);
+    const body = await env.STORY.get(key);
     if (body === null) return new Response('Not Found', { status: 404, headers: cors });
 
     return new Response(body, {
