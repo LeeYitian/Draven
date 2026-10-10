@@ -20,6 +20,38 @@ async function swipe(page: Page, x: number, y: number, dy: number) {
   await settleScroll(page);
 }
 
+/**
+ * 關係圖視口內沒有節點、連線、按鈕，且離它們夠遠的空白處（取最下面、最右邊的一格）。
+ * 節點在手機版可拖曳（touch-action:none），從節點上開始滑會變成拖節點而不是平移圖，所以平移要從空白處起手。
+ * 「夠遠」是因為 Chrome 的觸控會自動吸附到附近（約 15–25px 內）的可點目標，貼著節點的縫隙也會被吸過去。
+ */
+async function emptySpot(page: Page): Promise<{ x: number; y: number }> {
+  const spot = await page.evaluate(() => {
+    const MARGIN = 36;
+    const vp = document.querySelector('[data-graph-viewport]') as HTMLElement;
+    const r = vp.getBoundingClientRect();
+    const targets = [...vp.querySelectorAll('[data-node-wrapper], button, a')].map((el) =>
+      el.getBoundingClientRect(),
+    );
+    const far = (x: number, y: number) =>
+      targets.every(
+        (t) => Math.hypot(Math.max(t.left - x, 0, x - t.right), Math.max(t.top - y, 0, y - t.bottom)) >= MARGIN,
+      );
+    const left = Math.max(r.left, 0) + 12;
+    const right = Math.min(r.right, innerWidth) - 12;
+    const top = Math.max(r.top, 0) + 130; // 上方留出滑動距離
+    const bottom = Math.min(r.bottom, innerHeight) - 12;
+    for (let y = bottom; y >= top; y -= 8)
+      for (let x = right; x >= left; x -= 8) {
+        const hit = document.elementFromPoint(x, y);
+        if (hit && vp.contains(hit) && !hit.closest('[data-edge]') && far(x, y)) return { x, y };
+      }
+    return null;
+  });
+  if (!spot) throw new Error('關係圖視口內找不到空白處');
+  return spot;
+}
+
 /** 滑動後會有慣性捲動；等 scrollY 連續穩定才繼續（慣性中的點擊只會被拿來停住捲動） */
 async function settleScroll(page: Page) {
   let last = -1;
@@ -115,20 +147,47 @@ test.describe('關係圖的觸控捲動規則（R12）', () => {
       .poll(() => viewport.evaluate((el) => getComputedStyle(el).touchAction))
       .toBe('none');
     const scrolled = await page.evaluate(() => window.scrollY);
-    const box2 = (await viewport.boundingBox())!;
+    // 放大後角落可能正好壓到節點（節點可拖曳，會變成拖節點），所以從空白處起手
+    const start = await emptySpot(page);
     const panBefore = await page.locator('[data-graph-layer]').evaluate((el) => getComputedStyle(el).transform);
-    await swipe(page, box2.x + box2.width - 20, box2.y + box2.height - 20, -100);
+    await swipe(page, start.x, start.y, -100);
     expect(await page.evaluate(() => window.scrollY)).toBeCloseTo(scrolled, 0); // 頁面不捲
     const panAfter = await page.locator('[data-graph-layer]').evaluate((el) => getComputedStyle(el).transform);
     expect(panAfter).not.toBe(panBefore); // 圖被平移
   });
 
-  test('節點在手機版不能拖曳（點節點只聚焦）', async ({ page }) => {
+  test('節點在手機版可以拖曳：點節點仍是聚焦；按住拖動時節點跟著手指、頁面不捲，放開後彈回', async ({
+    page,
+  }) => {
     await openPage(page, { w: 390, h: 844 }, '#/axis/1');
     const node = page.locator('[data-node="dravin"]');
     await node.scrollIntoViewIfNeeded();
+    // 可拖曳的節點把觸控交給自己（touch-action:none），不然手指一動就變成頁面捲動
+    expect(await node.evaluate((el) => (el as HTMLElement).style.touchAction)).toBe('none');
     await node.tap();
     await expect(node).toHaveAttribute('aria-pressed', 'true');
-    expect(await node.evaluate((el) => (el as HTMLElement).style.touchAction)).not.toBe('none');
+
+    // 沒有點選的拖曳：用 CDP 送出觸控序列（放在最後，之後 Playwright 的 tap 會被瀏覽器忽略）
+    const home = (await node.boundingBox())!;
+    const scrollY = await page.evaluate(() => window.scrollY);
+    const x = home.x + home.width / 2;
+    const y = home.y + home.height / 2;
+    const cdp = await page.context().newCDPSession(page);
+    const point = (xx: number, yy: number) => [{ x: xx, y: yy, id: 1 }];
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: point(x, y) });
+    for (let i = 1; i <= 10; i++)
+      await cdp.send('Input.dispatchTouchEvent', {
+        type: 'touchMove',
+        touchPoints: point(x - (2 * i), y - 6 * i),
+      });
+    await expect
+      .poll(async () => (await node.boundingBox())!.y, { message: '節點應跟著手指往上移' })
+      .toBeLessThan(home.y - 30);
+    expect(await page.evaluate(() => window.scrollY)).toBe(scrollY); // 頁面沒有被捲動
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    // 放開後以彈簧回到原位
+    await expect
+      .poll(async () => Math.abs((await node.boundingBox())!.y - home.y), { timeout: 3000 })
+      .toBeLessThan(2);
   });
 });

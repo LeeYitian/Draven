@@ -105,8 +105,21 @@ test.describe('舞台版 03：三界分層', () => {
     await expect(page.locator('[data-edge="shadow-snake"]')).toHaveAttribute('data-hidden');
   });
 
+  test('收合後整條層頭都點得到：隱藏節點的透明方框不擋點擊（點層頭正中央可再展開）', async ({
+    page,
+  }) => {
+    // 層頭正中央原本就壓著人間層的節點（收合後它們被隱藏，但方框還在）
+    await head(page, 'human').click();
+    await settle(page);
+    await expect(head(page, 'human')).toHaveAttribute('aria-expanded', 'false');
+    await head(page, 'human').click(); // 不指定位置＝點正中央；被擋住的話 Playwright 會一路重試到逾時
+    await settle(page);
+    await expect(head(page, 'human')).toHaveAttribute('aria-expanded', 'true');
+    expect(await hiddenNodes(page)).toEqual([]);
+  });
+
   test('收合中的層：節點不可聚焦（aria-hidden／tabindex=-1）', async ({ page }) => {
-    await head(page, 'human').click({ position: { x: 120, y: 14 } });
+    await head(page, 'human').click();
     await settle(page);
     const node = page.locator('[data-node="dravin"]');
     await expect(node).toHaveAttribute('aria-hidden', 'true');
@@ -116,7 +129,7 @@ test.describe('舞台版 03：三界分層', () => {
   test('動畫中途每一格都是合法版面：節點與連線一路跟著動（層高加起來始終 457）', async ({
     page,
   }) => {
-    await head(page, 'human').click({ position: { x: 120, y: 14 } });
+    await head(page, 'human').click();
     const samples: number[] = [];
     for (let i = 0; i < 6; i++) {
       samples.push((await bandHeights(page)).reduce((a, b) => a + b, 0));
