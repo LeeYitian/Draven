@@ -8,7 +8,7 @@ const worker = ((await import('../../worker/index.js' as string)) as WorkerModul
 
 const env = {
   ALLOWED_ORIGINS: 'https://leeyitian.github.io, http://localhost:5173',
-  NOVEL: {
+  STORY: {
     get: async (key: string) =>
       key === 'full' ? '<p>原文</p>' : key === 'toc' ? '{"items":[]}' : null,
   },

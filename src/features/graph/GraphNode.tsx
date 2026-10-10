@@ -71,6 +71,9 @@ export const GraphNode = memo(function GraphNode({
         width,
         transform: 'translate(-50%, -50%)',
         zIndex: dragging ? 2 : 1,
+        // 隱藏的節點（圖例關閉、所在層收合）連 wrapper 也要穿透：不然透明的方框會擋住底下的層頭與連線，
+        // 收合的層就點不到層頭（.node[data-hidden] 的 pointer-events:none 只管內層）
+        pointerEvents: hidden ? 'none' : undefined,
       }}
     >
       <div
