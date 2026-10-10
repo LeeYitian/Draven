@@ -57,7 +57,7 @@ const put = (key: string, path: string) => {
       'put',
       key,
       `--path=${path}`,
-      '--binding=NOVEL',
+      '--binding=STORY',
       '--remote',
       '--config=worker/wrangler.toml',
     ],
