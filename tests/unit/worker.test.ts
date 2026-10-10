@@ -52,7 +52,7 @@ describe('worker', () => {
   it('KV 沒資料：404', async () => {
     const res = await worker.fetch(
       new Request('https://w.example/full', { headers: { Origin: 'http://localhost:5173' } }),
-      { ...env, NOVEL: { get: async () => null } },
+      { ...env, STORY: { get: async () => null } },
     );
     expect(res.status).toBe(404);
   });
