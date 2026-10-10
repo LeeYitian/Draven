@@ -1,4 +1,4 @@
-# Cloudflare Worker 設定（好讀版原文）。步驟見 specs/002-reader-mode/quickstart.md
+# Cloudflare Worker 設定（好讀版原文）。步驟見 docs/設定worker和KV.md
 name = "draven-novel"
 main = "index.js"
 compatibility_date = "2026-10-01"

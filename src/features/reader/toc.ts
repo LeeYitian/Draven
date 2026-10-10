@@ -1,6 +1,6 @@
 /**
- * 目錄解析（純函式）。toc.yaml 以「錨句」指向段落；沒有 toc.yaml 時用原文的標題（md 的 #、html 的 h1–h3）。
- * 約定見 specs/002-reader-mode/contracts/toc-and-source.md。
+ * 目錄解析（純函式）。toc.json 以「錨句」指向段落；沒有 toc.json 時用原文的標題（md 的 #、html 的 h1–h3）。
+ * 約定見 docs/toc-and-source.md。
  */
 import { normalize, type Block } from './source.ts';
 
@@ -11,7 +11,7 @@ export interface TocItem {
   level?: 1 | 2;
 }
 
-/** toc.yaml 的內容 → 有效的項目（欄位不合的項目略過；完整檢查在 content:check） */
+/** toc.json 的內容 → 有效的項目（欄位不合的項目略過；完整檢查在 content:check） */
 export function readTocItems(raw: unknown): TocItem[] {
   const items = (raw as { items?: unknown } | null)?.items;
   if (!Array.isArray(items)) return [];

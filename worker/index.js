@@ -1,6 +1,6 @@
 /**
  * 《德雷文》好讀版：Cloudflare Worker。把 KV 裡的小說原文（/full）與目錄（/toc），只送給允許的網站。
- * 約定見 specs/002-reader-mode/contracts/worker-api.md；部署步驟見 specs/002-reader-mode/quickstart.md。
+ * 約定見 specs/002-reader-mode/contracts/worker-api.md；部署步驟見 docs/設定worker和KV.md。
  *
  * 能擋：不經過你的網站、直接用網址或程式抓取（沒有正確的 Origin 就是 403）。
  * 擋不住：有心人偽造 Origin；讀者的瀏覽器收到後的內容（開發者工具看得到）。
