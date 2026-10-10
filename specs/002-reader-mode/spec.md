@@ -25,7 +25,7 @@
 - **Acceptance**：系統為深色時首次進入即深色；手動切到淺色後重整仍為淺色；深色下文字對比 ≥ 7:1（正文）、表情圖不刺眼。
 
 ### US3 — 目錄與跳轉（P1）
-目錄列出章節標題；點擊後捲到 html 中對應位置。目錄由 `src/content/toc.yaml` 以「錨句」定義（見 [contracts/toc-and-source.md](contracts/toc-and-source.md)），覆蓋 `full.html` 後不必重做。來源若是 md／純文字，`#` 開頭的行自動成為標題與目錄。
+目錄列出章節標題；點擊後捲到 html 中對應位置。目錄由 `contents/toc.json` 以「錨句」定義（見 [docs/toc-and-source.md](../../docs/toc-and-source.md)），覆蓋 `full.html` 後不必重做。來源若是 md／純文字，`#` 開頭的行自動成為標題與目錄。
 - **Acceptance**：點目錄項目捲到正確段落並短暫標示；目前所在章節在目錄中高亮；找不到錨句的項目不會讓頁面壞掉（該項停用，開發模式主控台警告）。
 
 ### US4 — 反白記錄閱讀進度（P1）
@@ -52,7 +52,7 @@
 - **FR-002** 路由 `#/read`；分頁標題為「德雷文 · 好讀版」（離開時還原）；未知路徑仍回 `#/`。好讀版不套用舞台縮放（獨立全頁）。
 - **FR-003** 閱讀排版：內文襯線體（Noto Serif TC，淺色 400／深色約 350）；字級預設桌機 19px／手機 17px；行高 1.95；字距 0.02em；段距 0.9em，不縮排；行寬 `max-width: 36em`；`line-break: strict`；尊重 `prefers-reduced-motion`。
 - **FR-004** 深淺色：`data-reader-theme`；起始＝系統；手動切換存 `reader.theme`。
-- **FR-005** 目錄：`toc.yaml`（title / match / nth / level）＋ md／txt 標題；位置以段落為單位；順序須與文件順序一致。**目錄與原文一樣存在 KV**（`/toc`），更新內容不需 commit；取不到目錄時退回原文標題。
+- **FR-005** 目錄：`toc.json`（title / match / nth / level）＋ md／txt 標題；位置以段落為單位；順序須與文件順序一致。**目錄與原文一樣存在 KV**（`/toc`），更新內容不需 commit；取不到目錄時退回原文標題。
 - **FR-006** 書籤：`{ index, quote, total, savedAt }` 存 `reader.bookmark`；還原先以 `quote` 全文比對（就近），失敗退回 `index`（僅在 `total` 相同時），再失敗放棄並提示。
 - **FR-007** 保護：好讀版內 `copy/cut/dragstart/contextmenu` 攔截、`@media print` 隱藏全文、圖片不可拖曳；`selectstart` 只放行於 `[data-reader-article]`。
 - **FR-008** 出處聲明（目錄區塊底端）文案放 `ui.yaml`（`reader.footer.*`），可由作者改。

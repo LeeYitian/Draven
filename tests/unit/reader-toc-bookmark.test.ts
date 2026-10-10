@@ -32,7 +32,7 @@ describe('resolveToc', () => {
     expect(problems.map((p) => p.severity).sort()).toEqual(['error', 'warning', 'warning']);
   });
 
-  it('沒有 toc.yaml 時使用標題', () => {
+  it('沒有 toc.json 時使用標題', () => {
     const b = parseSource('# 一\n\n文\n\n## 二\n\n文');
     expect(resolveToc(b, undefined).entries).toEqual([
       { title: '一', level: 1, index: 0 },

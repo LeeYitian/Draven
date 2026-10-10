@@ -2,7 +2,7 @@
  * 好讀版的原文解析（純函式，瀏覽器與 Node 腳本共用，所以不用 DOMParser）。
  * 輸入是 Plurk 匯出的 HTML，或 md／純文字；輸出是資料模型，由 React 渲染（不經過 innerHTML）。
  * 只認得 p br i em b strong h1–h3 與表情圖，其餘標籤與所有屬性一律丟棄。
- * 格式約定見 specs/002-reader-mode/contracts/toc-and-source.md。
+ * 格式約定見 docs/toc-and-source.md。
  */
 export type Inline =
   | { t: 'text'; v: string }

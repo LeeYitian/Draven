@@ -4,7 +4,7 @@
 ```
 src/features/reader/
   source.ts         純函式：原文(html/md/txt) → Block[]；自寫極小 tokenizer，不用 DOMParser（Node 與瀏覽器共用）
-  toc.ts            純函式：Block[] + toc.yaml → 目錄（錨句比對）
+  toc.ts            純函式：Block[] + toc.json → 目錄（錨句比對）
   bookmark.ts       純函式：選取 → Bookmark；Bookmark + Block[] → 段落 index
   loadNovel.ts      DEV：本機檔（import.meta.glob，僅 DEV）；PROD：fetch(VITE_NOVEL_URL)
   ReaderPage.tsx    頁面骨架（頂列、目錄、文章、頁尾）

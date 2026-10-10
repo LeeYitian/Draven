@@ -13,6 +13,8 @@ import { readTocItems, resolveToc } from '../src/features/reader/toc.ts';
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const CONTENT_DIR = join(ROOT, 'src', 'content');
 const SRC_DIR = join(ROOT, 'src');
+/** 好讀版的原文與目錄（不進 repo；與 scripts/upload-novel.ts 同一個資料夾） */
+const NOVEL_DIR = join(ROOT, 'contents');
 
 function walk(dir: string, filter: (name: string) => boolean): string[] {
   if (!existsSync(dir)) return [];
@@ -103,25 +105,37 @@ if (bundle.ui) {
   }
 }
 
-// ── 好讀版目錄（toc.yaml）：結構一定檢查；有本機原文時再檢查每一項的錨句 ─────────────
+// ── 好讀版目錄（contents/toc.json）：結構一定檢查；有本機原文時再檢查每一項的錨句 ─────────────
 {
-  const tocFile = join(CONTENT_DIR, 'toc.yaml');
-  const tocRaw = existsSync(tocFile) ? loadYaml(tocFile) : undefined;
+  const tocFile = join(NOVEL_DIR, 'toc.json');
+  let tocRaw: unknown;
+  if (existsSync(tocFile)) {
+    try {
+      tocRaw = JSON.parse(readFileSync(tocFile, 'utf8'));
+    } catch (error) {
+      issues.push({
+        severity: 'error',
+        file: 'toc.json',
+        path: '',
+        message: `JSON 語法錯誤：${(error as Error).message}`,
+      });
+    }
+  }
   if (tocRaw !== undefined) {
     const rawItems = (tocRaw as { items?: unknown } | null)?.items;
     if (!Array.isArray(rawItems)) {
       issues.push({
         severity: 'error',
-        file: 'toc.yaml',
+        file: 'toc.json',
         path: 'items',
-        message: '必須是項目清單（items:）',
+        message: '必須是項目清單（"items": [...]）',
       });
     } else {
       const items = readTocItems(tocRaw);
       rawItems.forEach((item: unknown, i) => {
         const v = item as Record<string, unknown> | null;
         const bad = (message: string) =>
-          issues.push({ severity: 'error', file: 'toc.yaml', path: `items[${i}]`, message });
+          issues.push({ severity: 'error', file: 'toc.json', path: `items[${i}]`, message });
         if (!v || typeof v.title !== 'string' || v.title.trim() === '') bad('缺少 title');
         else if (typeof v.match !== 'string' || v.match.trim() === '')
           bad(`「${v.title}」缺少 match（錨句）`);
@@ -134,15 +148,13 @@ if (bundle.ui) {
           bad('nth 必須是 1 以上的整數');
         if (v?.level !== undefined && v.level !== 1 && v.level !== 2) bad('level 只能是 1 或 2');
       });
-      const source = ['full.html', 'full.md', 'full.txt']
-        .map((n) => join(CONTENT_DIR, n))
-        .find(existsSync);
-      if (!source) {
-        console.log('提示：沒有本機原文（src/content/full.*），略過 toc.yaml 的錨句檢查。');
+      const source = join(NOVEL_DIR, 'full.html');
+      if (!existsSync(source)) {
+        console.log('提示：沒有本機原文（contents/full.html），略過 toc.json 的錨句檢查。');
       } else {
         const { problems } = resolveToc(parseSource(readFileSync(source, 'utf8')), items);
         for (const p of problems) {
-          issues.push({ severity: p.severity, file: 'toc.yaml', path: '', message: p.message });
+          issues.push({ severity: p.severity, file: 'toc.json', path: '', message: p.message });
         }
       }
     }

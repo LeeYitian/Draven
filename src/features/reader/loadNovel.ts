@@ -5,7 +5,7 @@ import { readTocItems, type TocItem } from './toc.ts';
  * 取得小說全文與目錄。
  *  - 有設定 VITE_NOVEL_URL（Worker 的根網址）：向 `${網址}/full` 與 `${網址}/toc` 取得（正式環境；
  *    原文與目錄都不在 repo、也不在網站的靜態檔裡）。目錄取不到不影響閱讀，退回原文自己的標題。
- *  - 沒設定且在開發模式：讀本機 src/content/full.{html,md,txt} 與 toc.yaml
+ *  - 沒設定且在開發模式：讀本機 contents/full.html 與 toc.json
  * 結果快取在記憶體；失敗時清掉快取，讓「重試」可以再試。
  */
 export interface Novel {
