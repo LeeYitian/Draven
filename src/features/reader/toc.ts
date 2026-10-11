@@ -91,12 +91,12 @@ export function resolveToc(
  */
 export function ancestorEntries(entries: readonly TocEntry[], current: number): Set<number> {
   const result = new Set<number>();
-  if (current < 0 || current >= entries.length) return result;
-  let level = entries[current].level;
+  let level = entries[current]?.level ?? 1;
   for (let i = current - 1; i >= 0 && level > 1; i--) {
-    if (entries[i].level < level) {
+    const entry = entries[i];
+    if (entry && entry.level < level) {
       result.add(i);
-      level = entries[i].level;
+      level = entry.level;
     }
   }
   return result;
