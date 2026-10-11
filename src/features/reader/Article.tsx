@@ -1,5 +1,11 @@
-import { memo, type ReactNode } from 'react';
+import { memo, type CSSProperties, type ReactNode } from 'react';
 import type { Block, Inline } from './source';
+
+/**
+ * 每行約容納的字數（行寬 36em ÷ 字寬含字距 1.02em ≈ 35，保守取 34）。
+ * 只用來估「尚未渲染」段落的高度（reader.css 的 contain-intrinsic-block-size），渲染過後以實測為準。
+ */
+const CHARS_PER_LINE = 34;
 
 /** 表情圖：由 scripts/fetch-emoticons.ts 下載到 public/images/emoticons/；缺圖時退回顯示 alt 文字 */
 // function Emoticon({ file, alt }: { file: string; alt: string }) {
@@ -44,7 +50,16 @@ const Paragraph = memo(function Paragraph({
 }) {
   const Tag = block.kind === 'p' ? 'p' : block.kind;
   return (
-    <Tag data-b={index} data-seg={block.seg || undefined} data-bookmark={marked || undefined}>
+    <Tag
+      data-b={index}
+      data-seg={block.seg || undefined}
+      data-bookmark={marked || undefined}
+      style={
+        {
+          '--rd-lines': Math.max(1, Math.ceil(block.norm.length / CHARS_PER_LINE)),
+        } as CSSProperties
+      }
+    >
       {renderInline(block.c)}
     </Tag>
   );

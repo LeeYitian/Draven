@@ -104,9 +104,12 @@ test.describe('閱讀版面', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await openReader(page);
     await expect(page.getByRole('navigation', { name: '目錄' })).toBeVisible();
+    // 內容寬度：段落框左側有 16px padding 讓書籤線畫在框內（見 reader.css）
     const width = await page
       .locator('[data-b="0"]')
-      .evaluate((e) => e.getBoundingClientRect().width);
+      .evaluate(
+        (e) => e.getBoundingClientRect().width - parseFloat(getComputedStyle(e).paddingLeft),
+      );
     const fs = await page
       .locator('[data-b="0"]')
       .evaluate((e) => parseFloat(getComputedStyle(e).fontSize));
