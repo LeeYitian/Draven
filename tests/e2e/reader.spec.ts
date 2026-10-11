@@ -175,6 +175,24 @@ test.describe('目錄', () => {
     );
   });
 
+  test('遠距離跳轉：標示出現時目標已在定位上（來回各一次）', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await openReader(page);
+    const nav = page.getByRole('navigation', { name: '目錄' });
+    // 預期距頂：bar 52 + scroll-margin 24 = 76
+    for (const [name, index] of [
+      ['第二幕', 119],
+      ['第一幕', 0],
+    ] as const) {
+      const target = page.locator(`[data-b="${index}"]`);
+      await nav.getByRole('button', { name }).click();
+      // 標示在捲動停止、落點確認之後才開始；此刻目標必須已在定位上
+      await expect(target).toHaveAttribute('data-flash', '');
+      const top = await target.evaluate((e) => e.getBoundingClientRect().top);
+      expect(Math.abs(top - 76)).toBeLessThanOrEqual(2);
+    }
+  });
+
   test('目錄取不到（404）不影響閱讀，目錄為空', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await mockNovel(page);

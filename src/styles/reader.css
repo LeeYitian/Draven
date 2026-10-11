@@ -367,7 +367,7 @@ html[data-reader][data-reader-theme='light'] {
   border-radius: 2px;
   background: var(--rd-accent);
 }
-.rd-article p[data-flash] {
+.rd-article [data-b][data-flash] {
   animation: rd-flash 1600ms ease-out 1;
 }
 @keyframes rd-flash {
@@ -379,7 +379,7 @@ html[data-reader][data-reader-theme='light'] {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .rd-article p[data-flash] {
+  .rd-article [data-b][data-flash] {
     animation: none;
     background: var(--rd-select);
   }

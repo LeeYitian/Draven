@@ -51,6 +51,41 @@ function flash(el: HTMLElement) {
   window.setTimeout(() => el.removeAttribute('data-flash'), 1800);
 }
 
+/** 目標離目前視窗超過幾個視窗高度，就不做平滑捲動 */
+const FAR_VIEWPORTS = 3;
+const SETTLE_MS = 120;
+const SETTLE_MAX_MS = 2000;
+const USER_INPUT = ['wheel', 'touchstart', 'mousedown', 'keydown'] as const;
+
+/**
+ * 捲動停止（位置連續 SETTLE_MS 不變，最多等 SETTLE_MAX_MS）後回傳 true；
+ * 等待期間讀者自己動手（滾輪、觸控、鍵盤）則回傳 false，呼叫端不該再替他捲動。
+ */
+function whenScrollSettled(): Promise<boolean> {
+  return new Promise((resolve) => {
+    const start = performance.now();
+    let last = window.scrollY;
+    let since = start;
+    let raf = 0;
+    const finish = (untouched: boolean) => {
+      cancelAnimationFrame(raf);
+      for (const type of USER_INPUT) window.removeEventListener(type, cancel);
+      resolve(untouched);
+    };
+    const cancel = () => finish(false);
+    const tick = (now: number) => {
+      if (window.scrollY !== last) {
+        last = window.scrollY;
+        since = now;
+      }
+      if (now - since >= SETTLE_MS || now - start >= SETTLE_MAX_MS) return finish(true);
+      raf = requestAnimationFrame(tick);
+    };
+    for (const type of USER_INPUT) window.addEventListener(type, cancel, { passive: true });
+    raf = requestAnimationFrame(tick);
+  });
+}
+
 function TocList({
   entries,
   current,
@@ -221,11 +256,20 @@ export default function ReaderPage() {
     };
   }, [blocks]);
 
+  // 目錄跳轉：遠距離瞬間跳（平滑捲動途中段落陸續排版、高度由估計值變實測值，終點會過時，
+  // 而且動畫太長）；近距離平滑。停止後再確認一次落點並標示，標示才不會在捲到之前就褪色。
+  const scrollSeq = useRef(0);
   const scrollToBlock = useCallback((index: number, block: ScrollLogicalPosition) => {
     const el = blockElement(articleRef.current, index);
     if (!el) return;
-    el.scrollIntoView?.({ block, behavior: reducedMotion() ? 'auto' : 'smooth' });
-    flash(el);
+    const seq = ++scrollSeq.current;
+    const far = Math.abs(el.getBoundingClientRect().top) > window.innerHeight * FAR_VIEWPORTS;
+    el.scrollIntoView?.({ block, behavior: far || reducedMotion() ? 'auto' : 'smooth' });
+    void whenScrollSettled().then((untouched) => {
+      if (!untouched || seq !== scrollSeq.current) return;
+      el.scrollIntoView?.({ block, behavior: 'auto' }); // 已在位置上就不會動；有偏差時才補正
+      flash(el);
+    });
   }, []);
 
   // 開啟時回到上次記錄的位置（只做一次；等字型就緒再捲，避免版面位移）
