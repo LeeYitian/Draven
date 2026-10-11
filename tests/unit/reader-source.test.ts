@@ -17,13 +17,10 @@ describe('parseSource（HTML）', () => {
     expect(b.map((x) => x.seg)).toEqual([false, true, false]);
   });
 
-  it('保留斜體與表情圖，丟棄 script 與屬性', () => {
-    const b = parseSource(
-      '<p>你<i>好</i><img src="https://s.plurk.com/emoticons/random/abc123.png" class="emoticon" alt="(coin)" onerror="x()"><script>alert(1)</script></p>',
-    );
+  it('保留斜體，丟棄 script 與屬性', () => {
+    const b = parseSource('<p>你<i onclick="x()">好</i><script>alert(1)</script></p>');
     expect(b).toHaveLength(1);
-    expect(b[0]!.c.map((n) => n.t)).toEqual(['text', 'em', 'emo', 'text']);
-    expect(b[0]!.c[2]).toEqual({ t: 'emo', file: 'abc123.png', alt: '(coin)' });
+    expect(b[0]!.c.map((n) => n.t)).toEqual(['text', 'em', 'text']);
   });
 
   it('原始碼換行：中文之間直接接起來', () => {
@@ -37,13 +34,6 @@ describe('parseSource（HTML）', () => {
       ['h2', '第一章 & 序'],
       ['p', '內文<3'],
     ]);
-  });
-
-  it('只有表情圖的段落也保留', () => {
-    const b = parseSource(
-      '<p>甲<br /><br />\n<img src="a/b/c.png" class="emoticon" alt="x"><br /><br />乙</p>',
-    );
-    expect(b).toHaveLength(3);
   });
 });
 

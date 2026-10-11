@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createBookmark, locateBookmark } from '../../src/features/reader/bookmark';
 import { parseSource } from '../../src/features/reader/source';
-import { currentEntry, resolveToc } from '../../src/features/reader/toc';
+import { ancestorEntries, currentEntry, resolveToc } from '../../src/features/reader/toc';
 
 const paragraphs = [
   '序幕的第一段文字，很長很長很長。',
@@ -46,6 +46,16 @@ describe('resolveToc', () => {
       { title: 'b', level: 1 as const, index: 3 },
     ];
     expect([0, 1, 2, 3].map((i) => currentEntry(entries, i))).toEqual([-1, 0, 0, 1]);
+  });
+
+  it('ancestorEntries：小節的上層是最近的章；章本身與無效索引沒有上層', () => {
+    const e = (title: string, level: 1 | 2) => ({ title, level, index: 0 });
+    const entries = [e('章1', 1), e('節1', 2), e('節2', 2), e('章2', 1), e('節3', 2)];
+    expect([...ancestorEntries(entries, 2)]).toEqual([0]);
+    expect([...ancestorEntries(entries, 4)]).toEqual([3]);
+    expect(ancestorEntries(entries, 3).size).toBe(0);
+    expect(ancestorEntries(entries, -1).size).toBe(0);
+    expect(ancestorEntries([e('節', 2)], 0).size).toBe(0); // 前面沒有章
   });
 });
 

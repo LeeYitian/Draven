@@ -212,6 +212,10 @@ html[data-reader][data-reader-theme='light'] {
   color: var(--rd-accent);
   font-weight: 600;
 }
+/* 目前項目的上層（level 1 之於其下的小節）：只染強調色，不加左線與粗體，主次分明 */
+.rd-toc__item[data-ancestor] {
+  color: var(--rd-accent);
+}
 .rd-toc__item:disabled {
   opacity: 0.45;
   cursor: default;
@@ -302,6 +306,19 @@ html[data-reader][data-reader-theme='light'] {
 .rd-article [data-b] {
   scroll-margin-top: calc(var(--rd-bar-h) + 24px);
 }
+/*
+ * 螢幕外的段落不排版、不繪製（全文約 15 萬字，改字級或視窗寬度時整篇重排要 1 秒以上）。
+ * 跳過時的高度：auto＝渲染過就記住實測值；否則用 --rd-lines（Article.tsx 依字數估的行數）× 行高。
+ * 不支援的瀏覽器會忽略這兩行，行為與以前相同。
+ * content-visibility 隱含 paint containment，會裁掉段落框外的內容，
+ * 所以書籤線（見下）要畫在段落框內：以 padding-left 讓出位置、負 margin 抵銷，文字位置不變。
+ */
+.rd-article [data-b] {
+  margin-left: -16px;
+  padding-left: 16px;
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto calc(var(--rd-lines, 1) * 1.95em);
+}
 .rd-article p[data-seg] {
   margin-top: 1.7em;
 }
@@ -345,7 +362,7 @@ html[data-reader][data-reader-theme='light'] {
   position: absolute;
   top: 0.35em;
   bottom: 0.35em;
-  left: -14px;
+  left: 2px;
   width: 3px;
   border-radius: 2px;
   background: var(--rd-accent);

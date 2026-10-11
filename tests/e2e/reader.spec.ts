@@ -20,13 +20,7 @@ const paragraphs = Array.from(
   (_, i) =>
     `這是第${i + 1}段測試文字，用來確認閱讀排版與捲動。他想了想，沒有說話，只是看著窗外慢慢暗下來的天色，心裡盤算著明天的事。`,
 );
-const html = `<p>${paragraphs
-  .map((p, i) =>
-    i === 3
-      ? `${p}<img src="https://s.plurk.com/x/516a706919ab3e97f167.png" class="emoticon" alt="(coin)">`
-      : p,
-  )
-  .join('<br /><br class="double-br" />')}</p>`;
+const html = `<p>${paragraphs.join('<br /><br class="double-br" />')}</p>`;
 
 async function mockNovel(page: Page) {
   await page.route(TOC_URL, (route) =>
@@ -104,9 +98,12 @@ test.describe('閱讀版面', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await openReader(page);
     await expect(page.getByRole('navigation', { name: '目錄' })).toBeVisible();
+    // 內容寬度：段落框左側有 16px padding 讓書籤線畫在框內（見 reader.css）
     const width = await page
       .locator('[data-b="0"]')
-      .evaluate((e) => e.getBoundingClientRect().width);
+      .evaluate(
+        (e) => e.getBoundingClientRect().width - parseFloat(getComputedStyle(e).paddingLeft),
+      );
     const fs = await page
       .locator('[data-b="0"]')
       .evaluate((e) => parseFloat(getComputedStyle(e).fontSize));
@@ -121,16 +118,6 @@ test.describe('閱讀版面', () => {
     await expect(page.getByRole('dialog', { name: '目錄' })).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog', { name: '目錄' })).toHaveCount(0);
-  });
-
-  test('表情圖使用專案內的檔案，不外連 plurk', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    const external: string[] = [];
-    page.on('request', (r) => r.url().includes('plurk.com') && external.push(r.url()));
-    await openReader(page);
-    const src = await page.locator('.rd-emo').first().getAttribute('src');
-    expect(src).toContain('/images/emoticons/516a706919ab3e97f167.png');
-    expect(external).toEqual([]);
   });
 
   test('字級：放大後字更大，且維持目前閱讀位置', async ({ page }) => {

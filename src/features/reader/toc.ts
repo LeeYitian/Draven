@@ -85,6 +85,23 @@ export function resolveToc(
   return { entries, problems };
 }
 
+/**
+ * 目前項目的上層項目（回傳 entries 的索引集合）。往前找，每個 level 較小的最近一項就是祖先。
+ * 例：[章1, 節1, 節2, 章2]，目前是「節2」→ {章1}。level 之間若有跳層也能運作。
+ */
+export function ancestorEntries(entries: readonly TocEntry[], current: number): Set<number> {
+  const result = new Set<number>();
+  if (current < 0 || current >= entries.length) return result;
+  let level = entries[current].level;
+  for (let i = current - 1; i >= 0 && level > 1; i--) {
+    if (entries[i].level < level) {
+      result.add(i);
+      level = entries[i].level;
+    }
+  }
+  return result;
+}
+
 /** 目前捲動到的段落屬於哪個目錄項目（回傳 entries 的索引；還沒到第一項回傳 -1） */
 export function currentEntry(entries: readonly TocEntry[], blockIndex: number): number {
   let found = -1;
