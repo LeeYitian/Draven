@@ -1,20 +1,20 @@
-import { memo, useState, type ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 import type { Block, Inline } from './source';
 
 /** 表情圖：由 scripts/fetch-emoticons.ts 下載到 public/images/emoticons/；缺圖時退回顯示 alt 文字 */
-function Emoticon({ file, alt }: { file: string; alt: string }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) return <span className="rd-emo-alt">{alt}</span>;
-  return (
-    <img
-      className="rd-emo"
-      src={`${import.meta.env.BASE_URL}images/emoticons/${file}`}
-      alt={alt}
-      draggable={false}
-      onError={() => setFailed(true)}
-    />
-  );
-}
+// function Emoticon({ file, alt }: { file: string; alt: string }) {
+//   const [failed, setFailed] = useState(false);
+//   if (failed) return <span className="rd-emo-alt">{alt}</span>;
+//   return (
+//     <img
+//       className="rd-emo"
+//       src={`${import.meta.env.BASE_URL}images/emoticons/${file}`}
+//       alt={alt}
+//       draggable={false}
+//       onError={() => setFailed(true)}
+//     />
+//   );
+// }
 
 function renderInline(nodes: readonly Inline[]): ReactNode {
   return nodes.map((n, i) => {
@@ -27,8 +27,8 @@ function renderInline(nodes: readonly Inline[]): ReactNode {
         return <em key={i}>{renderInline(n.c)}</em>;
       case 'strong':
         return <strong key={i}>{renderInline(n.c)}</strong>;
-      case 'emo':
-        return <Emoticon key={i} file={n.file} alt={n.alt} />;
+      // case 'emo':
+      //   return <Emoticon key={i} file={n.file} alt={n.alt} />;
     }
   });
 }
