@@ -8,7 +8,7 @@ import { createBookmark, locateBookmark } from './bookmark';
 import { loadNovel, NoSourceError } from './loadNovel';
 import { SelectionToolbar, type SelectionPoint } from './SelectionToolbar';
 import type { Block } from './source';
-import { currentEntry, resolveToc, type TocEntry, type TocItem } from './toc';
+import { ancestorEntries, currentEntry, resolveToc, type TocEntry, type TocItem } from './toc';
 
 type Load =
   | { status: 'loading' }
@@ -60,15 +60,37 @@ function TocList({
   current: number;
   onSelect: (entry: TocEntry) => void;
 }) {
+  const listRef = useRef<HTMLOListElement>(null);
+  const ancestors = useMemo(() => ancestorEntries(entries, current), [entries, current]);
+
+  // 目前項目超出目錄的可視範圍時，只捲動目錄容器（不帶動整頁）；首次（面板剛開啟）不做動畫
+  const settled = useRef(false);
+  useEffect(() => {
+    const list = listRef.current;
+    const box = list?.parentElement;
+    const item = list?.querySelector<HTMLElement>('[aria-current="true"]');
+    if (!box || !item) return;
+    const behavior = settled.current && !reducedMotion() ? 'smooth' : 'auto';
+    settled.current = true;
+    const boxRect = box.getBoundingClientRect();
+    const rect = item.getBoundingClientRect();
+    const margin = item.offsetHeight;
+    if (rect.top >= boxRect.top + margin && rect.bottom <= boxRect.bottom - margin) return;
+    const top = box.scrollTop + (rect.top - boxRect.top) - (box.clientHeight - rect.height) / 2;
+    if (typeof box.scrollTo === 'function') box.scrollTo({ top, behavior });
+    else box.scrollTop = top;
+  }, [current]);
+
   if (entries.length === 0) return <p className="rd-toc__empty">{t('reader.tocEmpty')}</p>;
   return (
-    <ol>
+    <ol ref={listRef}>
       {entries.map((entry, i) => (
         <li key={i}>
           <button
             type="button"
             className="rd-toc__item"
             data-level={entry.level}
+            data-ancestor={ancestors.has(i) || undefined}
             aria-current={i === current ? 'true' : undefined}
             disabled={entry.index === null}
             title={entry.index === null ? t('reader.tocMissing') : undefined}

@@ -212,6 +212,10 @@ html[data-reader][data-reader-theme='light'] {
   color: var(--rd-accent);
   font-weight: 600;
 }
+/* 目前項目的上層（level 1 之於其下的小節）：只染強調色，不加左線與粗體，主次分明 */
+.rd-toc__item[data-ancestor] {
+  color: var(--rd-accent);
+}
 .rd-toc__item:disabled {
   opacity: 0.45;
   cursor: default;
